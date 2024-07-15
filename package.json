@@ -1,0 +1,32 @@
+{
+  "type": "module",
+  "name": "userlogin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "nodemon src/app.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "ioredis": "^5.4.1",
+    "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.4",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "socket.io": "^4.7.5",
+    "url": "^0.11.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
