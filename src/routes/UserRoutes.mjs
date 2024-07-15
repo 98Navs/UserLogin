@@ -11,6 +11,9 @@ router.post('/createUser', UserController.createUser);
 // POST /Route for user to signIn
 router.post('/signIn', UserController.signIn);
 
+// POST /Route for user to signOut
+router.post('/signOut', Middleware.user, UserController.signOut);
+
 // GET /Route to get all users
 router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 

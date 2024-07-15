@@ -31,6 +31,15 @@ class UserController {
         }
     }
 
+    static async signOut(req, res) {
+        try {
+            res.clearCookie('jwt');
+            res.status(200).json({ status: 200, success: true, message: 'User sign out is successful!' });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async getAllUsers(req, res) {
         try {
             const { search, startDate, endDate, pageNumber = 1, perpage = 10 } = req.query;
