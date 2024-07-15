@@ -23,7 +23,7 @@ class UserController {
             const existingUser = await UserController.getUser(user.trim());
             if (!existingUser) { throw new NotFoundError("user not found for the provided details"); }
             if (existingUser.status != 'Active') { throw new ValidationError('User account has been deleted or suspended'); }
-            if (!bcrypt.compare(password, existingUser.password)) { throw new ValidationError('Invalid credentials.'); }
+            if (! await bcrypt.compare(password, existingUser.password)) { throw new ValidationError('Invalid credentials.'); }
             const token = await Middleware.generateToken({ userId: existingUser.userId, email: existingUser.email, role: existingUser.role }, res);
             res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, token } });
         } catch (error) {
@@ -74,7 +74,7 @@ class UserController {
         if (role) { await CommonHandler.validateRole(role); }
         if (status) { await CommonHandler.validateStatus(status); }
         data.password = await CommonHandler.hashPassword(password);
-        
+
         return data;   
     }
 
