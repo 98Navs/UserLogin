@@ -11,15 +11,6 @@ router.post('/createUser', UserController.createUser);
 // POST /Route for user to signIn
 router.post('/signIn', UserController.signIn);
 
-// POST /Route for user to apply for forgetPassword
-router.post('/forgetPassword', UserController.forgetPassword);
-
-// POST /Route for user confirm otp
-router.post('/otp', UserController.otp);
-
-// POST /Route for user to changePassword
-router.post('/changePassword', UserController.changePassword);
-
 // GET /Route to get all users
 router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 

@@ -4,19 +4,11 @@ import bcrypt from 'bcrypt';
 class CommonHandler {
 
     //Valid Inputs
-    static validStatusForGames = ['Active', 'Deactive', 'Upcoming'];
-    static validStatuses = ['Active', 'Deactive'];
-    static validBonusTypes = ['New User Bonus', 'Festival Bonus'];
     static validUserRoles = ['admin', 'user'];
     static validUserStatuses = ['Active', 'Deactive', 'Suspended'];
-    static validRechargeAndWithdrawalStatuses = ['Approved', 'Pending', 'Rejected'];
-    static validCreaditDebit = ['Credit', 'Debit'];
-    static validStatementCategory = ['Recharge', 'Withdrawal', 'Betting', 'Deposit Bonus', 'Festival Bonus', 'New User Bonus'];
-
+    
     //Valid Formats
     static async validateSixDigitIdFormat(id) { if (!/^[0-9]{6}$/.test(id)) { throw new ValidationError('Invalid 6 digit id format.'); } }
-
-    static async validateObjectIdFormat(id) { if (!/^[0-9a-fA-F]{24}$/.test(id)) { throw new ValidationError('Invalid Id format.'); } }
 
     static async validateEmailFormat(email) { if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { throw new ValidationError('Invalid email format.'); } }
 
@@ -29,23 +21,6 @@ class CommonHandler {
     static async validateRole(role) { if (!CommonHandler.validUserRoles.includes(role)) { throw new ValidationError(`Role must be one of: ${CommonHandler.validUserRoles.join(', ')} without any space.`); } }
 
     static async validateStatus(status) { if (!CommonHandler.validUserStatuses.includes(status)) { throw new ValidationError(`Status must be one of: ${CommonHandler.validUserStatuses.join(', ')} without any space.`); } }
-
-    static async validateAccountNumberFormat(accountNumber) { if (!/^\d+$/.test(accountNumber)) { throw new ValidationError('Invalid account number. Must be a number.'); } }
-
-    static async validateIfscCodeFormat(ifscCode) { if (!/^[a-zA-Z]{4}0[a-zA-Z0-9]{6}$/.test(ifscCode)) { throw new ValidationError('Invalid IFSC code. Must be in the format of 4 letters followed by 0 and 6 alphanumeric characters in capital letters.'); } }
-
-    static async validateUpiIdFormat(upiId) { if (!/^[\w.-]+@[\w.-]+$/.test(upiId)) { throw new ValidationError('Invalid UPI ID format.'); } }
-
-    static async validateSaveAsFormat(saveAs) { if (!/^[a-zA-Z0-9\s]{1,}$/.test(saveAs)) { throw new ValidationError('Invalid saveAs. Must be at least 1 characters and only letters numbers and spaces.'); } }
-
-    static async validateRechargeAndWithdrawalStatus(status) { if (!CommonHandler.validRechargeAndWithdrawalStatuses.includes(status)) { throw new ValidationError(`Status must be one of: ${CommonHandler.validRechargeAndWithdrawalStatuses.join(', ')} without any space.`); } }
-
-    static async validateTransactionFormat(transactionNo) { if (!/^[a-zA-Z0-9]{6,20}$/.test(transactionNo)) { throw new ValidationError('Invalid transaction number. Must be between 6 to 20 characters and only alphanumeric.'); } }
-
-    static async validateCreditDebit(type) { if (!CommonHandler.validCreaditDebit.includes(type)) { throw new ValidationError(`Type must be one of: ${CommonHandler.validCreaditDebit.join(', ')} without any space.`); } }
-
-    static async validateStatementCategory(category) { if (!CommonHandler.validStatementCategory.includes(category)) { throw new ValidationError(`Category must be one of: ${CommonHandler.validStatementCategory.join(', ')} without any space.`); } }
-
 
     //Password Hashing
     static async hashPassword(password) {
