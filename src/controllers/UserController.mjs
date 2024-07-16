@@ -1,7 +1,7 @@
 // src/controllers/UserRegistrationController.mjs
 import bcrypt from 'bcrypt';
 import UserRepository from '../repositories/UserRepository.mjs';
-import { sendEmail } from '../project_setup/Utils.mjs';
+import WalletRepository from '../repositories/WalletRepository.mjs';
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 import Middleware from '../project_setup/Middleware.mjs';
 
@@ -10,7 +10,8 @@ class UserController {
         try {
             const userData = await UserController.validateUserData(req.body);
             const user = await UserRepository.createUser(userData);
-            res.status(201).json({ status: 201, success: true, message: 'User created successfully', user });
+            const wallet = await WalletRepository.createWallet({ userId: user.userId });
+            res.status(201).json({ status: 201, success: true, message: 'User created successfully', user, wallet });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -40,6 +41,27 @@ class UserController {
         }
     }
 
+    static async userRechargeByAdmin(req, res) {
+        try {
+            const { email, amount } = req.body;
+            const user = await UserRepository.getUserByEmail(email);
+            if (!user) { throw new NotFoundError(`User not found with email: ${email}`) };
+            const userWallet = await WalletRepository.getWalletByUserId(user.userId);
+            if (!userWallet) { throw new NotFoundError(`User wallet not found for ${user.userName}`) };
+
+            const admin = await UserRepository.getUserByEmail('admin@scriza.in');
+            if (!admin) { throw new NotFoundError(`Admin not found with email: ${email}`) };
+            const adminWallet = await WalletRepository.getWalletByUserId(admin.userId);
+            if (!adminWallet) { throw new NotFoundError(`User wallet not found for ${admin.userName}`) };
+
+
+            if(admin.amount)
+            res.status(201).json({ status: 201, success: true, message: 'User created successfully' });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async getAllUsers(req, res) {
         try {
             const { search, startDate, endDate, pageNumber = 1, perpage = 10 } = req.query;
@@ -48,7 +70,13 @@ class UserController {
             const users = Object.keys(filterParams).length > 0 ?
                 await UserRepository.filterUsers(filterParams, options, req) :
                 await UserRepository.getAllUsers(options, req);
-            return res.status(200).json({ status: 200, success: true, message: 'Users fetched successfully', ...users });
+
+            // Fetch wallets and map to users
+            const userIds = users.data.map(user => user.userId);
+            const wallets = await WalletRepository.getWalletsByUserIds(userIds);
+            const userWalletMap = new Map(wallets.map(wallet => [wallet.userId, wallet.amount]));
+            const usersWithWallets = users.data.map(user => ({ ...user.toObject(), amount: userWalletMap.get(user.userId) || 0 }));
+            res.status(200).json({ status: 200, success: true, message: 'Users fetched successfully', data: usersWithWallets, total: users.total, page: users.pageNumber, pages: users.pages, perpage: users.perpage, nextPageUrl: users.nextPageUrl });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }

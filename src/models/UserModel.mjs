@@ -13,7 +13,6 @@ const userSchema = new Schema({
 }, {
     timestamps: true,
     toJSON: {
-        virtuals: true,
         transform: (doc, ret) => {
             delete ret.password;
             delete ret.otp;
