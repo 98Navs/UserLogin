@@ -45,6 +45,10 @@ class UserController {
         try {
             const { email, amount } = req.body;
 
+            if (typeof email !== 'string') { throw new ValidationError('Email must be of string format') }
+            if (typeof amount !== 'number') { throw new ValidationError('Amount must be of number format') }
+            await CommonHandler.validateEmailFormat(email);
+
             const [user, admin] = await Promise.all([ UserRepository.getUserByEmail(email), UserRepository.getUserByEmail('admin@scriza.in') ]);
             if (!user) { throw new NotFoundError(`User not found with email: ${email}`); }
             if (!admin) { throw new NotFoundError(`Admin not found with email: admin@scriza.in`); }
