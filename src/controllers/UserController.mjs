@@ -88,6 +88,18 @@ class UserController {
         }
     }
 
+    static async getUserByUserId(req, res) {
+        try {
+            const { userId } = req.params;
+            const user = await UserController.validateAndFetchUserByUserId(userId);
+            const wallet = await WalletRepository.getWalletByUserId(userId);
+            const userWithWallet = { ...user.toObject(), amount: wallet?.amount || 0 };
+            res.status(200).json({ status: 200, success: true, message: `Data fetched successfully for userId ${userId}`, data: userWithWallet, });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     //Static Methods Only For This Class (Not To Be Used In Routes)
     static async validateAndFetchUserByUserId(userId) {
         await CommonHandler.validateSixDigitIdFormat(userId);

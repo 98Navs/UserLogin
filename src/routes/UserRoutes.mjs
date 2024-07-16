@@ -20,4 +20,7 @@ router.post('/userRechargeByAdmin', Middleware.admin, UserController.userRecharg
 // GET /Route to get all users
 router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 
+// GET /Route to get user details by userId
+router.get('/getUserByUserId/:userId', Middleware.user, UserController.getUserByUserId);
+
 export default router;
