@@ -55,7 +55,7 @@ class UserController {
             if (!adminWallet) { throw new NotFoundError(`User wallet not found for ${admin.userName}`) };
 
 
-            if(admin.amount)
+            if (admin.amount < amount) { throw new ValidationError(`Admin doesn't have sufficient funds, current admin available balance is ${adminWallet.amount}`) };
             res.status(201).json({ status: 201, success: true, message: 'User created successfully' });
         } catch (error) {
             CommonHandler.catchError(error, res);
