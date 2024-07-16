@@ -44,19 +44,21 @@ class UserController {
     static async userRechargeByAdmin(req, res) {
         try {
             const { email, amount } = req.body;
-            const user = await UserRepository.getUserByEmail(email);
-            if (!user) { throw new NotFoundError(`User not found with email: ${email}`) };
-            const userWallet = await WalletRepository.getWalletByUserId(user.userId);
-            if (!userWallet) { throw new NotFoundError(`User wallet not found for ${user.userName}`) };
 
-            const admin = await UserRepository.getUserByEmail('admin@scriza.in');
-            if (!admin) { throw new NotFoundError(`Admin not found with email: ${email}`) };
-            const adminWallet = await WalletRepository.getWalletByUserId(admin.userId);
-            if (!adminWallet) { throw new NotFoundError(`User wallet not found for ${admin.userName}`) };
+            const [user, admin] = await Promise.all([ UserRepository.getUserByEmail(email), UserRepository.getUserByEmail('admin@scriza.in') ]);
+            if (!user) { throw new NotFoundError(`User not found with email: ${email}`); }
+            if (!admin) { throw new NotFoundError(`Admin not found with email: admin@scriza.in`); }
 
+            const [userWallet, adminWallet] = await Promise.all([ WalletRepository.getWalletByUserId(user.userId), WalletRepository.getWalletByUserId(admin.userId) ]);
+            if (!userWallet) { throw new NotFoundError(`User wallet not found for ${user.userName}`); }
+            if (!adminWallet) { throw new NotFoundError(`Admin wallet not found for ${admin.userName}`); }
+            
+            if (adminWallet.amount < amount) { throw new ValidationError(`Admin doesn't have sufficient funds. Current balance: ${adminWallet.amount}`); }
+            userWallet.amount += amount;
+            adminWallet.amount -= amount;
+            await Promise.all([ userWallet.save(), adminWallet.save()]);
 
-            if (admin.amount < amount) { throw new ValidationError(`Admin doesn't have sufficient funds, current admin available balance is ${adminWallet.amount}`) };
-            res.status(201).json({ status: 201, success: true, message: 'User created successfully' });
+            res.status(201).json({ status: 201, success: true, message: `User recharged successfully by admin to ${user.userName} for amount: ${amount}` });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }

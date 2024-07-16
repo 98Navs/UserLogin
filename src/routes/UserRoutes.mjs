@@ -14,6 +14,9 @@ router.post('/signIn', UserController.signIn);
 // POST /Route for user to signOut
 router.post('/signOut', Middleware.user, UserController.signOut);
 
+// POST /Route for admin to rechrge user wallet
+router.post('/userRechargeByAdmin', Middleware.admin, UserController.userRechargeByAdmin);
+
 // GET /Route to get all users
 router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 
