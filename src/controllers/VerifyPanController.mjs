@@ -1,6 +1,6 @@
 import ApiPartiesRepository from '../repositories/ApiPartiesRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
-import { verifyPanNumber } from '../services/zoopService.mjs'
+import { verifyPanNumberByZoop } from '../services/zoopService.mjs'
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 
 
@@ -19,20 +19,20 @@ class VerifyPanController {
 
             switch (apiParty.apiOperatorName) {
                 case 'ZOOP':
-                    const apiZoopResult = await verifyPanNumber(customerPanNumber);
-                    if (apiZoopResult.metadata.billable === 'Y') {
+                    const zoopResult = await verifyPanNumberByZoop(customerPanNumber);
+                    if (zoopResult.metadata.billable === 'Y') {
                         userWallet.amount -= apiParty.ourCharges;
                         await userWallet.save();
                     }
-                    res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: apiZoopResult.result });
+                    res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: zoopResult.result });
                     break;
                 case 'SCRIZA':
-                    const apiScrizaResult = await verifyPanNumber(customerPanNumber);
-                    if (apiScrizaResult.metadata.billable === 'Y') {
+                    const scrizaResult = await verifyPanNumberByZoop(customerPanNumber);
+                    if (scrizaResult.metadata.billable === 'Y') {
                         userWallet.amount -= apiParty.ourCharges;
                         await userWallet.save();
                     }
-                    res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: apiScrizaResult.result });
+                    res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: scrizaResult.result });
                     break;
                 default:
                     throw new NotFoundError('Operator not found');

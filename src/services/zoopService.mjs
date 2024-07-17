@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const ZOOP_API_URL = 'https://test.zoop.one/api/v1/in/identity/pan/lite';
 
-export async function verifyPanNumber(customerPanNumber) {
+export async function verifyPanNumberByZoop(customerPanNumber) {
     try {
         const response = await axios.post(ZOOP_API_URL, {
             data: {
