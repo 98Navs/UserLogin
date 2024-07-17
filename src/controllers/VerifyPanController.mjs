@@ -14,24 +14,29 @@ class VerifyPanController {
             const userWallet = await WalletRepository.getWalletByUserId(userId);
             if (!userWallet) { throw new NotFoundError(`User wallet not found for userId: ${userId}`) };
 
-            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByOperationName(VerifyPanController.PANCARD);
+            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(VerifyPanController.PANCARD);
             if (userWallet.amount < apiParty.ourCharges) { throw new ValidationError(`User with userId: ${userId} have insufficient funds, Current wallet balance is RS: ${userWallet.amount}, this service charge is RS: ${apiParty.ourCharges}`) };
-            switch (apiParty.operationName) {
+
+            switch (apiParty.apiOperatorName) {
                 case 'ZOOP':
+                    const apiZoopResult = await verifyPanNumber(customerPanNumber);
+                    if (apiZoopResult.metadata.billable === 'Y') {
+                        userWallet.amount -= apiParty.ourCharges;
+                        await userWallet.save();
+                    }
+                    res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: apiZoopResult.result });
                     break;
                 case 'SCRIZA':
+                    const apiScrizaResult = await verifyPanNumber(customerPanNumber);
+                    if (apiScrizaResult.metadata.billable === 'Y') {
+                        userWallet.amount -= apiParty.ourCharges;
+                        await userWallet.save();
+                    }
+                    res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: apiScrizaResult.result });
                     break;
                 default:
-                    throw new ValidationError('Operator not found');
+                    throw new NotFoundError('Operator not found');
             }
-            const apiResult = await verifyPanNumber(customerPanNumber);
-
-            if (apiResult.metadata.billable === 'Y') {
-                userWallet.amount -= apiParty.ourCharges;
-                await userWallet.save();
-            }
-
-            res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: apiResult.result });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
