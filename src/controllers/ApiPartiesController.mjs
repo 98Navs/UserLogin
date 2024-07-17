@@ -13,7 +13,7 @@ class ApiPartiesController {
         }
     }
 
-    static async changePrimary(req, res) {
+    static async changePrimaryByApiOperatorId(req, res) {
         try {
             const { apiOperatorId } = req.params;
             const apiParty = await ApiPartiesController.validateAndFetchApiOperatorByApiId(apiOperatorId);
