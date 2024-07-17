@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from 'cookie-parser';
-import { UserRoutes, VerifyPanRoutes, ApiPartiesRoutes, ServiceTableRoutes } from "../routes/AllRoutes.mjs";
+import { UserRoutes, VerifyPanRoutes, ApiPartiesRoutes, ServiceTableRoutes } from "../routes/AllRoutesss.mjs";
 
 export default async function setupExpressApp() {
     const app = express();
