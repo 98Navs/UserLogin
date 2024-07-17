@@ -77,7 +77,6 @@ class UserController {
                 await UserRepository.filterUsers(filterParams, options, req) :
                 await UserRepository.getAllUsers(options, req);
 
-            // Fetch wallets and map to users
             const userIds = users.data.map(user => user.userId);
             const wallets = await WalletRepository.getWalletsByUserIds(userIds);
             const userWalletMap = new Map(wallets.map(wallet => [wallet.userId, wallet.amount]));

@@ -6,12 +6,6 @@ const walletSchema = new Schema({
     status: { type: String, default: 'Active' },
     amount: { type: Number, default: 0 }
 }, {
-    timestamps: true,
-    toJSON: {
-        transform: (doc, ret) => {
-            ret.createdAt = ret.createdAt.toISOString();
-            ret.updatedAt = ret.updatedAt.toISOString();
-        }
-    }
+    timestamps: true
 });
 export default model('Wallet', walletSchema);
