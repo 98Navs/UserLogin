@@ -19,20 +19,23 @@ class VerifyPanController {
 
             switch (apiParty.apiOperatorName) {
                 case 'ZOOP':
-                    const zoopResult = await verifyPanNumberByZoop(customerPanNumber);
+                    const zoopResult = await verifyPanNumberByZoop(customerPanNumber.toUpperCase());
+                    console.log(zoopResult);
                     if (zoopResult.metadata.billable === 'Y') {
                         userWallet.amount -= apiParty.ourCharges;
                         await userWallet.save();
                     }
-                    res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: zoopResult.result });
+                    if (zoopResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: zoopResult.result }); }
+                    else throw new ValidationError(`Details not found for customer PAN Number: ${customerPanNumber}`);
                     break;
                 case 'SCRIZA':
-                    const scrizaResult = await verifyPanNumberByZoop(customerPanNumber);
+                    const scrizaResult = await verifyPanNumberByZoop(customerPanNumber.toUpperCase());
                     if (scrizaResult.metadata.billable === 'Y') {
                         userWallet.amount -= apiParty.ourCharges;
                         await userWallet.save();
                     }
-                    res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: scrizaResult.result });
+                    if (scrizaResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: scrizaResult.result }); }
+                    else throw new ValidationError(`Details not found for customer PAN Number: ${customerPanNumber}`);
                     break;
                 default:
                     throw new NotFoundError('Operator not found');
