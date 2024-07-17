@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from 'cookie-parser';
-import { UserRoutes, VerifyPanRoutes, ApiPartiesRoutes } from "../routes/Allroutes.mjs";
+import { UserRoutes, VerifyPanRoutes, ApiPartiesRoutes, ServiceTableRoutes } from "../routes/AllRoutes.mjs";
 
 export default async function setupExpressApp() {
     const app = express();
@@ -20,6 +20,7 @@ export default async function setupExpressApp() {
     app.use(UserRoutes);
     app.use(VerifyPanRoutes);
     app.use(ApiPartiesRoutes);
+    app.use(ServiceTableRoutes);
 
     // Start the server
     app.listen(process.env.PORT, () => { console.log(`Server is running on port ${process.env.PORT} `); });

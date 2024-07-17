@@ -1,9 +1,9 @@
 // src/repositories/ApiPartiesRepository.mjs
-import ApiParties from '../models/ApiPartiesModel.mjs';
+import ServiceTable from '../models/ServiceTableModel.mjs';
 import { paginate } from '../project_setup/Utils.mjs';
-//apiParties
-class ApiPartiesRepository {
-    static async createApiParty(apiPartiesData) { return await ApiParties.create(apiPartiesData); }
+//serviceTable
+class ServiceTableRepository {
+    static async createServiceTable(serviceTableData) { return await ServiceTable.create(serviceTableData); }
 
     static async getAllApiPartiess(options, req) { return await paginate(ApiParties, {}, options.page, options.limit, req); }
 
@@ -39,4 +39,4 @@ class ApiPartiesRepository {
     // }
 }
 
-export default ApiPartiesRepository;
+export default ServiceTableRepository;

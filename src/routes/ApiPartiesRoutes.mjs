@@ -8,4 +8,7 @@ const router = express.Router();
 // POST /Route to create a new user
 router.post('/createApiParty', Middleware.admin, ApiPartiesController.createApiParty);
 
+// POST /Route to create a new user
+router.put('/changePrimary/:apiId', Middleware.admin, ApiPartiesController.changePrimary);
+
 export default router;
