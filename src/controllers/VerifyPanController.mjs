@@ -11,6 +11,9 @@ class VerifyPanController {
             const { customerPanNumber } = req.body;
             const { userId } = req.user;
 
+            await CommonHandler.validateRequiredFields({ customerPanNumber });
+            await CommonHandler.validatePanCardFormat(customerPanNumber.toUpperCase());
+
             const userWallet = await WalletRepository.getWalletByUserId(userId);
             if (!userWallet) { throw new NotFoundError(`User wallet not found for userId: ${userId}`) };
 
