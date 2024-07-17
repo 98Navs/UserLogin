@@ -1,6 +1,6 @@
 import ApiPartiesRepository from '../repositories/ApiPartiesRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
-import { verifyPanNumberByZoop } from '../services/ZoopServicesss.mjs'
+import { verifyPanNumberByZoop } from '../services/ZoopServices.mjs'
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 
 
