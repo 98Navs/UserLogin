@@ -30,20 +30,23 @@ class ApiPartiesController {
     static async validateAndFetchApiOperatorByApiId(apiOperatorId) {
         await CommonHandler.validateSixDigitIdFormat(apiOperatorId);
         const apiParty = await ApiPartiesRepository.getApiPartyByApiOperatorId(apiOperatorId);
-        if (!apiParty) throw new NotFoundError(`Api operator details not found for apiId ${apiOperatorId}.`);
+        if (!apiParty) throw new NotFoundError(`Api operator details not found for apiOperatorId: ${apiOperatorId}.`);
         return apiParty;
     }
 
     static async validateApiPartiesData(data) {
         const { apiOperatorName, serviceName, category, apiOperatorCharges, ourCharges } = data;
-        await CommonHandler.validateRequiredFields({ apiOperatorName, serviceName, category, apiOperatorCharges, ourCharges });
+        await CommonHandler.validateRequiredFields({ apiOperatorName, serviceName, apiOperatorCharges, ourCharges });
 
         const existingService = await ApiPartiesRepository.getApiPartyByServiceName(serviceName);
         if (!existingService) { data.primary = 'Yes'; }
 
         const serviceTable = await ServiceTableRepository.getServiceTableByServiceName(serviceName);
         if (!serviceTable) { throw new NotFoundError(`Service not found by the name of: ${serviceName}.`) }
-        else { data.serviceId = serviceTable.serviceId; }
+        else {
+            data.serviceId = serviceTable.serviceId;
+            data.category = serviceTable.category;
+        }
 
         return data;
     }
