@@ -35,7 +35,7 @@ class VerifyPanController {
                         await userWallet.save();
                     }
                     if (scrizaResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: scrizaResult.result }); }
-                    else throw new ValidationError(`Details not found for customer PAN Number: ${customerPanNumber}`);
+                    else throw new ValidationError(`Details not found for customer PAN Number: ${customerPanNumber.toUpperCase()}`);
                     break;
                 default:
                     throw new NotFoundError('Operator not found');
