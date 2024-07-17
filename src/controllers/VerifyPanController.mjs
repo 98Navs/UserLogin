@@ -26,7 +26,7 @@ class VerifyPanController {
                         await userWallet.save();
                     }
                     if (zoopResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN details fetched successfully`, data: zoopResult.result }); }
-                    else throw new ValidationError(`Details not found for customer PAN Number: ${customerPanNumber}`);
+                    else { throw new ValidationError(`Details not found for customer PAN Number: ${customerPanNumber.toUpperCase()}`);}
                     break;
                 case 'SCRIZA':
                     const scrizaResult = await verifyPanNumberByZoop(customerPanNumber.toUpperCase());
