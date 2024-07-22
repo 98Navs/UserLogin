@@ -34,6 +34,8 @@ class CommonHandler {
     static catchError(error, res) {
         try {
             if (error instanceof ValidationError) { res.status(400).json({ status: 400, success: false, message: error.message }); }
+            else if (error instanceof AdminBalanceError) { res.status(401).json({ status: 401, success: false, message: error.message }); }
+            else if (error instanceof UserBalanceError) { res.status(402).json({ status: 402, success: false, message: error.message }); }
             else if (error instanceof MiddlewareError) { res.status(403).json({ status: 403, success: false, message: error.message }); }
             else if (error instanceof NotFoundError) { res.status(404).json({ status: 404, success: false, message: error.message }); }
             else { res.status(500).json({ status: 500, success: false, message: 'Internal server error.' }); }
@@ -53,8 +55,10 @@ class CommonHandler {
 
 //Assigned Errors
 class ValidationError extends Error { constructor(message) { super(message); this.name = 'ValidationError'; } }
+class AdminBalanceError extends Error { constructor(message) { super(message); this.name = 'AdminBalanceError'; } }
+class UserBalanceError extends Error { constructor(message) { super(message); this.name = 'AdminBalanceError'; } }
 class NotFoundError extends Error { constructor(message) { super(message); this.name = 'NotFoundError'; } }
 class MiddlewareError extends Error { constructor(message) { super(message); this.name = 'MiddlewareError'; } }
 
 
-export { CommonHandler, ValidationError, NotFoundError, MiddlewareError };
+export { CommonHandler, ValidationError, NotFoundError, MiddlewareError, AdminBalanceError, UserBalanceError };

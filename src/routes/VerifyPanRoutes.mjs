@@ -5,7 +5,10 @@ import Middleware from '../project_setup/Middleware.mjs'
 
 const router = express.Router();
 
-// POST /Route to create a new user
-router.post('/verifyPan', Middleware.user, VerifyPanController.verifyPan);
+// POST /Route to Verify PAN Card Details
+router.post('/verifyPanLite', Middleware.user, VerifyPanController.verifyPanLite);
+
+router.post('/verifyVoterAdvance', Middleware.user, VerifyPanController.verifyVoterAdvance);
+
 
 export default router;
