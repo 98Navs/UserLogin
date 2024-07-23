@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from 'cookie-parser';
-import { UserRoutes, VerifyPanRoutes, ApiPartiesRoutes, ServiceTableRoutes } from "../routes/AllRoutes.mjs";
+import { UserRoutes, VerifyRoutes, ApiPartiesRoutes, ServiceTableRoutes } from "../routes/AllRoutes.mjs";
 
 export default async function setupExpressApp() {
     const app = express();
@@ -18,7 +18,7 @@ export default async function setupExpressApp() {
 
     // Mount routes
     app.use(UserRoutes);
-    app.use(VerifyPanRoutes);
+    app.use(VerifyRoutes);
     app.use(ApiPartiesRoutes);
     app.use(ServiceTableRoutes);
 
