@@ -2,22 +2,30 @@
 import ApiPartiesRepository from '../repositories/ApiPartiesRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
 import TransactionHistoryRepository from '../repositories/TransactionHistoryRepository.mjs';
-import { verifyPanLiteByZoop, verifyPanAdvanceByZoop, verifyPanDemographicByZoop, verifyDrivingLicenceAdvanceByZoop, verifyVoterAdvanceByZoop, verifyPassportLiteByZoop, verifyCkycLiteByZoop, verifyOkycLiteByZoop, verifyOkycOtpLiteByZoop } from '../services/ZoopServices.mjs';
-import { CommonHandler, ValidationError, NotFoundError, ApiError } from './CommonHandler.mjs';
+import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
+import { verifyPanLiteByZoop, verifyPanAdvanceByZoop, verifyPanDemographicByZoop, verifyDrivingLicenceAdvanceByZoop, verifyVoterAdvanceByZoop, verifyPassportLiteByZoop, verifyCkycLiteByZoop, verifyOkycLiteByZoop, verifyOkycOtpLiteByZoop, verifyGstinLiteByZoop, verifyGstinAdvanceByZoop, verifyBankAccountLiteByZoop, verifyRcLiteByZoop, verifyRcAdvanceByZoop, verifyIfscLiteByZoop, verifyOcrLiteByZoop } from '../services/ZoopServices.mjs';
+import { CommonHandler, ValidationError, NotFoundError, ApiError,MiddlewareError } from './CommonHandler.mjs';
 
 class VerifyController {
-    static SERVICES = { PAN_LITE: 'PAN CARD', PAN_ADVANCE: 'PAN CARD ADVANCE', PAN_DEMOGRAPHIC: 'PAN CARD DEMOGRAPHIC', VOTER: 'VOTER CARD', DL_ADVANCE: 'DRIVING LICENCE ADVANCE', PASSPORT_LITE: 'PASSPORT LITE', CKYC_LITE: 'CKYC LITE', OKYC_LITE: "OKYC LITE" };
+    static SERVICES = { PAN_LITE: 'PAN CARD', PAN_ADVANCE: 'PAN CARD ADVANCE', PAN_DEMOGRAPHIC: 'PAN CARD DEMOGRAPHIC', VOTER: 'VOTER CARD', DL_ADVANCE: 'DRIVING LICENCE ADVANCE', PASSPORT_LITE: 'PASSPORT LITE', CKYC_LITE: 'CKYC LITE', OKYC_LITE: 'OKYC LITE', GSTIN_LITE: 'GSTIN LITE', GSTIN_ADVANCE: 'GSTIN ADVANCE', BANK_VERIFICATION_LITE: 'BANK VERIFICATION LITE', RC_LITE: 'RC LITE', RC_ADVANCE: 'RC ADVANCE', IFSC_LITE: 'IFSC LITE', OCR_LITE: 'OCR LITE' };
     
     static OPERATORS = { ZOOP: 'ZOOP', SCRIZA: 'SCRIZA' };
 
-    static async verifyDocument(req, res, serviceType, formatValidation, verifyByZoop, verifyByScriza) {
+    static async verifyDocument(req, res, serviceType, verifyByZoop, verifyByScriza) {
         try {
-            const { userId } = req.user;
-            const documentDetails = { ...req.body };
-           
+            let userId;
+            if (req.user) {
+                userId = req.user.userId;
+            } else {
+                const apiKey = req.headers['api-key'];
+                const userApiKey = await UserApikeyRepository.getUserApiKeyByApiKey(apiKey);
+                if (!userApiKey) { throw new MiddlewareError('Token or API-Key not found in the request'); }
+                userId = userApiKey.userId;
+            }
+            const documentDetails = { ...req.body };  
             const documentNumber = documentDetails[Object.keys(documentDetails)[0]].toUpperCase();
-           // console.log(documentNumber);
-            await formatValidation(documentNumber);
+
+            //console.log(documentDetails);
 
             const userWallet = await WalletRepository.getWalletByUserId(userId);
             if (!userWallet) throw new NotFoundError(`User wallet not found for userId: ${userId}`);
@@ -56,23 +64,38 @@ class VerifyController {
         }
     }
 
-    static async verifyPanLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_LITE, CommonHandler.validatePanCardFormat, verifyPanLiteByZoop, null); }
+    static async verifyPanLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_LITE, verifyPanLiteByZoop, null); }
 
-    static async verifyPanAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_ADVANCE, CommonHandler.validatePanCardFormat, verifyPanAdvanceByZoop, null); }
+    static async verifyPanAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_ADVANCE, verifyPanAdvanceByZoop, null); }
 
-    static async verifyPanDemographic(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_DEMOGRAPHIC, CommonHandler.validatePanCardFormat, verifyPanDemographicByZoop, null); }
+    static async verifyPanDemographic(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_DEMOGRAPHIC, verifyPanDemographicByZoop, null); }
 
-    static async verifyDrivingLicenceAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.DL_ADVANCE, CommonHandler.validateDrivingLicenseFormat, verifyDrivingLicenceAdvanceByZoop, null); }
+    static async verifyDrivingLicenceAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.DL_ADVANCE, verifyDrivingLicenceAdvanceByZoop, null); }
 
-    static async verifyVoterAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.VOTER, CommonHandler.validateVoterEpicFormat, verifyVoterAdvanceByZoop, null); }
+    static async verifyVoterAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.VOTER, verifyVoterAdvanceByZoop, null); }
 
-    static async verifyPassportLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PASSPORT_LITE, CommonHandler.validatePassportFormat, verifyPassportLiteByZoop, null); }
+    static async verifyPassportLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PASSPORT_LITE, verifyPassportLiteByZoop, null); }
 
-    static async verifyCkycLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.CKYC_LITE, CommonHandler.validatePanCardFormat, verifyCkycLiteByZoop, null); }
+    static async verifyCkycLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.CKYC_LITE, verifyCkycLiteByZoop, null); }
 
-    static async verifyOkycLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.OKYC_LITE, CommonHandler.validateAadhaarFormat, verifyOkycLiteByZoop, null); }
+    static async verifyOkycLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.OKYC_LITE, verifyOkycLiteByZoop, null); }
 
-    static async verifyOkycOtpLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.OKYC_LITE, () => true, verifyOkycOtpLiteByZoop, null); }
+    static async verifyOkycOtpLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.OKYC_LITE, verifyOkycOtpLiteByZoop, null); }
+
+    static async verifyGstinLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.GSTIN_LITE, verifyGstinLiteByZoop, null); }
+
+    static async verifyGstinAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.GSTIN_ADVANCE, verifyGstinAdvanceByZoop, null); }
+
+    static async verifyBankAccountLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.BANK_VERIFICATION_LITE, verifyBankAccountLiteByZoop, null); }
+
+    static async verifyRcLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.RC_LITE, verifyRcLiteByZoop, null); }
+
+    static async verifyRcAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.RC_ADVANCE, verifyRcAdvanceByZoop, null); }
+
+    static async verifyIfscLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.IFSC_LITE, verifyIfscLiteByZoop, null); }
+
+    static async verifyOcrLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.OCR_LITE, verifyOcrLiteByZoop, null); }
+
 }
 
 export default VerifyController;

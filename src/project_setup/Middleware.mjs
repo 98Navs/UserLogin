@@ -5,18 +5,36 @@ import { CommonHandler, MiddlewareError } from '../controllers/CommonHandler.mjs
 class Middleware {
     //Validate Authentiacation
     static async validateToken(req, res, next, roles, message) {
+        const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
+        if (!token) throw new MiddlewareError('Token not found in header or cookies');
         try {
-            const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
-            if (!token) throw new MiddlewareError('Token not found in header or cookies');
             const decodedToken = jwt.verify(token, process.env.APP_SECRET);
-            if (!roles.includes(decodedToken.role)) { return res.status(403).json({ status: 403, success: false, message }); }
+            if (!decodedToken) { throw new MiddlewareError('Unauthorized or distorted token'); }
+            if (roles && !roles.includes(decodedToken.role)) { return res.status(403).json({ status: 403, success: false, message }); }
             req.user = decodedToken;
             next();
         } catch (error) {
-            const errorMessage = error instanceof jwt.JsonWebTokenError ? 'Unauthorized or distorted token': error.message;
-            CommonHandler.catchError(new MiddlewareError(errorMessage), res);
+            CommonHandler.catchError(error, res);
         }
     }
+
+    static optionalMiddleware(req, res, next) {
+        const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
+        try {
+            if (token) {
+                jwt.verify(token, process.env.APP_SECRET, (error, decodedToken) => {
+                    if (!error) req.user = decodedToken;
+                    else { throw new MiddlewareError('Unauthorized or distorted token'); }
+                    next();
+                });
+            } else {
+                next();
+            }
+        } catch(error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static validateRole(roles, message) { return (req, res, next) => Middleware.validateToken(req, res, next, roles, message); }
 
     //Generate JWT token 

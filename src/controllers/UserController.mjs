@@ -2,6 +2,7 @@
 import bcrypt from 'bcrypt';
 import UserRepository from '../repositories/UserRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
+import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 import Middleware from '../project_setup/Middleware.mjs';
 
@@ -11,7 +12,8 @@ class UserController {
             const userData = await UserController.validateUserData(req.body);
             const user = await UserRepository.createUser(userData);
             const wallet = await WalletRepository.createWallet({ userId: user.userId });
-            res.status(201).json({ status: 201, success: true, message: 'User created successfully', user, wallet });
+            const apiKey = await UserApikeyRepository.createUserApikey({ userId: user.userId });
+            res.status(201).json({ status: 201, success: true, message: 'User created successfully', user, wallet, apiKey });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -105,6 +107,7 @@ class UserController {
             await UserController.validateAndFetchUserByUserId(userId);
             const deleteUser = await UserRepository.deleteUserByUserId(userId);
             await WalletRepository.deleteWalletByUserId(userId);
+            await UserApikeyRepository.deleteUserApiKeyByUserId(userId);
             res.status(200).json({ status: 200, success: true, message: `Data deleted successfully for userId ${userId}`, deleteUser });
         } catch (error) {
             CommonHandler.catchError(error, res);

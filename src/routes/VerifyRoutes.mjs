@@ -6,22 +6,36 @@ import Middleware from '../project_setup/Middleware.mjs'
 const router = express.Router();
 
 // POST /Route to Verify PAN Card Details
-router.post('/verifyPanLite', Middleware.user, VerifyController.verifyPanLite);
+router.post('/verifyPanLite', Middleware.optionalMiddleware, VerifyController.verifyPanLite);
 
-router.post('/verifyPanAdvance', Middleware.user, VerifyController.verifyPanAdvance);
+router.post('/verifyPanAdvance', Middleware.optionalMiddleware, VerifyController.verifyPanAdvance);
 
-router.post('/verifyPanDemographic', Middleware.user, VerifyController.verifyPanDemographic);
+router.post('/verifyPanDemographic', Middleware.optionalMiddleware, VerifyController.verifyPanDemographic);
 
-router.post('/verifyDrivingLicenceAdvance', Middleware.user, VerifyController.verifyDrivingLicenceAdvance);
+router.post('/verifyDrivingLicenceAdvance', Middleware.optionalMiddleware, VerifyController.verifyDrivingLicenceAdvance);
 
-router.post('/verifyVoterAdvance', Middleware.user, VerifyController.verifyVoterAdvance);
+router.post('/verifyVoterAdvance', Middleware.optionalMiddleware, VerifyController.verifyVoterAdvance);
 
-router.post('/verifyPassportLite', Middleware.user, VerifyController.verifyPassportLite);
+router.post('/verifyPassportLite', Middleware.optionalMiddleware, VerifyController.verifyPassportLite);
 
-router.post('/verifyCkycLite', Middleware.user, VerifyController.verifyCkycLite);
+router.post('/verifyCkycLite', Middleware.optionalMiddleware, VerifyController.verifyCkycLite);
 
-router.post('/verifyOkycLite', Middleware.user, VerifyController.verifyOkycLite);
+router.post('/verifyOkycLite', Middleware.optionalMiddleware, VerifyController.verifyOkycLite);
 
-router.post('/verifyOkycOtpLite', Middleware.user, VerifyController.verifyOkycOtpLite);
+router.post('/verifyOkycOtpLite', Middleware.optionalMiddleware, VerifyController.verifyOkycOtpLite);
+
+router.post('/verifyGstinLite', Middleware.optionalMiddleware, VerifyController.verifyGstinLite);
+
+router.post('/verifyGstinAdvance', Middleware.optionalMiddleware, VerifyController.verifyGstinAdvance);
+
+router.post('/verifyBankAccountLite', Middleware.optionalMiddleware, VerifyController.verifyBankAccountLite);
+
+router.post('/verifyRcLite', Middleware.optionalMiddleware, VerifyController.verifyRcLite);
+
+router.post('/verifyRcAdvance', Middleware.optionalMiddleware, VerifyController.verifyRcAdvance);
+
+router.post('/verifyIfscLite', Middleware.optionalMiddleware, VerifyController.verifyIfscLite);
+
+router.post('/verifyOcrLite', Middleware.optionalMiddleware, VerifyController.verifyOcrLite);
 
 export default router;

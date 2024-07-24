@@ -10,7 +10,13 @@ const ZOOP_API_URLS = {
     CKYC_LITE: 'https://test.zoop.one/api/v1/in/identity/ckyc/lite',
     OKYC_LITE: 'https://test.zoop.one/in/identity/okyc/otp/request',
     OKYC_OTP_LITE: 'https://test.zoop.one/in/identity/okyc/otp/verify',
-    GSTIN_LITE: 'https://test.zoop.one/api/v1/in/merchant/gstin/lite'
+    GSTIN_LITE: 'https://test.zoop.one/api/v1/in/merchant/gstin/lite',
+    GSTIN_ADVANCE: 'https://test.zoop.one/api/v1/in/merchant/gstin/advance',
+    BANK_VERIFICATION_LITE: 'https://test.zoop.one/api/v1/in/financial/bav/lite',
+    RC_LITE: 'https://test.zoop.one/api/v1/in/vehicle/rc/lite',
+    RC_ADVANCE: 'https://test.zoop.one/api/v1/in/vehicle/rc/advance',
+    IFSC_LITE: 'https://test.zoop.one/api/v1/in/utility/ifsc/lite',
+    OCR_LITE: 'https://test.zoop.one/api/v1/in/utility/ocr/lite'
 };
 
 const ZOOP_HEADERS = {
@@ -116,6 +122,70 @@ export async function verifyOkycOtpLiteByZoop({ request_id, verifyOtp}) {
     return makeZoopRequest(ZOOP_API_URLS.OKYC_OTP_LITE, {
         request_id: request_id,
         otp: verifyOtp,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
+    });
+}
+
+export async function verifyGstinLiteByZoop(documentDetails) {
+    const { customerGstin } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.GSTIN_LITE, {
+        business_gstin_number: customerGstin,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API"
+    });
+}
+
+export async function verifyGstinAdvanceByZoop(documentDetails) {
+    const { customerGstin } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.GSTIN_ADVANCE, {
+        business_gstin_number: customerGstin,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API"
+    });
+}
+
+export async function verifyBankAccountLiteByZoop({ customerAccountNumber, customerIfsc }) {
+    return makeZoopRequest(ZOOP_API_URLS.BANK_VERIFICATION_LITE, {
+        account_number: customerAccountNumber,
+        ifsc: customerIfsc,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API"
+    });
+}
+
+export async function verifyRcLiteByZoop(documentDetails) {
+    const { customerRC } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.RC_LITE, {
+        vehicle_registration_number: customerRC,
+        consent: "Y",
+        consent_text: "RC Lite is Verified by author"
+    });
+}
+
+export async function verifyRcAdvanceByZoop(documentDetails) {
+    const { customerRC } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.RC_ADVANCE, {
+        vehicle_registration_number: customerRC,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
+    });
+}
+
+export async function verifyIfscLiteByZoop(documentDetails) {
+    const { customerIfsc } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.IFSC_LITE, {
+        ifsc: customerIfsc,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
+    });
+}
+
+export async function verifyOcrLiteByZoop({ customerCardFront, customerCardBack }) {
+    return makeZoopRequest(ZOOP_API_URLS.OCR_LITE, {
+        card_front_image: customerCardFront,
+        card_back_image: customerCardBack,
+        card_type: "Anyone mention on document.",
         consent: "Y",
         consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
     });
