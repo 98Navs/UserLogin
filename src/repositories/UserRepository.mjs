@@ -13,6 +13,8 @@ class UserRepository {
 
     static async getUserByUserId(userId) { return await User.findOne({ userId }); }
 
+    static async deleteUserByUserId(userId) { return await User.findOneAndDelete({ userId }); }
+
     static async filterUsers(filterParams, options, req) {
         const query = {};
 

@@ -1,220 +1,78 @@
+// src/controllers/VerifyController.mjs
 import ApiPartiesRepository from '../repositories/ApiPartiesRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
 import TransactionHistoryRepository from '../repositories/TransactionHistoryRepository.mjs';
-import { verifyPanLiteByZoop, verifyPanAdvanceByZoop, verifyPanDemographicByZoop, verifyDrivingLicenceAdvanceByZoop, verifyVoterAdvanceByZoop } from '../services/ZoopServices.mjs'
-import { CommonHandler, ValidationError, NotFoundError, UserBalanceError } from './CommonHandler.mjs';
-
+import { verifyPanLiteByZoop, verifyPanAdvanceByZoop, verifyPanDemographicByZoop, verifyDrivingLicenceAdvanceByZoop, verifyVoterAdvanceByZoop, verifyPassportLiteByZoop, verifyCkycLiteByZoop, verifyOkycLiteByZoop, verifyOkycOtpLiteByZoop } from '../services/ZoopServices.mjs';
+import { CommonHandler, ValidationError, NotFoundError, ApiError } from './CommonHandler.mjs';
 
 class VerifyController {
-    static PANCARDLITE = 'PAN CARD';
-    static PANCARDADVANCE = 'PAN CARD ADVANCE';
-    static PANCARDDEMOGRAPHIC = 'PAN CARD DEMOGRAPHIC';
-    static VOTERCARD = 'VOTER CARD';
-    static DRIVINGLICENCEADVANCE = 'DRIVING LICENCE ADVANCE';
+    static SERVICES = { PAN_LITE: 'PAN CARD', PAN_ADVANCE: 'PAN CARD ADVANCE', PAN_DEMOGRAPHIC: 'PAN CARD DEMOGRAPHIC', VOTER: 'VOTER CARD', DL_ADVANCE: 'DRIVING LICENCE ADVANCE', PASSPORT_LITE: 'PASSPORT LITE', CKYC_LITE: 'CKYC LITE', OKYC_LITE: "OKYC LITE" };
+    
+    static OPERATORS = { ZOOP: 'ZOOP', SCRIZA: 'SCRIZA' };
 
-    static async verifyPanLite(req, res) {
+    static async verifyDocument(req, res, serviceType, formatValidation, verifyByZoop, verifyByScriza) {
         try {
-            const { customerPanNumber } = req.body;
             const { userId } = req.user;
-
-            const customerPan = customerPanNumber.toUpperCase()
-            await CommonHandler.validateRequiredFields({ customerPanNumber });
-            await CommonHandler.validatePanCardFormat(customerPan);
+            const documentDetails = { ...req.body };
+           
+            const documentNumber = documentDetails[Object.keys(documentDetails)[0]].toUpperCase();
+           // console.log(documentNumber);
+            await formatValidation(documentNumber);
 
             const userWallet = await WalletRepository.getWalletByUserId(userId);
-            if (!userWallet) { throw new NotFoundError(`User wallet not found for userId: ${userId}`) };
+            if (!userWallet) throw new NotFoundError(`User wallet not found for userId: ${userId}`);
 
-            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(VerifyController.PANCARD);
-            if (userWallet.amount < apiParty.ourCharges) { throw new UserBalanceError(`User with userId: ${userId} have insufficient funds, Current wallet balance is RS: ${userWallet.amount}, this service charge is RS: ${apiParty.ourCharges}`) };
+            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(serviceType);
+            if (!apiParty) throw new NotFoundError(`Api party not found for: ${serviceType}`);
+
+            if (userWallet.amount < apiParty.ourCharges) throw new ValidationError(`Insufficient funds. Current balance: RS: ${userWallet.amount}, service charge: RS: ${apiParty.ourCharges}`);
             userWallet.amount -= apiParty.ourCharges;
             await userWallet.save();
 
-            const transactionHistoryData = { userId: userId, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: apiParty.ourCharges, type: 'Debit', reason: `PAN lite verification, User input:${customerPan}, Result pending from:${apiParty.apiOperatorName}` };
+            const transactionHistoryData = { userId, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: apiParty.ourCharges, type: 'Debit', reason: `${serviceType} verification, User input:${documentNumber}, Result pending from:${apiParty.apiOperatorName}` };
             const transaction = await TransactionHistoryRepository.createTransactionHistory(transactionHistoryData);
+
+            let result;
             switch (apiParty.apiOperatorName) {
-                case 'ZOOP':
-                    const zoopResult = await verifyPanLiteByZoop(customerPan);
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `PAN lite verification, Api resopnse:${zoopResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (zoopResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN lite details fetched successfully`, data: zoopResult.result }); }
-                    else { throw new ValidationError(`Details not found for customer PAN Number: ${customerPan}`); }
+                case VerifyController.OPERATORS.ZOOP:
+                    result = await verifyByZoop(documentDetails);
                     break;
-                case 'SCRIZA':
-                    const scrizaResult = await verifyPanLiteByScriza(customerPan);
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `PAN lite verification, Api resopnse:${scrizaResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (scrizaResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN lite details fetched successfully`, data: scrizaResult.result }); }
-                    else throw new ValidationError(`Details not found for customer PAN Number: ${customerPan}`);
+                case VerifyController.OPERATORS.SCRIZA:
+                    result = await verifyByScriza(documentDetails);
                     break;
                 default:
                     throw new NotFoundError('Operator not found');
+            }
+            //console.log(result);
+            if (result.response_message === 'Valid Authentication') {
+                await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `${serviceType} verification, Api response:${result.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
+                res.status(200).json({ status: 200, success: true, message: `User ${serviceType} details fetched successfully`, data: result });
+            } else {
+                await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `${serviceType} verification, Api response:${result.data.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
+                throw new ApiError(result.data.response_message);
             }
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
     }
 
-    static async verifyPanAdvance(req, res) {
-        try {
-            const { customerPanNumber } = req.body;
-            const { userId } = req.user;
+    static async verifyPanLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_LITE, CommonHandler.validatePanCardFormat, verifyPanLiteByZoop, null); }
 
-            const customerPan = customerPanNumber.toUpperCase()
-            await CommonHandler.validateRequiredFields({ customerPanNumber });
-            await CommonHandler.validatePanCardFormat(customerPan);
+    static async verifyPanAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_ADVANCE, CommonHandler.validatePanCardFormat, verifyPanAdvanceByZoop, null); }
 
-            const userWallet = await WalletRepository.getWalletByUserId(userId);
-            if (!userWallet) { throw new NotFoundError(`User wallet not found for userId: ${userId}`) };
+    static async verifyPanDemographic(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PAN_DEMOGRAPHIC, CommonHandler.validatePanCardFormat, verifyPanDemographicByZoop, null); }
 
-            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(VerifyController.PANCARDADVANCE);
-            if (!apiParty) { throw new NotFoundError(`Api party not found for: ${VerifyController.PANCARDADVANCE}`) };
-            if (userWallet.amount < apiParty.ourCharges) { throw new UserBalanceError(`User with userId: ${userId} have insufficient funds, Current wallet balance is RS: ${userWallet.amount}, this service charge is RS: ${apiParty.ourCharges}`) };
-            userWallet.amount -= apiParty.ourCharges;
-            await userWallet.save();
+    static async verifyDrivingLicenceAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.DL_ADVANCE, CommonHandler.validateDrivingLicenseFormat, verifyDrivingLicenceAdvanceByZoop, null); }
 
-            const transactionHistoryData = { userId: userId, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: apiParty.ourCharges, type: 'Debit', reason: `PAN advance verification, User input:${customerPan}, Result pending from:${apiParty.apiOperatorName}` };
-            const transaction = await TransactionHistoryRepository.createTransactionHistory(transactionHistoryData);
-            switch (apiParty.apiOperatorName) {
-                case 'ZOOP':
-                    const zoopResult = await verifyPanAdvanceByZoop(customerPan);
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `PAN advance verification, Api resopnse:${zoopResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (zoopResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN advance details fetched successfully`, data: zoopResult.result }); }
-                    else { throw new ValidationError(`Details not found for customer PAN Number: ${customerPan}`); }
-                    break;
-                case 'SCRIZA':
-                    const scrizaResult = await verifyPanAdvanceByScriza(customerPan);
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `PAN advance verification, Api resopnse:${scrizaResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (scrizaResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN advance details fetched successfully`, data: scrizaResult.result }); }
-                    else throw new ValidationError(`Details not found for customer PAN Number: ${customerPan}`);
-                    break;
-                default:
-                    throw new NotFoundError('Operator not found');
-            }
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
+    static async verifyVoterAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.VOTER, CommonHandler.validateVoterEpicFormat, verifyVoterAdvanceByZoop, null); }
 
-    static async verifyPanDemographic(req, res) {
-        try {
-            const { customerPanNumber, customerDob, customerName } = req.body;
-            const { userId } = req.user;
-            
-            const customerPan = customerPanNumber.toUpperCase()
-            await CommonHandler.validateRequiredFields({ customerPanNumber, customerDob, customerName });
-            await CommonHandler.validatePanCardFormat(customerPan);
+    static async verifyPassportLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.PASSPORT_LITE, CommonHandler.validatePassportFormat, verifyPassportLiteByZoop, null); }
 
-            const userWallet = await WalletRepository.getWalletByUserId(userId);
-            if (!userWallet) { throw new NotFoundError(`User wallet not found for userId: ${userId}`) };
+    static async verifyCkycLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.CKYC_LITE, CommonHandler.validatePanCardFormat, verifyCkycLiteByZoop, null); }
 
-            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(VerifyController.PANCARDDEMOGRAPHIC);
-            if (!apiParty) { throw new NotFoundError(`Api party not found for: ${VerifyController.PANCARDDEMOGRAPHIC}`) };
-            if (userWallet.amount < apiParty.ourCharges) { throw new UserBalanceError(`User with userId: ${userId} have insufficient funds, Current wallet balance is RS: ${userWallet.amount}, this service charge is RS: ${apiParty.ourCharges}`) };
-            userWallet.amount -= apiParty.ourCharges;
-            await userWallet.save();
+    static async verifyOkycLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.OKYC_LITE, CommonHandler.validateAadhaarFormat, verifyOkycLiteByZoop, null); }
 
-            const transactionHistoryData = { userId: userId, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: apiParty.ourCharges, type: 'Debit', reason: `PAN demographic verification, User input:${customerPan}, Result pending from:${apiParty.apiOperatorName}` };
-            const transaction = await TransactionHistoryRepository.createTransactionHistory(transactionHistoryData);
-            switch (apiParty.apiOperatorName) {
-                case 'ZOOP':
-                    const zoopResult = await verifyPanDemographicByZoop({ customerPan, customerDob, customerName });
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `PAN demographic verification, Api resopnse:${zoopResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (zoopResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN demographic details fetched successfully`, data: zoopResult.result }); }
-                    else { throw new ValidationError(`Details not found for customer PAN Number: ${customerPan}`); }
-                    break;
-                case 'SCRIZA':
-                    const scrizaResult = await verifyPanDemographicByScriza({ customerPan, customerDob, customerName });
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `PAN demographic verification, Api resopnse:${scrizaResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (scrizaResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User PAN demographic details fetched successfully`, data: scrizaResult.result }); }
-                    else throw new ValidationError(`Details not found for customer PAN Number: ${customerPan}`);
-                    break;
-                default:
-                    throw new NotFoundError('Operator not found');
-            }
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-    static async verifyDrivingLicenceAdvance(req, res) {
-        try {
-            const { customerDL, customerDob } = req.body;
-            const { userId } = req.user;
-
-            const customerDLN = customerDL.toUpperCase()
-            await CommonHandler.validateRequiredFields({ customerDL, customerDob });
-            await CommonHandler.validateDrivingLicenseFormat(customerDLN);
-
-            const userWallet = await WalletRepository.getWalletByUserId(userId);
-            if (!userWallet) { throw new NotFoundError(`User wallet not found for userId: ${userId}`) };
-
-            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(VerifyController.DRIVINGLICENCEADVANCE);
-            if (!apiParty) { throw new NotFoundError(`Api party not found for: ${VerifyController.DRIVINGLICENCEADVANCE}`) };
-            if (userWallet.amount < apiParty.ourCharges) { throw new UserBalanceError(`User with userId: ${userId} have insufficient funds, Current wallet balance is RS: ${userWallet.amount}, this service charge is RS: ${apiParty.ourCharges}`) };
-            userWallet.amount -= apiParty.ourCharges;
-            await userWallet.save();
-
-            const transactionHistoryData = { userId: userId, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: apiParty.ourCharges, type: 'Debit', reason: `DL advance, User input:${customerDLN}, Result pending from:${apiParty.apiOperatorName}` };
-            const transaction = await TransactionHistoryRepository.createTransactionHistory(transactionHistoryData);
-            switch (apiParty.apiOperatorName) {
-                case 'ZOOP':
-                    const zoopResult = await verifyDrivingLicenceAdvanceByZoop({ customerDLN, customerDob });
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `DL advance verification, Api resopnse:${zoopResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (zoopResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User DL advance details fetched successfully`, data: zoopResult.result }); }
-                    else { throw new ValidationError(`Details not found for customer DL Number: ${customerDLN}`); }
-                    break;
-                case 'SCRIZA':
-                    const scrizaResult = await verifyDrivingLicenceAdvanceByScriza({ customerDLN, customerDob });
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `DL advance verification, Api resopnse:${scrizaResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (scrizaResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User DL advance details fetched successfully`, data: scrizaResult.result }); }
-                    else throw new ValidationError(`Details not found for customer DL Number: ${customerDLN}`);
-                    break;
-                default:
-                    throw new NotFoundError('Operator not found');
-            }
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-    static async verifyVoterAdvance(req, res) {
-        try {
-            const { customerEpicNumber } = req.body;
-            const { userId } = req.user;
-
-
-            const customerEpic = customerEpicNumber.toUpperCase()
-            await CommonHandler.validateRequiredFields({ customerEpicNumber });
-
-            const userWallet = await WalletRepository.getWalletByUserId(userId);
-            if (!userWallet) { throw new NotFoundError(`User wallet not found for userId: ${userId}`) };
-
-            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(VerifyController.VOTERCARD);
-            if (userWallet.amount < apiParty.ourCharges) { throw new UserBalanceError(`User with userId: ${userId} have insufficient funds, Current wallet balance is RS: ${userWallet.amount}, this service charge is RS: ${apiParty.ourCharges}`) };
-            userWallet.amount -= apiParty.ourCharges;
-            await userWallet.save();
-
-            const transactionHistoryData = { userId: userId, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: apiParty.ourCharges, type: 'Debit', reason: `Voter advance verification, User input:${customerEpic}, Result pending from:${apiParty.apiOperatorName}` };
-            const transaction = await TransactionHistoryRepository.createTransactionHistory(transactionHistoryData);
-            switch (apiParty.apiOperatorName) {
-                case 'ZOOP':
-                    const zoopResult = await verifyVoterAdvanceByZoop(customerEpic);
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `Voter advance verification, Api resopnse:${zoopResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (zoopResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User voter advance details fetched successfully`, data: zoopResult.result }); }
-                    else { throw new ValidationError(`Details not found for customer Voter Epic Number: ${customerEpic}`); }
-                    break;
-                case 'SCRIZA':
-                    const scrizaResult = await verifyVoterAdvanceByScriza(customerEpic);
-                    await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `Voter advance verification, Api resopnse:${scrizaResult.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
-                    if (scrizaResult.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User voter advance details fetched successfully`, data: scrizaData }); }
-                    else throw new ValidationError(`Details not found for customer Voter Epic Number: ${customerEpic}`);
-                    break;
-                default:
-                    throw new NotFoundError('Operator not found');
-            }
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-
+    static async verifyOkycOtpLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.OKYC_LITE, () => true, verifyOkycOtpLiteByZoop, null); }
 }
+
 export default VerifyController;

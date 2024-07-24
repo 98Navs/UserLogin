@@ -11,6 +11,7 @@ class WalletRepository {
 
     static async getWalletsByUserIds(userIds) { return await Wallet.find({ userId: { $in: userIds } }); }
 
+    static async deleteWalletByUserId(userId) { return await Wallet.findOneAndDelete({ userId }); }
 
     static async filterUsers(filterParams, options, req) {
         const query = {};

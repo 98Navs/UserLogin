@@ -99,6 +99,18 @@ class UserController {
         }
     }
 
+    static async deleteUserByUserId(req, res) {
+        try {
+            const { userId } = req.params;
+            await UserController.validateAndFetchUserByUserId(userId);
+            const deleteUser = await UserRepository.deleteUserByUserId(userId);
+            await WalletRepository.deleteWalletByUserId(userId);
+            res.status(200).json({ status: 200, success: true, message: `Data deleted successfully for userId ${userId}`, deleteUser });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     //Static Methods Only For This Class (Not To Be Used In Routes)
     static async validateAndFetchUserByUserId(userId) {
         await CommonHandler.validateSixDigitIdFormat(userId);

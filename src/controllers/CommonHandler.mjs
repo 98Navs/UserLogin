@@ -24,7 +24,14 @@ class CommonHandler {
 
     static async validatePanCardFormat(panCardNumber) { if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(panCardNumber)) { throw new ValidationError('Invalid PAN card number. Must be in the format of 5 letters, 4 digits, and 1 letter, all in capital letters.'); } }
 
-    static async validateDrivingLicenseFormat(drivingLicenseNumber) { if (!/^([A-Z]{2}[0-9]{13})$/.test(drivingLicenseNumber)) { throw new ValidationError('Invalid driving license number. Must be in the format of 2 letters, 2 digits, and 11 digits, with optional spaces.'); } }
+    static async validateDrivingLicenseFormat(drivingLicenseNumber) { if (!/^([A-Z]{2}[0-9]{13})$/.test(drivingLicenseNumber)) { throw new ValidationError('Invalid driving license number. Must be in the format of 2 letters, 13 digits.'); } }
+
+    static async validateVoterEpicFormat(customerEpic) { if (!/^([A-Z]{3}[0-9]{7})$/.test(customerEpic)) { throw new ValidationError('Invalid epic number. Must be in the format of 3 letters, 7 digits.'); } }
+
+    static async validatePassportFormat(customerPassportNumber) { if (!/^([A-Z]{1}[0-9]{7})$/.test(customerPassportNumber)) { throw new ValidationError('Invalid passport number. Must be in the format of 1 letters, 7 digits.'); } }
+
+    static async validateAadhaarFormat(customerAadhaar) { if (!/^([0-9]{12})$/.test(customerAadhaar)) { throw new ValidationError('Invalid aadhaar number. Must be in the format of 12 digits.'); } }
+
     //Password Hashing
     static async hashPassword(password) {
         const saltRounds = 10;
@@ -36,7 +43,6 @@ class CommonHandler {
         try {
             if (error instanceof ValidationError) { res.status(400).json({ status: 400, success: false, message: error.message }); }
             else if (error instanceof ApiError) { res.status(401).json({ status: 401, success: false, message: error.message }); }
-            else if (error instanceof UserBalanceError) { res.status(402).json({ status: 402, success: false, message: error.message }); }
             else if (error instanceof MiddlewareError) { res.status(403).json({ status: 403, success: false, message: error.message }); }
             else if (error instanceof NotFoundError) { res.status(404).json({ status: 404, success: false, message: error.message }); }
             else { res.status(500).json({ status: 500, success: false, message: 'Internal server error.' }); }
@@ -57,9 +63,8 @@ class CommonHandler {
 //Assigned Errors
 class ValidationError extends Error { constructor(message) { super(message); this.name = 'ValidationError'; } }
 class ApiError extends Error { constructor(message) { super(message); this.name = 'ApiError'; } }
-class UserBalanceError extends Error { constructor(message) { super(message); this.name = 'AdminBalanceError'; } }
 class NotFoundError extends Error { constructor(message) { super(message); this.name = 'NotFoundError'; } }
 class MiddlewareError extends Error { constructor(message) { super(message); this.name = 'MiddlewareError'; } }
 
 
-export { CommonHandler, ValidationError, NotFoundError, MiddlewareError, ApiError, UserBalanceError };
+export { CommonHandler, ValidationError, NotFoundError, MiddlewareError, ApiError };

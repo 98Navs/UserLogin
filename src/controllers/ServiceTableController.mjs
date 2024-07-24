@@ -13,13 +13,12 @@ class ServiceTableController{
     }
 
     static async validateServiceTable(data) {
-        const { serviceName, serviceId, category, image } = data;
+        const { serviceName, serviceId, category } = data;
 
-        await CommonHandler.validateRequiredFields({ serviceName, serviceId, category, image });
+        await CommonHandler.validateRequiredFields({ serviceName, serviceId, category });
         if (typeof serviceName !== 'string') { throw new ValidationError('Service name must be a string') };
         if (typeof serviceId !== 'number') { throw new ValidationError('Service id must be a number') };
         if (typeof category !== 'string') { throw new ValidationError('Category name must be a string') };
-        if (typeof image !== 'string') { throw new ValidationError('Image must be of string type') };
 
         const service = await ServiceTableRepository.getServiceTableByServiceId(serviceId);
         if(service){throw new ValidationError(`ServiceId already exist for service:${service.serviceName} `)}

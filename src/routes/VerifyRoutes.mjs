@@ -16,4 +16,12 @@ router.post('/verifyDrivingLicenceAdvance', Middleware.user, VerifyController.ve
 
 router.post('/verifyVoterAdvance', Middleware.user, VerifyController.verifyVoterAdvance);
 
+router.post('/verifyPassportLite', Middleware.user, VerifyController.verifyPassportLite);
+
+router.post('/verifyCkycLite', Middleware.user, VerifyController.verifyCkycLite);
+
+router.post('/verifyOkycLite', Middleware.user, VerifyController.verifyOkycLite);
+
+router.post('/verifyOkycOtpLite', Middleware.user, VerifyController.verifyOkycOtpLite);
+
 export default router;
