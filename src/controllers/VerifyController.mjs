@@ -13,15 +13,10 @@ class VerifyController {
 
     static async verifyDocument(req, res, serviceType, verifyByZoop, verifyByScriza) {
         try {
-            let userId;
-            if (req.user) {
-                userId = req.user.userId;
-            } else {
-                const apiKey = req.headers['api-key'];
-                const userApiKey = await UserApikeyRepository.getUserApiKeyByApiKey(apiKey);
-                if (!userApiKey) { throw new MiddlewareError('Token or API-Key not found in the request'); }
-                userId = userApiKey.userId;
-            }
+            const apiKey = req.headers['api-key'];
+            const userId = req.user?.userId || (await UserApikeyRepository.getUserApiKeyByApiKey(apiKey))?.userId;
+            if (!userId) throw new MiddlewareError('Token or API-Key not found in the request');
+
             const documentDetails = { ...req.body };  
             const documentNumber = documentDetails[Object.keys(documentDetails)[0]].toUpperCase();
 
