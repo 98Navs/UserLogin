@@ -1,3 +1,4 @@
+// src/controllers/ApiPartiesController.mjs
 import ApiPartiesRepository from "../repositories/ApiPartiesRepository.mjs";
 import ServiceTableRepository from "../repositories/ServiceTableRepository.mjs";
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';

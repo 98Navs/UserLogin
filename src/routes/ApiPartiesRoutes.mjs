@@ -1,4 +1,4 @@
-//src/routes/VerifyPanRoutes.mjs
+//src/routes/ApiPartiesRoutes.mjs
 import express from 'express';
 import ApiPartiesController from '../controllers/ApiPartiesController.mjs';
 import Middleware from '../project_setup/Middleware.mjs'

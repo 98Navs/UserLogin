@@ -1,3 +1,4 @@
+// src/controllers/ServiceTableController.mjs
 import ServiceTableRepository from "../repositories/ServiceTableRepository.mjs";
 import { CommonHandler, ValidationError } from "./CommonHandler.mjs";
 

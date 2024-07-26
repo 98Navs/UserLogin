@@ -1,6 +1,6 @@
-// src/repositories/ApiPartiesRepository.mjs
+// src/repositories/UserApikeyRepository.mjs
 import UserApikey from '../models/UserApiKeyModel.mjs';
-//serviceTable
+
 class UserApikeyRepository {
     static async createUserApikey(userApikeyData) { return await UserApikey.create(userApikeyData); }
 
@@ -9,8 +9,6 @@ class UserApikeyRepository {
     static async updateTransactionHistoryById(id, transactionHistoryData) { return await UserApikey.findByIdAndUpdate(id, transactionHistoryData, { new: true }); }
 
     static async deleteUserApiKeyByUserId(userId) { return await UserApikey.findOneAndDelete({ userId }); }
-
-
 }
 
 export default UserApikeyRepository;

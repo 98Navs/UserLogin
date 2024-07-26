@@ -1,10 +1,11 @@
+//src/services/ZoopServices.mjs
 import axios from 'axios';
 
 const ZOOP_API_URLS = {
     PAN_LITE: 'https://test.zoop.one/api/v1/in/identity/pan/lite',
     PAN_ADVANCE: 'https://test.zoop.one/api/v1/in/identity/pan/advance',
     PAN_DEMOGRAPHIC: 'https://test.zoop.one/api/v1/in/identity/pan/demographic',
-    EPIC: 'https://test.zoop.one/api/v1/in/identity/voter/advance',
+    VOTER_ADVANCE: 'https://test.zoop.one/api/v1/in/identity/voter/advance',
     DRIVING_LICENCE_ADVANCE: 'https://test.zoop.one/api/v1/in/identity/dl/advance',
     PASSPORT_LITE: 'https://test.zoop.one/api/v1/in/identity/passport/lite',
     CKYC_LITE: 'https://test.zoop.one/api/v1/in/identity/ckyc/lite',
@@ -16,7 +17,20 @@ const ZOOP_API_URLS = {
     RC_LITE: 'https://test.zoop.one/api/v1/in/vehicle/rc/lite',
     RC_ADVANCE: 'https://test.zoop.one/api/v1/in/vehicle/rc/advance',
     IFSC_LITE: 'https://test.zoop.one/api/v1/in/utility/ifsc/lite',
-    OCR_LITE: 'https://test.zoop.one/api/v1/in/utility/ocr/lite'
+    OCR_LITE: 'https://test.zoop.one/api/v1/in/utility/ocr/lite',
+    EPFO_PRO: 'https://test.zoop.one/api/v1/in/identity/epfo/pro',
+    PAN_206AB: 'https://test.zoop.one/api/v1/in/identity/pan/206ab',
+    PAN_MICRO: 'https://test.zoop.one/api/v1/in/identity/pan/micro',
+    PAN_PRO: 'https://test.zoop.one/api/v1/in/identity/pan/pro',
+    PASSPORT_ADVANCE: 'https://test.zoop.one/api/v1/in/identity/passport/advance',
+    CIN_ADVANCE: 'https://test.zoop.one/api/v1/in/merchant/cin/advance',
+    FSSAI: 'https://test.zoop.one/api/v1/in/merchant/fssai/number',
+    GST_PAN: 'https://test.zoop.one/api/v1/in/merchant/gstpan/lite',
+    UDYOG_AADHAAR: 'https://test.zoop.one/api/v1/in/merchant/udyog/lite',
+    CORPORATE_VERIFICATION: 'https://test.zoop.one/api/v1/in/persona/corporate/verification',
+    CHEQUE_OCR: 'https://test.zoop.one/api/v1/in/utility/ocr/cheque',
+    EMAIL_VERIFICATION_REQUEST: 'https://test.zoop.one/api/v1/in/persona/email/verification/request',
+    EMAIL_VERIFICATION_SUBMIT: 'https://test.zoop.one/api/v1/in/persona/email/verification/submit'
 };
 
 const ZOOP_HEADERS = {
@@ -27,7 +41,7 @@ const ZOOP_HEADERS = {
 
 async function makeZoopRequest(url, data) {
     try {
-        //console.log(data);
+        console.log(data);
         const response = await axios.post(url, { data }, { headers: ZOOP_HEADERS });
         return response.data;
     } catch (error) {
@@ -89,7 +103,7 @@ export async function verifyPassportLiteByZoop({ customerPassportNumber, custome
 
 export async function verifyVoterAdvanceByZoop( documentDetails ) {
     const { customerEpic } = documentDetails;
-    return makeZoopRequest(ZOOP_API_URLS.EPIC, {
+    return makeZoopRequest(ZOOP_API_URLS.VOTER_ADVANCE, {
         customer_epic_number: customerEpic,
         consent: 'Y',
         consent_text: 'I hereby declare my consent agreement for fetching my information via ZOOP API.'
@@ -98,14 +112,11 @@ export async function verifyVoterAdvanceByZoop( documentDetails ) {
 
 export async function verifyCkycLiteByZoop({ customerPan, customerDob, customerMobile }) {
     return makeZoopRequest(ZOOP_API_URLS.CKYC_LITE, {
-        mode: "sync",
-        data: {
-            customer_pan_number: customerPan,
-            customer_dob: customerDob,
-            customer_phone_number: customerMobile,
-            consent: "Y",
-            consent_text: "Approve the values here"
-        }
+        customer_pan_number: customerPan,
+        customer_dob: customerDob,
+        customer_phone_number: customerMobile,
+        consent: "Y",
+        consent_text: "Approve the values here"
     });
 }
 
@@ -186,6 +197,125 @@ export async function verifyOcrLiteByZoop({ customerCardFront, customerCardBack 
         card_front_image: customerCardFront,
         card_back_image: customerCardBack,
         card_type: "Anyone mention on document.",
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
+    });
+}
+
+export async function verifyEpfoProByZoop(documentDetails) {
+    const { customerMobile } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.EPFO_PRO, {
+        customer_phone_number: customerMobile,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API"
+    });
+}
+
+export async function verifyPan206AbByZoop(documentDetails) {
+    const { customerPan } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.PAN_206AB, {
+        customer_pan_number: customerPan,
+        consent: 'Y',
+        consent_text: 'I hereby declare my consent agreement for fetching my information via ZOOP API.'
+    });
+}
+
+export async function verifyPanMicroByZoop({customerPan, customerPanDetails}) {
+    return makeZoopRequest(ZOOP_API_URLS.PAN_MICRO, {
+        customer_pan_number: customerPan,
+        pan_details: customerPanDetails,
+        consent: 'Y',
+        consent_text: 'I hereby declare my consent agreement for fetching my information via ZOOP API.'
+    });
+}
+
+export async function verifyPanProByZoop({ customerPan, customerName }) {
+    return makeZoopRequest(ZOOP_API_URLS.PAN_PRO, {
+        customer_pan_number: customerPan,
+        pan_holder_name: customerName,
+        consent: 'Y',
+        consent_text: 'I hereby declare my consent agreement for fetching my information via ZOOP API.'
+    });
+}
+
+export async function verifyPassportAdvanceByZoop({ customerfileNumber, customerName, customerDob }) {
+    return makeZoopRequest(ZOOP_API_URLS.PASSPORT_ADVANCE, {
+        customer_file_number: customerfileNumber,
+        name_to_match: customerName,
+        customer_dob: customerDob,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API"
+    });
+}
+
+export async function verifyCinAdvanceByZoop(documentDetails) {
+    const { customerCinNumber } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.CIN_ADVANCE, {
+        cin_number: customerCinNumber,
+        consent: 'Y',
+        consent_text: 'I hereby declare my consent agreement for fetching my information via ZOOP API.'
+    });
+}
+
+export async function verifyFssaiByZoop(documentDetails) {
+    const { fssaiNumber } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.FSSAI, {
+        fssai_number: fssaiNumber,
+        consent: 'Y',
+        consent_text: 'I hereby declare my consent agreement for fetching my information via ZOOP API.'
+    });
+}
+
+export async function verifyGstPanByZoop(documentDetails) {
+    const { customerGstPan } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.GST_PAN, {
+        business_pan_number: customerGstPan,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
+    });
+}
+
+export async function verifyUdyogAadhaarByZoop(documentDetails) {
+    const { udyogAadhaar } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.UDYOG_AADHAAR, {
+        udyog_aadhaar: udyogAadhaar,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
+    });
+}
+
+export async function verifyCorporateVerificationByZoop(documentDetails) {
+    const { customerNumber } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.CORPORATE_VERIFICATION, {
+        customer_phone_number: customerNumber,
+        consent: "Y",
+        consent_text: "Approve the values here."
+    });
+}
+
+export async function verifyChequeOcrByZoop(documentDetails) {
+    const { chequeImage } = documentDetails;
+    return makeZoopRequest(ZOOP_API_URLS.CHEQUE_OCR, {
+        cheque_image: chequeImage,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API"
+    
+    });
+}
+
+export async function verifyEmailVerificationRequestByZoop({ customerEmail, customerName }) {
+    return makeZoopRequest(ZOOP_API_URLS.EMAIL_VERIFICATION_REQUEST, {
+        email: customerEmail,
+        name: customerName,
+        consent: "Y",
+        consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API"
+    });
+}
+
+export async function verifyEmailVerificationSubmitByZoop({ request_id, verifyOtp }) {
+    return makeZoopRequest(ZOOP_API_URLS.EMAIL_VERIFICATION_SUBMIT, {
+        request_id: request_id,
+        otp: verifyOtp,
         consent: "Y",
         consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
     });

@@ -1,4 +1,4 @@
-//src/routes/VerifyPanRoutes.mjs
+//src/routes/VerifyRoutes.mjs
 import express from 'express';
 import VerifyController from '../controllers/VerifyController.mjs';
 import Middleware from '../project_setup/Middleware.mjs'
@@ -37,5 +37,31 @@ router.post('/verifyRcAdvance', Middleware.optionalMiddleware, VerifyController.
 router.post('/verifyIfscLite', Middleware.optionalMiddleware, VerifyController.verifyIfscLite);
 
 router.post('/verifyOcrLite', Middleware.optionalMiddleware, VerifyController.verifyOcrLite);
+
+router.post('/verifyEpfoPro', Middleware.optionalMiddleware, VerifyController.verifyEpfoPro);
+
+router.post('/verifyPan206Ab', Middleware.optionalMiddleware, VerifyController.verifyPan206Ab);
+
+router.post('/verifyPanMicro', Middleware.optionalMiddleware, VerifyController.verifyPanMicro);
+
+router.post('/verifyPanPro', Middleware.optionalMiddleware, VerifyController.verifyPanPro);
+
+router.post('/verifyPassportAdvance', Middleware.optionalMiddleware, VerifyController.verifyPassportAdvance);
+
+router.post('/verifyCinAdvance', Middleware.optionalMiddleware, VerifyController.verifyCinAdvance);
+
+router.post('/verifyFssai', Middleware.optionalMiddleware, VerifyController.verifyFssai);
+
+router.post('/verifyGstPan', Middleware.optionalMiddleware, VerifyController.verifyGstPan);
+
+router.post('/verifyUdyogAadhaar', Middleware.optionalMiddleware, VerifyController.verifyUdyogAadhaar);
+
+router.post('/verifyCorporateVerification', Middleware.optionalMiddleware, VerifyController.verifyCorporateVerification);
+
+router.post('/verifyChequeOcr', Middleware.optionalMiddleware, VerifyController.verifyChequeOcr);
+
+router.post('/verifyEmailVerificationRequest', Middleware.optionalMiddleware, VerifyController.verifyEmailVerificationRequest);
+
+router.post('/verifyEmailVerificationSubmit', Middleware.optionalMiddleware, VerifyController.verifyEmailVerificationSubmit);
 
 export default router;

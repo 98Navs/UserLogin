@@ -1,4 +1,4 @@
-// src/models/UserModel.mjs
+// src/models/WalletModel.mjs
 import { Schema, model } from 'mongoose';
 
 const walletSchema = new Schema({

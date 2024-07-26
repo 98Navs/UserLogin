@@ -1,6 +1,6 @@
-// src/repositories/ApiPartiesRepository.mjs
+// src/repositories/ServiceTableRepository.mjs
 import ServiceTable from '../models/ServiceTableModel.mjs';
-import { paginate } from '../project_setup/Utils.mjs';
+
 //serviceTable
 class ServiceTableRepository {
     static async createServiceTable(serviceTableData) { return await ServiceTable.create(serviceTableData); }

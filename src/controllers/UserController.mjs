@@ -1,4 +1,4 @@
-// src/controllers/UserRegistrationController.mjs
+// src/controllers/UserController.mjs
 import bcrypt from 'bcrypt';
 import UserRepository from '../repositories/UserRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';

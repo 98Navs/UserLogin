@@ -8,7 +8,8 @@ const apiPartiesSchema = new Schema({
     serviceId: { type: Number, require: true },
     category: { type: String, require: true, trim: true, uppercase: true },
     apiOperatorCharges: { type: Number, require: true },
-    ourCharges: { type: Number, require: true, default: 0 },   
+    ourCharges: { type: Number, require: true, default: 0 },
+    apiInputKeys: [{type: String }],
     primary: { type: String, default: 'No' },
     status: { type: String, default: 'Active' },
 }, {

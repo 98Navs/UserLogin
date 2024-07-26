@@ -1,4 +1,4 @@
-// src/models/ApiPartiesModel.mjs
+// src/models/ServiceTableModel.mjs
 import { Schema, model } from 'mongoose';
 
 const serviceTableSchema = new Schema({

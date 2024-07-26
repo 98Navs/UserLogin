@@ -1,4 +1,4 @@
-// src/models/ApiPartiesModel.mjs
+// src/models/UserApiKeyModel.mjs
 import { Schema, model } from 'mongoose';
 import crypto from 'crypto';
 
