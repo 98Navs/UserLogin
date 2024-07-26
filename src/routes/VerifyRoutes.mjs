@@ -64,4 +64,10 @@ router.post('/verifyEmailVerificationRequest', Middleware.optionalMiddleware, Ve
 
 router.post('/verifyEmailVerificationSubmit', Middleware.optionalMiddleware, VerifyController.verifyEmailVerificationSubmit);
 
+router.post('/verifyAadhaarEsign', Middleware.optionalMiddleware, VerifyController.verifyAadhaarEsign);
+
+router.post('/verifyFaceCrop', Middleware.optionalMiddleware, VerifyController.verifyFaceCrop);
+
+router.post('/verifyFaceMatch', Middleware.optionalMiddleware, VerifyController.verifyFaceMatch)
+
 export default router;

@@ -11,7 +11,7 @@ import {
     verifyEpfoProByZoop, verifyPan206AbByZoop, verifyPanMicroByZoop, verifyPanProByZoop,
     verifyPassportAdvanceByZoop, verifyCinAdvanceByZoop, verifyFssaiByZoop, verifyGstPanByZoop,
     verifyUdyogAadhaarByZoop, verifyCorporateVerificationByZoop, verifyChequeOcrByZoop, verifyEmailVerificationRequestByZoop,
-    verifyEmailVerificationSubmitByZoop
+    verifyEmailVerificationSubmitByZoop, verifyAadhaarEsignByZoop, verifyFaceCropByZoop, verifyFaceMatchByZoop
 } from '../services/ZoopServices.mjs';
 import { CommonHandler, ValidationError, NotFoundError, ApiError,MiddlewareError } from './CommonHandler.mjs';
 
@@ -24,7 +24,8 @@ class VerifyController {
         IFSC_LITE: 'IFSC LITE', OCR_LITE: 'OCR LITE', EPFO_PRO: 'EPFO PRO', PAN_206AB: 'PAN 206AB',
         PAN_MICRO: 'PAN MICRO', PAN_PRO: 'PAN PRO', PASSPORT_ADVANCE: 'PASSPORT ADVANCE', CIN_ADVANCE: 'CIN ADVANCE',
         FSSAI: 'FSSAI', GST_PAN: 'GST PAN', UDYOG_AADHAAR: 'UDYOG AADHAAR', CORPORATE_VERIFICATION: 'CORPORATE VERIFICATION',
-        CHEQUE_OCR: 'CHEQUE OCR', EMAIL_VERIFICATION_REQUEST: 'EMAIL VERIFICATION REQUEST', EMAIL_VERIFICATION_SUBMIT: 'EMAIL VERIFICATION SUBMIT'
+        CHEQUE_OCR: 'CHEQUE OCR', EMAIL_VERIFICATION_REQUEST: 'EMAIL VERIFICATION REQUEST', AADHAAR_ESIGN: "AADHAAR ESIGN",
+        FACE_CROP: 'FACE CROP', FACE_MATCH: 'FACE MATCH'
     };
     
     static OPERATORS = { ZOOP: 'ZOOP', SCRIZA: 'SCRIZA' };
@@ -42,7 +43,7 @@ class VerifyController {
             const documentDetails = { ...req.body };  
             const documentNumber = documentDetails[Object.keys(documentDetails)[0]].toUpperCase();
 
-            //console.log(documentDetails);
+            console.log(documentDetails);
 
             const userWallet = await WalletRepository.getWalletByUserId(userId);
             if (!userWallet) throw new NotFoundError(`User wallet not found for userId: ${userId}`);
@@ -68,7 +69,7 @@ class VerifyController {
                 default:
                     throw new NotFoundError('Operator not found');
             }
-            console.log(result.data);
+            console.log(result);
             //console.log(result.response_message);
             if (result.response_message === 'Valid Authentication') {
                 await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { reason: `${serviceType} verification, Api response:${result.response_message}, Result fetched successfully from:${apiParty.apiOperatorName} operator`, status: 'Complete' });
@@ -147,7 +148,13 @@ class VerifyController {
 
     static async verifyEmailVerificationRequest(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.EMAIL_VERIFICATION_REQUEST, verifyEmailVerificationRequestByZoop, null); }
 
-    static async verifyEmailVerificationSubmit(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.EMAIL_VERIFICATION_SUBMIT, verifyEmailVerificationSubmitByZoop, null); }
+    static async verifyEmailVerificationSubmit(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.EMAIL_VERIFICATION_REQUEST, verifyEmailVerificationSubmitByZoop, null); }
+
+    static async verifyAadhaarEsign(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.AADHAAR_ESIGN, verifyAadhaarEsignByZoop, null); }
+
+    static async verifyFaceCrop(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.FACE_CROP, verifyFaceCropByZoop, null); }
+
+    static async verifyFaceMatch(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.FACE_MATCH, verifyFaceMatchByZoop, null); }
 }
 
 export default VerifyController;

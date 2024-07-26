@@ -8,7 +8,6 @@ const userSchema = new Schema({
     mobile: { type: Number, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, default: 'user' },
-    image: { type: String, default: 'NaN'},
     status: { type: String, default: 'Active' },
     otp: { type: Number, default: null }
 }, {
