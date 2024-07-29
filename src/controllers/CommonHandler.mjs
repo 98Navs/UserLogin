@@ -22,16 +22,6 @@ class CommonHandler {
 
     static async validateStatus(status) { if (!CommonHandler.validUserStatuses.includes(status)) { throw new ValidationError(`Status must be one of: ${CommonHandler.validUserStatuses.join(', ')} without any space.`); } }
 
-    static async validatePanCardFormat(panCardNumber) { if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(panCardNumber)) { throw new ValidationError('Invalid PAN card number. Must be in the format of 5 letters, 4 digits, and 1 letter, all in capital letters.'); } }
-
-    static async validateDrivingLicenseFormat(drivingLicenseNumber) { if (!/^([A-Z]{2}[0-9]{13})$/.test(drivingLicenseNumber)) { throw new ValidationError('Invalid driving license number. Must be in the format of 2 letters, 13 digits.'); } }
-
-    static async validateVoterEpicFormat(customerEpic) { if (!/^([A-Z]{3}[0-9]{7})$/.test(customerEpic)) { throw new ValidationError('Invalid epic number. Must be in the format of 3 letters, 7 digits.'); } }
-
-    static async validatePassportFormat(customerPassportNumber) { if (!/^([A-Z]{1}[0-9]{7})$/.test(customerPassportNumber)) { throw new ValidationError('Invalid passport number. Must be in the format of 1 letters, 7 digits.'); } }
-
-    static async validateAadhaarFormat(customerAadhaar) { if (!/^([0-9]{12})$/.test(customerAadhaar)) { throw new ValidationError('Invalid aadhaar number. Must be in the format of 12 digits.'); } }
-
     //Password Hashing
     static async hashPassword(password) {
         const saltRounds = 10;
@@ -57,6 +47,12 @@ class CommonHandler {
             .filter(([_, value]) => value === undefined || value === '')
             .map(([field]) => field.charAt(0).toUpperCase() + field.slice(1));
         if (missingFields.length > 0) { throw new NotFoundError(`Missing required fields: ${missingFields.join(', ')}`); }
+    }
+
+    // Function to handle circular references
+    static async safeStringify(obj) {
+        const seen = new WeakSet();
+        return JSON.stringify(obj, (key, value) => (typeof value === "object" && value !== null ? seen.has(value) ? undefined : (seen.add(value), value) : value));
     }
 }
 

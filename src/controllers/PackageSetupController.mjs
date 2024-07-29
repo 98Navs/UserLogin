@@ -21,7 +21,7 @@ class PackageSetupController{
         if (!servicesProvided || !Array.isArray(servicesProvided) || servicesProvided.length === 0) { throw new ValidationError('At least one service must be provided'); }
 
         for (const service of servicesProvided) {
-            if (!service.serviceName) { throw new ValidationError('Service name is required'); }
+            if (!service.serviceType) { throw new ValidationError('Service type is required'); }
             if (service.serviceCharges == null) { throw new ValidationError('Service charges are required'); }
             if (service.serviceLimit == null) { throw new ValidationError('Service limit is required'); }
         }

@@ -12,7 +12,8 @@ const transactionHistorySchema = new Schema({
     category: { type: String, require: true, trim: true, uppercase: true },
     amount: { type: Number, require: true },
     type: { type: String, require: true },
-    reason: { type: String, default: 'NaN'},
+    reason: { type: String, default: 'NaN' },
+    endResult: {type: String, default: 'NaN'},
     status: { type: String, default: 'Pending' }
 }, {
     timestamps: true

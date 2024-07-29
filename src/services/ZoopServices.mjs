@@ -45,7 +45,7 @@ const ZOOP_HEADERS = {
 
 async function makeZoopRequest(url, data) {
     try {
-        console.log(data);
+        //console.log(data);
         const response = await axios.post(url, { data }, { headers: ZOOP_HEADERS });
         return response.data;
     } catch (error) {

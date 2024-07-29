@@ -147,6 +147,7 @@ class UserController {
 
         if (packageName) { 
             const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
+            if (!packageSetup) { throw new NotFoundError(`No package found by entered name: ${packageName}`); }
             data.packageDetails = packageSetup.servicesProvided;
         }
 

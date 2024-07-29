@@ -2,7 +2,7 @@
 import { Schema, model } from 'mongoose';
 
 const services = new Schema({
-    serviceName: { type: String, required: true },
+    serviceType: { type: String, required: true },
     serviceCharges: { type: Number, required: true },
     serviceLimit: { type: Number, required: true }
 }, { _id: false });
