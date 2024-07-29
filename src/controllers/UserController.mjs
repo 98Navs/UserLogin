@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import UserRepository from '../repositories/UserRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
 import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
+import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 import Middleware from '../project_setup/Middleware.mjs';
 
@@ -131,7 +132,7 @@ class UserController {
     }
 
     static async validateUserData(data) {
-        const { userName, email, mobile, password, role, status } = data;
+        const { userName, email, mobile, password, packageName, role, status } = data;
 
         await CommonHandler.validateRequiredFields({ userName, email, mobile, password });
         await UserController.checkExistingUser(email.toUpperCase(), mobile);
@@ -143,6 +144,11 @@ class UserController {
         if (role) { await CommonHandler.validateRole(role); }
         if (status) { await CommonHandler.validateStatus(status); }
         data.password = await CommonHandler.hashPassword(password);
+
+        if (packageName) { 
+            const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
+            data.packageDetails = packageSetup.servicesProvided;
+        }
 
         return data;   
     }
