@@ -1,69 +1,33 @@
 // src/controllers/UserController.mjs
-import bcrypt from 'bcrypt';
+import dayjs from 'dayjs';
 import UserRepository from '../repositories/UserRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
 import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
 import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
-import Middleware from '../project_setup/Middleware.mjs';
+import UserRegistrationController from './UserRegistrationController.mjs';
 
 class UserController {
-    static async createUser(req, res) {
-        try {
-            const userData = await UserController.validateUserData(req.body);
-            const user = await UserRepository.createUser(userData);
-            const wallet = await WalletRepository.createWallet({ userId: user.userId });
-            const apiKey = await UserApikeyRepository.createUserApikey({ userId: user.userId });
-            res.status(201).json({ status: 201, success: true, message: 'User created successfully', user, wallet, apiKey });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-    static async signIn(req, res) {
-        try {
-            const { user, password } = req.body;
-            await CommonHandler.validateRequiredFields({ user, password });
-            const existingUser = await UserController.getUser(user.trim());
-            if (!existingUser) { throw new NotFoundError("user not found for the provided details"); }
-            if (existingUser.status != 'Active') { throw new ValidationError('User account has been deleted or suspended'); }
-            if (! await bcrypt.compare(password, existingUser.password)) { throw new ValidationError('Invalid credentials.'); }
-            const token = await Middleware.generateToken({ userId: existingUser.userId, email: existingUser.email, role: existingUser.role }, res);
-            res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, token } });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-    static async signOut(req, res) {
-        try {
-            res.clearCookie('jwt');
-            res.status(200).json({ status: 200, success: true, message: 'User sign out is successful!' });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
     static async userRechargeByAdmin(req, res) {
         try {
             const { email, amount } = req.body;
 
-            if (typeof email !== 'string') { throw new ValidationError('Email must be of string format') }
-            if (typeof amount !== 'number') { throw new ValidationError('Amount must be of number format') }
+            if (typeof email !== 'string') { throw new ValidationError('Email must be of string format'); }
+            if (typeof amount !== 'number') { throw new ValidationError('Amount must be of number format'); }
             await CommonHandler.validateEmailFormat(email);
 
-            const [user, admin] = await Promise.all([ UserRepository.getUserByEmail(email), UserRepository.getUserByEmail('admin@scriza.in') ]);
+            const [user, admin] = await Promise.all([UserRepository.getUserByEmail(email), UserRepository.getUserByEmail('admin@scriza.in')]);
             if (!user) { throw new NotFoundError(`User not found with email: ${email}`); }
             if (!admin) { throw new NotFoundError(`Admin not found with email: admin@scriza.in`); }
 
-            const [userWallet, adminWallet] = await Promise.all([ WalletRepository.getWalletByUserId(user.userId), WalletRepository.getWalletByUserId(admin.userId) ]);
+            const [userWallet, adminWallet] = await Promise.all([WalletRepository.getWalletByUserId(user.userId), WalletRepository.getWalletByUserId(admin.userId)]);
             if (!userWallet) { throw new NotFoundError(`User wallet not found for ${user.userName}`); }
             if (!adminWallet) { throw new NotFoundError(`Admin wallet not found for ${admin.userName}`); }
-            
+
             if (adminWallet.amount < amount) { throw new ValidationError(`Admin doesn't have sufficient funds. Current balance: ${adminWallet.amount}`); }
             userWallet.amount += amount;
             adminWallet.amount -= amount;
-            await Promise.all([ userWallet.save(), adminWallet.save()]);
+            await Promise.all([userWallet.save(), adminWallet.save()]);
 
             res.status(201).json({ status: 201, success: true, message: `User recharged successfully by admin to ${user.userName} for amount: ${amount}` });
         } catch (error) {
@@ -93,10 +57,22 @@ class UserController {
     static async getUserByUserId(req, res) {
         try {
             const { userId } = req.params;
-            const user = await UserController.validateAndFetchUserByUserId(userId);
+            const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
             const wallet = await WalletRepository.getWalletByUserId(userId);
             const userWithWallet = { ...user.toObject(), amount: wallet?.amount || 0 };
-            res.status(200).json({ status: 200, success: true, message: `Data fetched successfully for userId ${userId}`, data: userWithWallet, });
+            res.status(200).json({ status: 200, success: true, message: `Data fetched successfully for userId ${userId}`, data: userWithWallet });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async updateUserByUserId(req, res) {
+        try {
+            const { userId } = req.params;
+            await UserRegistrationController.validateAndFetchUserByUserId(userId);
+            const userData = await UserController.validateAndUpdateUserFields(req.body);
+            const updatedUser = await UserRepository.updateUserByUserId(userId, userData);
+            res.status(200).json({ status: 200, success: true, message: `User with userId ${userId} updated successfully.`, data: updatedUser });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -105,58 +81,35 @@ class UserController {
     static async deleteUserByUserId(req, res) {
         try {
             const { userId } = req.params;
-            await UserController.validateAndFetchUserByUserId(userId);
+            await UserRegistrationController.validateAndFetchUserByUserId(userId);
             const deleteUser = await UserRepository.deleteUserByUserId(userId);
             await WalletRepository.deleteWalletByUserId(userId);
             await UserApikeyRepository.deleteUserApiKeyByUserId(userId);
-            res.status(200).json({ status: 200, success: true, message: `Data deleted successfully for userId ${userId}`, deleteUser });
+            res.status(200).json({ status: 200, success: true, message: `Data deleted successfully for userId ${userId}`, data: deleteUser });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
     }
 
-    //Static Methods Only For This Class (Not To Be Used In Routes)
-    static async validateAndFetchUserByUserId(userId) {
-        await CommonHandler.validateSixDigitIdFormat(userId);
-        const user = await UserRepository.getUserByUserId(userId);
-        if (!user) { throw new NotFoundError(`User with userId: ${userId} does not exist`); }
-        return user;
-    }
-    
-    static async getUser(user) {
-        if (typeof user !== 'string') throw new ValidationError('Invalid email, userId, or mobile provided in string format.');
-        if (user.includes('@')) return UserRepository.getUserByEmail(user);
-        if (/^\d{10}$/.test(user)) return UserRepository.getUserByMobile(parseInt(user, 10));
-        if (!isNaN(user)) return UserRepository.getUserByUserId(user);
-        throw new ValidationError('Invalid email, userId, or mobile provided.');
-    }
+    // Static Methods Only For This Class (Not To Be Used In Routes)
+    static async validateAndUpdateUserFields(data) {
+        const { password, packageName, role, status } = data;
 
-    static async validateUserData(data) {
-        const { userName, email, mobile, password, packageName, role, status } = data;
-
-        await CommonHandler.validateRequiredFields({ userName, email, mobile, password });
-        await UserController.checkExistingUser(email.toUpperCase(), mobile);
-
-        if (userName) { await CommonHandler.validateNameFormat(userName); }
-        if (email) { await CommonHandler.validateEmailFormat(email); }
-        if (mobile) { await CommonHandler.validateMobileFormat(mobile); }
-        if (password) { await CommonHandler.validatePasswordFormat(password); }
         if (role) { await CommonHandler.validateRole(role); }
         if (status) { await CommonHandler.validateStatus(status); }
-        data.password = await CommonHandler.hashPassword(password);
-
-        if (packageName) { 
+        if (password) {
+            await CommonHandler.validatePasswordFormat(password);
+            data.password = await CommonHandler.hashPassword(password);
+        }
+        if (packageName) {
             const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
             if (!packageSetup) { throw new NotFoundError(`No package found by entered name: ${packageName}`); }
-            data.packageDetails = packageSetup.servicesProvided;
+            const today = dayjs();
+            data.packageDetails = packageSetup.servicesProvided.map(service => {
+                const expirationDate = today.add(service.serviceLifeSpan, 'day').format('YYYY-MM-DD');
+                return { ...service.toObject ? service.toObject() : service, serviceLifeEnds: expirationDate }; });
         }
-
-        return data;   
-    }
-
-    static async checkExistingUser(email, mobile) {
-        if (await UserRepository.getUserByEmail(email)) { throw new ValidationError('Email already registered.'); }
-        if (await UserRepository.getUserByMobile(mobile)) { throw new ValidationError('Mobile number already registered.'); }
+        return data;
     }
 }
 

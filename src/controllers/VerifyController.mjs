@@ -1,11 +1,12 @@
 // src/controllers/VerifyController.mjs
+import dayjs from 'dayjs';
 import ApiPartiesRepository from '../repositories/ApiPartiesRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
 import TransactionHistoryRepository from '../repositories/TransactionHistoryRepository.mjs';
 import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
 import UserRepository from '../repositories/UserRepository.mjs';
 import * as ZoopServices from '../services/ZoopServices.mjs';
-import { CommonHandler, ValidationError, NotFoundError, ApiError,MiddlewareError } from './CommonHandler.mjs';
+import { CommonHandler, ValidationError, NotFoundError, ApiError, MiddlewareError } from './CommonHandler.mjs';
 
 class VerifyController {
     // Service and Operator constants
@@ -41,17 +42,16 @@ class VerifyController {
             };
 
             // Handle service verification and wallet update
-            const serviceIndex = user.packageDetails.findIndex(service => service.serviceType === serviceType);
-            if (user.packageName !== 'NaN' && serviceIndex !== -1) {
-                const service = user.packageDetails[serviceIndex];
-                if (service.serviceLimit > 0) {
-                    service.serviceLimit -= 1;
-                    await user.save();
-                    await updateWalletAndSave(service.serviceCharges);
-                } else {
-                    await updateWalletAndSave(apiParty.ourCharges);
-                }
-            } else { throw new ValidationError(`Service ${serviceType} not included in user's package`); }
+            const today = dayjs();
+            const service = user.packageDetails.find(service => service.serviceType === serviceType);
+            if (user.packageName === 'NaN' || !service) { throw new ValidationError(`Service ${serviceType} not included in user's package`); }
+            const serviceExpiryDate = dayjs(service.serviceLifeSpan);
+            if (today.isAfter(serviceExpiryDate)) {throw new ValidationError(`Service ${serviceType} has expired. Expiry date: ${serviceExpiryDate.format('YYYY-MM-DD')}`); }
+            if (service.serviceLimit > 0) {
+                service.serviceLimit -= 1;
+                await user.save();
+                await updateWalletAndSave(service.serviceCharges);
+            } else { await updateWalletAndSave(apiParty.ourCharges); }
             
             // Record transaction
             const transactionHistoryData = { userId, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: amountDeducted, type: 'Debit', reason: `${serviceType} verification, User input: ${JSON.stringify(documentDetails)}` };

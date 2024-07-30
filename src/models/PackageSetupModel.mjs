@@ -4,7 +4,8 @@ import { Schema, model } from 'mongoose';
 const services = new Schema({
     serviceType: { type: String, required: true },
     serviceCharges: { type: Number, required: true },
-    serviceLimit: { type: Number, required: true }
+    serviceLimit: { type: Number, required: true },
+    serviceLifeSpan: { type: Number, required: true}
 }, { _id: false });
 
 const packageSetupSchema = new Schema({

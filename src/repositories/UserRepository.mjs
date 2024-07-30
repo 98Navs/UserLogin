@@ -13,6 +13,8 @@ class UserRepository {
 
     static async getUserByUserId(userId) { return await User.findOne({ userId }); }
 
+    static async updateUserByUserId(userId, userData) { return await User.findOneAndUpdate({ userId }, userData, { new: true }); }
+
     static async deleteUserByUserId(userId) { return await User.findOneAndDelete({ userId }); }
 
     static async filterUsers(filterParams, options, req) {

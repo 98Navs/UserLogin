@@ -4,7 +4,8 @@ import { Schema, model } from 'mongoose';
 const services = new Schema({
     serviceType: { type: String, required: true },
     serviceCharges: { type: Number, required: true },
-    serviceLimit: { type: Number, required: true }
+    serviceLimit: { type: Number, required: true },
+    serviceLifeEnds: { type: String, required: true } 
 }, { _id: false });
 
 const userSchema = new Schema({
@@ -16,6 +17,9 @@ const userSchema = new Schema({
     packageName: { type: String, default: 'NaN' },
     packageDetails: [services],
     role: { type: String, default: 'user' },
+    panNumber: { type: String, default: 'NaN' },
+    gstNumber: { type: String, default: 'NaN' },
+    address: { type: String, default: 'NaN' },
     status: { type: String, default: 'Active' },
     otp: { type: Number, default: null }
 }, {
