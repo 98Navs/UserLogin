@@ -45,7 +45,7 @@ class VerifyController {
             const today = dayjs();
             const service = user.packageDetails.find(service => service.serviceType === serviceType);
             if (user.packageName === 'NaN' || !service) { throw new ValidationError(`Service ${serviceType} not included in user's package`); }
-            const serviceExpiryDate = dayjs(service.serviceLifeSpan);
+            const serviceExpiryDate = dayjs(service.serviceLifeEnds);
             if (today.isAfter(serviceExpiryDate)) {throw new ValidationError(`Service ${serviceType} has expired. Expiry date: ${serviceExpiryDate.format('YYYY-MM-DD')}`); }
             if (service.serviceLimit > 0) {
                 service.serviceLimit -= 1;

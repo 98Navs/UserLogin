@@ -5,6 +5,7 @@ class CommonHandler {
 
     //Valid Inputs
     static validUserRoles = ['admin', 'user'];
+    static validStatuses = ['Active', 'Deactive'];
     static validUserStatuses = ['Active', 'Deactive', 'Suspended'];
     
     //Valid Formats
@@ -21,6 +22,14 @@ class CommonHandler {
     static async validateRole(role) { if (!CommonHandler.validUserRoles.includes(role)) { throw new ValidationError(`Role must be one of: ${CommonHandler.validUserRoles.join(', ')} without any space.`); } }
 
     static async validateStatus(status) { if (!CommonHandler.validUserStatuses.includes(status)) { throw new ValidationError(`Status must be one of: ${CommonHandler.validUserStatuses.join(', ')} without any space.`); } }
+
+    static async validateAccountNumberFormat(accountNumber) { if (!/^\d+$/.test(accountNumber)) { throw new ValidationError('Invalid account number. Must be a number.'); } }
+
+    static async validateIfscCodeFormat(ifscCode) { if (!/^[a-zA-Z]{4}0[a-zA-Z0-9]{6}$/.test(ifscCode)) { throw new ValidationError('Invalid IFSC code. Must be in the format of 4 letters followed by 0 and 6 alphanumeric characters in capital letters.'); } }
+
+    static async validateUpiIdFormat(upiId) { if (!/^[\w.-]+@[\w.-]+$/.test(upiId)) { throw new ValidationError('Invalid UPI ID format.'); } }
+
+    static async validateSaveAsFormat(saveAs) { if (!/^[a-zA-Z0-9\s]{1,}$/.test(saveAs)) { throw new ValidationError('Invalid saveAs. Must be at least 1 characters and only letters numbers and spaces.'); } }
 
     static async validatePanCardFormat(panCardNumber) { if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(panCardNumber)) { throw new ValidationError('Invalid PAN card number. Must be in the format of 5 letters, 4 digits, and 1 letter, all in capital letters.'); } }
 
