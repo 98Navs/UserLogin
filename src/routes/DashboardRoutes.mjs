@@ -5,7 +5,6 @@ import DashboardController from '../controllers/DashboardController.mjs';
 
 const router = express.Router();
 
-// POST /Route to create a new user bank details
 router.get('/getAdminApiHitCountStats', Middleware.admin, DashboardController.getAdminApiHitCountStats);
 
 router.get('/getUserApiHitCountStats', Middleware.user, DashboardController.getUserApiHitCountStats);
@@ -13,5 +12,7 @@ router.get('/getUserApiHitCountStats', Middleware.user, DashboardController.getU
 router.get('/getAdminGraphStats', Middleware.admin, DashboardController.getAdminGraphStats);
 
 router.get('/getUserGraphStats', Middleware.user, DashboardController.getUserGraphStats);
+
+router.get('/getWalletDetails', Middleware.user, DashboardController.getWalletDetails);
 
 export default router;

@@ -54,7 +54,7 @@ class VerifyController {
             } else { await updateWalletAndSave(apiParty.ourCharges); }
             
             // Record transaction
-            const transactionHistoryData = { userId: userId, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: amountDeducted, type: 'Debit', reason: `${serviceType} verification, User input: ${JSON.stringify(documentDetails)} `, gstNumber: user.gstNumber };
+            const transactionHistoryData = { userId: userId, userName: user.userName, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: amountDeducted, type: 'Debit', reason: `${serviceType} verification, User input: ${JSON.stringify(documentDetails)} `, gstNumber: user.gstNumber };
             const transaction = await TransactionHistoryRepository.createTransactionHistory(transactionHistoryData);
 
             // Verify document with the appropriate service

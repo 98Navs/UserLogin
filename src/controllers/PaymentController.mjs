@@ -69,10 +69,10 @@ class PaymentController {
     }
 
     static async paymentCreateValidation(data) {
-        const { transactionNo, saveAs, amount } = data.body;
+        const { transactionNo, saveAs, amount, depositDate, paymentMethod } = data.body;
         const { userId } = data.user;
 
-        await CommonHandler.validateRequiredFields({ transactionNo, saveAs, amount });
+        await CommonHandler.validateRequiredFields({ transactionNo, saveAs, amount, depositDate, paymentMethod });
         await CommonHandler.validateSixDigitIdFormat(userId);
         await CommonHandler.validateTransactionFormat(transactionNo);
 
