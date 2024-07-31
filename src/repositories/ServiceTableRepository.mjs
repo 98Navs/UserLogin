@@ -1,7 +1,6 @@
 // src/repositories/ServiceTableRepository.mjs
 import ServiceTable from '../models/ServiceTableModel.mjs';
 
-//serviceTable
 class ServiceTableRepository {
     static async createServiceTable(serviceTableData) { return await ServiceTable.create(serviceTableData); }
 

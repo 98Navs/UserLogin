@@ -1,7 +1,7 @@
 // src/repositories/ApiPartiesRepository.mjs
 import ApiParties from '../models/ApiPartiesModel.mjs';
 import { paginate } from '../project_setup/Utils.mjs';
-//apiParties
+
 class ApiPartiesRepository {
     static async createApiParty(apiPartiesData) { return await ApiParties.create(apiPartiesData); }
 

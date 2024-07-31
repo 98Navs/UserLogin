@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from 'cookie-parser';
-import { UserRoutes, VerifyRoutes, ApiPartiesRoutes, ServiceTableRoutes, PackageSetupRoutes } from "../routes/AllRoutes.mjs";
+import * as Routes from "../routes/AllRoutes.mjs";
 
 export default async function setupExpressApp() {
     const app = express();
@@ -17,11 +17,13 @@ export default async function setupExpressApp() {
     app.use(express.static('src/public'));
 
     // Mount routes
-    app.use(UserRoutes);
-    app.use(VerifyRoutes);
-    app.use(ApiPartiesRoutes);
-    app.use(ServiceTableRoutes);
-    app.use(PackageSetupRoutes);
+    app.use(Routes.UserRoutes);
+    app.use(Routes.VerifyRoutes);
+    app.use(Routes.ApiPartiesRoutes);
+    app.use(Routes.ServiceTableRoutes);
+    app.use(Routes.PackageSetupRoutes);
+    app.use(Routes.BankDetailsRoutes);
+    app.use(Routes.PaymentRoutes);
 
     // Start the server
     app.listen(process.env.PORT, () => { console.log(`Server is running on port ${process.env.PORT} `); });

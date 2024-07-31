@@ -7,7 +7,9 @@ class CommonHandler {
     static validUserRoles = ['admin', 'user'];
     static validStatuses = ['Active', 'Deactive'];
     static validUserStatuses = ['Active', 'Deactive', 'Suspended'];
-    
+    static validPaymentStatuses = ['Approved', 'Pending', 'Rejected'];
+
+
     //Valid Formats
     static async validateSixDigitIdFormat(id) { if (!/^[0-9]{6}$/.test(id)) { throw new ValidationError('Invalid 6 digit id format.'); } }
 
@@ -42,6 +44,11 @@ class CommonHandler {
     static async validatePassportFormat(customerPassportNumber) { if (!/^([A-Z]{1}[0-9]{7})$/.test(customerPassportNumber)) { throw new ValidationError('Invalid passport number. Must be in the format of 1 letters, 7 digits.'); } }
 
     static async validateAadhaarFormat(customerAadhaar) { if (!/^([0-9]{12})$/.test(customerAadhaar)) { throw new ValidationError('Invalid aadhaar number. Must be in the format of 12 digits.'); } }
+
+    static async validatePaymentStatus(status) { if (!CommonHandler.validPaymentStatuses.includes(status)) { throw new ValidationError(`Status must be one of: ${CommonHandler.validPaymentStatuses.join(', ')} without any space.`); } }
+
+    static async validateTransactionFormat(transactionNo) { if (!/^[a-zA-Z0-9]{6,20}$/.test(transactionNo)) { throw new ValidationError('Invalid transaction number. Must be between 6 to 20 characters and only alphanumeric.'); } }
+
 
     //Password Hashing
     static async hashPassword(password) {

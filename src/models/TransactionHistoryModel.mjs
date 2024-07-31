@@ -13,7 +13,8 @@ const transactionHistorySchema = new Schema({
     amount: { type: Number, require: true },
     type: { type: String, require: true },
     reason: { type: String, default: 'NaN' },
-    endResult: {type: String, default: 'NaN'},
+    endResult: { type: String, default: 'NaN' },
+    gstNumber: { type: String, default: 'NaN'},
     status: { type: String, default: 'Pending' }
 }, {
     timestamps: true

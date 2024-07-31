@@ -18,9 +18,7 @@ class WalletRepository {
 
         if (filterParams.search) {
             const searchRegex = new RegExp(`^${filterParams.search}`, 'i');
-            query.$or = [
-                { $expr: { $regexMatch: { input: { $toString: "$userId" }, regex: searchRegex } } }
-            ];
+            query.$or = [ { $expr: { $regexMatch: { input: { $toString: "$userId" }, regex: searchRegex } } } ];
         }
         if (filterParams.startDate || filterParams.endDate) {
             query.createdAt = {};
