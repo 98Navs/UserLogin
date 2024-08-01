@@ -11,6 +11,7 @@ const PaymentSchema = new Schema({
     depositDate: { type: String, required: true},
     paymentMethod: {type: String, required: true},
     status: { type: String, default: 'Pending' }
-}, { timestamps: true });
-
+}, {
+    timestamps: true
+});
 export default model('Payment', PaymentSchema);

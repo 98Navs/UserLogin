@@ -3,7 +3,6 @@ import PackageSetup from "../models/PackageSetupModel.mjs";
 import { paginate } from '../project_setup/Utils.mjs';
 
 class PackageSetupRepository{
-
     static async createPackageSetup(packageSetupData) { return await PackageSetup.create(packageSetupData); }
 
     static async getAllPackageSetup(options, req) { return await paginate(PackageSetup, {}, options.page, options.limit, req); }

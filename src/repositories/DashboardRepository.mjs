@@ -1,8 +1,8 @@
+// src/repository/DashboardRepository.mjs
 import dayjs from 'dayjs';
 import TransactionHistory from '../models/TransactionHistoryModel.mjs';
 
 class DashboardRepository {
-    //ADMIN
     static async getAdminApiHitCountStats(serviceName, selectDate = null) {
         const today = dayjs().startOf('day');
         const selectedDay = selectDate ? dayjs(selectDate, 'DD-MM-YYYY').startOf('day') : null;
@@ -28,7 +28,6 @@ class DashboardRepository {
         return { daily, weekly, monthly, yearly };
     }
 
-    //USER
     static async getUserApiHitCountStats(userId, serviceName, selectDate = null) {
         const today = dayjs().startOf('day');
         const selectedDay = selectDate ? dayjs(selectDate, 'DD-MM-YYYY').startOf('day') : null;
@@ -44,15 +43,14 @@ class DashboardRepository {
     static async getUserGraphStats(userId, startDate, endDate) {
         const matchStage = { userId: userId, status: 'Complete', createdAt: { $gte: new Date(startDate), $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) } };
         const aggregateStats = (format) => { return TransactionHistory.aggregate([{ $match: matchStage }, { $group: { _id: { $dateToString: { format, date: '$createdAt' } }, count: { $sum: 1 } } }, { $sort: { _id: 1 } }]); };
-
+        
         const dailyStats = aggregateStats('%Y-%m-%d');
         const weeklyStats = aggregateStats('%Y-%U');
         const monthlyStats = aggregateStats('%Y-%m');
         const yearlyStats = aggregateStats('%Y');
-
+        
         const [daily, weekly, monthly, yearly] = await Promise.all([dailyStats, weeklyStats, monthlyStats, yearlyStats]);
         return { daily, weekly, monthly, yearly };
     }
-
 }
 export default DashboardRepository;

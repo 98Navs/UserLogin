@@ -3,7 +3,6 @@ import Payment from "../models/PaymentModel.mjs";
 import { paginate } from "../project_setup/Utils.mjs";
 
 class PaymentRepository {
-
     static async createPayment(paymentData) { return await Payment.create(paymentData); }
 
     static async getAllPayments(options, req) { return await paginate(Payment, {}, options.page, options.limit, req); }
@@ -34,5 +33,4 @@ class PaymentRepository {
         return await paginate(Payment, query, options.page, options.limit, req);
     }
 }
-
 export default PaymentRepository;

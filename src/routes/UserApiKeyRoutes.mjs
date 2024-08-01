@@ -5,7 +5,7 @@ import UserApiKeyController from '../controllers/UserApiKeyController.mjs';
 
 const router = express.Router();
 
+// PUT /Route to update user api key for user
 router.put('/updateUserApiKey', Middleware.user, UserApiKeyController.updateUserApiKey);
-
 
 export default router;

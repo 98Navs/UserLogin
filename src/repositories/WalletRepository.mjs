@@ -28,5 +28,4 @@ class WalletRepository {
         return await paginate(Wallet, query, options.page, options.limit, req);
     }
 }
-
 export default WalletRepository;

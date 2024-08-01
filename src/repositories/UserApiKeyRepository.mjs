@@ -12,5 +12,4 @@ class UserApikeyRepository {
 
     static async deleteUserApiKeyByUserId(userId) { return await UserApikey.findOneAndDelete({ userId }); }
 }
-
 export default UserApikeyRepository;

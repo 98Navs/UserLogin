@@ -90,5 +90,4 @@ class ApiError extends Error { constructor(message) { super(message); this.name 
 class NotFoundError extends Error { constructor(message) { super(message); this.name = 'NotFoundError'; } }
 class MiddlewareError extends Error { constructor(message) { super(message); this.name = 'MiddlewareError'; } }
 
-
 export { CommonHandler, ValidationError, NotFoundError, MiddlewareError, ApiError };

@@ -110,5 +110,4 @@ class PaymentController {
         return updatePayment;
     }
 }
-
 export default PaymentController;

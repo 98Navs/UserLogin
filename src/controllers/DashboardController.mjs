@@ -1,3 +1,4 @@
+// src/controllers/DashboardController.mjs
 import { CommonHandler, NotFoundError } from "./CommonHandler.mjs";
 import DashboardRepository from '../repositories/DashboardRepository.mjs';
 import VerifyController from "./VerifyController.mjs";
@@ -70,8 +71,5 @@ class DashboardController {
             CommonHandler.catchError(error, res);
         }
     }
-
-
 }
-
 export default DashboardController;

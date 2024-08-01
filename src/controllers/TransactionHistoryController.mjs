@@ -1,9 +1,9 @@
+// src/controllers/TransactionHistoryController.mjs
 import { Parser } from 'json2csv';
 import TransactionHistoryRepository from "../repositories/TransactionHistoryRepository.mjs";
 import { CommonHandler, ValidationError } from "./CommonHandler.mjs";
 
 class TransactionHistoryController{ 
-   
     static async getAllTransactionHistory(req, res) {
         try {
             const { status, search, startDate, endDate, pageNumber = 1, perpage = 10 } = req.query;
@@ -56,5 +56,4 @@ class TransactionHistoryController{
         }
     }
 }
-
 export default TransactionHistoryController;

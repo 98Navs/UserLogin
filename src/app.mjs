@@ -8,5 +8,4 @@ const StartServer = async () => {
     await connectToDatabase();
     await expressApp(app);
 };
-
 StartServer();

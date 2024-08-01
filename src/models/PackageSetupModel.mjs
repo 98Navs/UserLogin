@@ -16,5 +16,4 @@ const packageSetupSchema = new Schema({
 }, {
     timestamps: true
 });
-
 export default model('PackageSetup', packageSetupSchema);

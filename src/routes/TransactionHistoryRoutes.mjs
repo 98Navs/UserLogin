@@ -5,12 +5,16 @@ import TransactionHistoryController from '../controllers/TransactionHistoryContr
 
 const router = express.Router();
 
+// GET /Route to get all transaction history
 router.get('/getAllTransactionHistory', Middleware.admin, TransactionHistoryController.getAllTransactionHistory);
 
+// GET /Route to get all transaction history for user
 router.get('/getAllTransactionHistoryforUser', Middleware.user, TransactionHistoryController.getAllTransactionHistoryforUser);
 
+// GET /Route to get all transaction history data in CSV
 router.get('/getAllTransactionHistoryDataInCSV', Middleware.admin, TransactionHistoryController.getAllTransactionHistoryDataInCSV);
 
+// GET /Route to get all transaction history data in CSV for user
 router.get('/getUserTransactionHistoryDataInCSV', Middleware.user, TransactionHistoryController.getUserTransactionHistoryDataInCSV);
 
 export default router;

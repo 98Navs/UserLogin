@@ -20,6 +20,4 @@ const transactionHistorySchema = new Schema({
 }, {
     timestamps: true
 });
-
-
 export default model('TransactionHistory', transactionHistorySchema);

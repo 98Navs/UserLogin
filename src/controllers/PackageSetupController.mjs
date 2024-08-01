@@ -2,7 +2,6 @@
 import PackageSetupRepository from "../repositories/PackageSetupRepository.mjs";
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 
-
 class PackageSetupController{
     static async createPackageSetup(req, res) {
         try {
@@ -27,6 +26,5 @@ class PackageSetupController{
         }
         return data;
     }
-
 }
 export default PackageSetupController;

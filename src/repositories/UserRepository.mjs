@@ -36,5 +36,4 @@ class UserRepository {
         return await paginate(User, query, options.page, options.limit, req);
     }
 }
-
 export default UserRepository;

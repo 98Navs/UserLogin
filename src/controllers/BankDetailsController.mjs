@@ -150,5 +150,4 @@ class BankDetailsController {
         return data;
     }
 }
-
 export default BankDetailsController;

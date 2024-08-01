@@ -8,5 +8,4 @@ class ServiceTableRepository {
 
     static async getServiceTableByServiceId(serviceId) { return await ServiceTable.findOne({ serviceId }); }
 }
-
 export default ServiceTableRepository;

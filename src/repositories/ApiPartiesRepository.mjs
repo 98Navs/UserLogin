@@ -17,5 +17,4 @@ class ApiPartiesRepository {
 
     static async updateApiPartyDetailsByApiOperatorId(apiOperatorId, updateData) { return await ApiParties.findOneAndUpdate({ apiOperatorId }, updateData, { new: true }); }
 }
-
 export default ApiPartiesRepository;

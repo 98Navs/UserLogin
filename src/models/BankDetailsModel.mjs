@@ -12,6 +12,7 @@ const BankDetailsSchema = new Schema({
     saveAs: { type: String, required: true, trim: true, uppercase: true },
     primary: { type: String, default: 'Yes' },
     status: { type: String, default: 'Active' }
-}, { timestamps: true });
-
+}, {
+    timestamps: true
+});
 export default model('BankDetails', BankDetailsSchema);

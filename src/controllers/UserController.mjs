@@ -4,6 +4,7 @@ import UserRepository from '../repositories/UserRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
 import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
 import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
+import UserLoginLogsRepository from '../repositories/UserLoginLogsRepository.mjs'
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 import UserRegistrationController from './UserRegistrationController.mjs';
 
@@ -66,6 +67,18 @@ class UserController {
         }
     }
 
+    static async getUserLoginLogs(req, res) {
+        try {
+            const userId = req.user.userId;
+            const { pageNumber = 1, perpage = 10 } = req.query;
+            const options = { page: Number(pageNumber), limit: Number(perpage) };
+            const loginLogs = await UserLoginLogsRepository.getUserLoginLogsByUserId(userId, options, req);
+            res.status(200).json({ status: 200, success: true, message: 'User login logs fetched successfully', data: loginLogs });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async updateUserByUserId(req, res) {
         try {
             const { userId } = req.params;
@@ -112,5 +125,4 @@ class UserController {
         return data;
     }
 }
-
 export default UserController;

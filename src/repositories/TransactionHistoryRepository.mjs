@@ -2,8 +2,6 @@
 import TransactionHistory from '../models/TransactionHistoryModel.mjs';
 import { paginate } from "../project_setup/Utils.mjs";
 
-
-//serviceTable
 class TransactionHistoryRepository {
     static async createTransactionHistory(transactionHistoryData) { return await TransactionHistory.create(transactionHistoryData); }
 
@@ -18,7 +16,6 @@ class TransactionHistoryRepository {
     static async getUserTransactionHistoryDataInCSV(userId) { return await TransactionHistory.find({ userId }).lean().exec(); }
 
     static async updateTransactionHistoryById(id, transactionHistoryData) { return await TransactionHistory.findByIdAndUpdate(id, transactionHistoryData, { new: true }); }
-
 
     static async filterTransactionHistorys(userId = null, filterParams, options, req) {
         const query = {};
@@ -40,5 +37,4 @@ class TransactionHistoryRepository {
         return await paginate(TransactionHistory, query, options.page, options.limit, req);
     }
 }
-
 export default TransactionHistoryRepository;

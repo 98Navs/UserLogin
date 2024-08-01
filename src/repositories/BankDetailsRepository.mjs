@@ -22,5 +22,4 @@ class BankDetailsRepository {
 
     static async deleteAllBankDetailsByUserId(userId) { return await BankDetails.deleteMany({ userId }); }
 }
-
 export default BankDetailsRepository;

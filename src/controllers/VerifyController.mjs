@@ -141,5 +141,4 @@ class VerifyController {
 
     static async verifyFaceMatch(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.FACE_MATCH, ZoopServices.verifyFaceMatchByZoop, null); }
 }
-
 export default VerifyController;

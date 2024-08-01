@@ -5,8 +5,7 @@ import ServiceTableController from '../controllers/ServiceTableController.mjs';
 
 const router = express.Router();
 
-// POST /Route to create a new user
+// POST /Route to create a new service table
 router.post('/createServiceTable', Middleware.admin, ServiceTableController.createServiceTable);
-
 
 export default router;

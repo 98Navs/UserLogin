@@ -26,6 +26,5 @@ class ServiceTableController{
 
         return data;
     }
-
 }
 export default ServiceTableController;

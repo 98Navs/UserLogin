@@ -24,14 +24,15 @@ class UserRegistrationController{
 
     static async signIn(req, res) {
         try {
-            const { user, password } = req.body;
+            const { user, password, ipAddress, deviceName, location } = req.body;
             await CommonHandler.validateRequiredFields({ user, password });
             const existingUser = await UserRegistrationController.getUser(user.trim());
             if (!existingUser) { throw new NotFoundError("user not found for the provided details"); }
             if (existingUser.status != 'Active') { throw new ValidationError('User account has been deleted or suspended'); }
             if (! await bcrypt.compare(password, existingUser.password)) { throw new ValidationError('Invalid credentials.'); }
             const token = await Middleware.generateToken({ userId: existingUser.userId, email: existingUser.email, role: existingUser.role }, res);
-            res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, token } });
+            const loginLog = await UserLoginLogsRepository.createUserLoginLogs({ userId: existingUser.userId, ipAddress: ipAddress, deviceName: deviceName, location: location });
+            res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, token }, loginLog });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
