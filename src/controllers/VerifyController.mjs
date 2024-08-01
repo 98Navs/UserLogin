@@ -20,8 +20,11 @@ class VerifyController {
             const userId = req.user?.userId || (await UserApikeyRepository.getUserApiKeyByApiKey(apiKey))?.userId;
             if (!userId) throw new MiddlewareError('Token or API-Key not found in the request');
 
-            const userIP = req.ip;
-            const documentDetails = { ...req.body };  
+            const userIp = req.ip;
+            const userApiKey = await UserApikeyRepository.getUserApiKeyByUserId(userId);
+            if (userApiKey.whiteListIp.length > 0 && !userApiKey.whiteListIp.includes(userIp)) { throw new MiddlewareError(`User IP is not in the whitelist, Currently IP being used is ${userIp}`); }
+            
+            const documentDetails = { ...req.body };
 
             const userWallet = await WalletRepository.getWalletByUserId(userId);
             if (!userWallet) throw new NotFoundError(`User wallet not found for userId: ${userId}`);

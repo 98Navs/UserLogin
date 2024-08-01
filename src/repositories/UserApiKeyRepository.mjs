@@ -6,7 +6,9 @@ class UserApikeyRepository {
 
     static async getUserApiKeyByApiKey(apiKey) { return await UserApikey.findOne({ apiKey }); }
 
-    static async updateTransactionHistoryById(id, transactionHistoryData) { return await UserApikey.findByIdAndUpdate(id, transactionHistoryData, { new: true }); }
+    static async getUserApiKeyByUserId(userId) { return await UserApikey.findOne({ userId }); }
+
+    static async updateUserApiKey(userId, userApiKeyData) { return await UserApikey.findOneAndUpdate({ userId }, userApiKeyData, { new: true }); }
 
     static async deleteUserApiKeyByUserId(userId) { return await UserApikey.findOneAndDelete({ userId }); }
 }

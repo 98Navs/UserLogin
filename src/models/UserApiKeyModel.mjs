@@ -6,7 +6,8 @@ const generateDefaultApiKey = () => { return crypto.randomBytes(25).toString('he
 
 const userApiKeySchema = new Schema({
     userId: { type: Number, required: true, trim: true, uppercase: true },
-    apiKey: { type: String, default: generateDefaultApiKey, unique: true }
+    apiKey: { type: String, default: generateDefaultApiKey, unique: true },
+    whiteListIp: [{ type: String }]
 }, {
     timestamps: true
 });
