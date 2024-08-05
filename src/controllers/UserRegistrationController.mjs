@@ -5,6 +5,7 @@ import UserRepository from '../repositories/UserRepository.mjs';
 import WalletRepository from '../repositories/WalletRepository.mjs';
 import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
 import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
+import UserLoginLogsRepository from '../repositories/UserLoginLogsRepository.mjs';
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 import { sendEmail } from '../project_setup/Utils.mjs';
 import Middleware from '../project_setup/Middleware.mjs';
