@@ -33,7 +33,7 @@ class UserRegistrationController{
             if (! await bcrypt.compare(password, existingUser.password)) { throw new ValidationError('Invalid credentials.'); }
             const token = await Middleware.generateToken({ userId: existingUser.userId, email: existingUser.email, role: existingUser.role }, res);
             const loginLog = await UserLoginLogsRepository.createUserLoginLogs({ userId: existingUser.userId, ipAddress: ipAddress, deviceName: deviceName, location: location });
-            res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, token }, loginLog });
+            res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, role:existingUser.role, token }, loginLog });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
