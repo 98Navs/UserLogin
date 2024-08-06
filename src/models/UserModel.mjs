@@ -11,6 +11,14 @@ const services = new Schema({
     status: { type: String, required: true }
 }, { _id: false });
 
+const addressInputs = new Schema({
+    address: { type: String, required: true },
+    city: { type: String, required: true },
+    district: { type: String, required: true },
+    state: { type: String, required: true },
+    pincode: { type: Number, required: true }
+}, { _id: false });
+
 const userSchema = new Schema({
     userId: { type: Number, default: () => Math.floor(100000 + Math.random() * 900000), unique: true },
     userName: { type: String, required: true, trim: true, uppercase: true },
@@ -25,7 +33,10 @@ const userSchema = new Schema({
     role: { type: String, default: 'user' },
     panNumber: { type: String, default: 'NaN' },
     gstNumber: { type: String, default: 'NaN' },
-    address: { type: String, default: 'NaN' },
+    companyName: { type: String, default: 'NaN' },
+    companyAddress: { type: String, default: 'NaN' },
+    companyUrl: { type: String, default: 'NaN' },
+    addressDetails: addressInputs ,
     status: { type: String, default: 'Active' },
     otp: { type: Number, default: null }
 }, {
