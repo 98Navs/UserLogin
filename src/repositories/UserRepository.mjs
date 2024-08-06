@@ -5,8 +5,8 @@ import { paginate } from '../project_setup/Utils.mjs';
 class UserRepository {
     static async createUser(userData) { return await User.create(userData); }
 
-    static async getAllUsers(options, req) { return await paginate(User, {}, options.page, options.limit, req); }
-
+    static async getAllUsers(options, req) { return await paginate(User, { role: 'user' }, options.page, options.limit, req); }
+    
     static async getUserByEmail(email) { return await User.findOne({ email: new RegExp(`^${email}`, 'i') }); }
 
     static async getUserByMobile(mobile) { return await User.findOne({ mobile }); }
@@ -28,7 +28,7 @@ class UserRepository {
     static async deleteUserApiKeyByUserId(userId) { return await User.findOneAndDelete({ userId }); }
 
     static async filterUsers(filterParams, options, req) {
-        const query = {};
+        const query = { role: 'user' };
 
         if (filterParams.search) {
             const searchRegex = new RegExp(`^${filterParams.search}`, 'i');

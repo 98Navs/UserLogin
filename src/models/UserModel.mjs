@@ -34,6 +34,8 @@ const userSchema = new Schema({
         transform: (doc, ret) => {
             delete ret.password;
             delete ret.otp;
+            delete ret.apiKey;
+            delete ret.whiteListIp;
             ret.createdAt = ret.createdAt.toISOString();
             ret.updatedAt = ret.updatedAt.toISOString();
         }
