@@ -1,7 +1,6 @@
 // src/controllers/PaymentController.mjs
 import PaymentRepository from '../repositories/PaymentRepository.mjs';
 import UserRepository from '../repositories/UserRepository.mjs';
-import WalletRepository from '../repositories/WalletRepository.mjs'
 import BankDetailsRepository from '../repositories/BankDetailsRepository.mjs'
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
 
@@ -98,12 +97,12 @@ class PaymentController {
         await CommonHandler.validatePaymentStatus(status);
 
         const payment = await PaymentController.validateAndFetchPaymentByPaymentId(paymentId);
-        const userWallet = await WalletRepository.getWalletByUserId(payment.userId);
-        if (!userWallet) { throw new NotFoundError(`User wallet with userId: ${payment.userId} does not exist`); }
+        const user = await UserRepository.getUserByUserId(payment.userId);
+        if (!user) { throw new NotFoundError(`User wallet with userId: ${payment.userId} does not exist`); }
 
         if (status === 'Approved') {
-            userWallet.amount += payment.amount;
-            userWallet.save();
+            user.amount += payment.amount;
+            user.save();
         }
 
         const updatePayment = await PaymentRepository.updatePaymentByPaymentId(paymentId, { status });

@@ -39,6 +39,9 @@ router.get('/getUserLoginLogs', Middleware.user, UserController.getUserLoginLogs
 // PUT /Route to update user details bu userId
 router.put('/updateUserByUserId/:userId', Middleware.user, UserController.updateUserByUserId);
 
+// PUT /Route to update user api key for user
+router.put('/updateUserApiKey', Middleware.user, UserController.updateUserApiKey);
+
 // DELETE /Route to delete the user by userId
 router.delete('/deleteUserByUserId/:userId', Middleware.user, UserController.deleteUserByUserId);
 

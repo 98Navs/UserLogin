@@ -9,4 +9,3 @@ export { default as BankDetailsRoutes } from './BankDetailsRoute.mjs';
 export { default as PaymentRoutes } from './PaymentRoutes.mjs';
 export { default as DashboardRoutes } from './DashboardRoutes.mjs';
 export { default as TransactionHistoryRoutes } from './TransactionHistoryRoutes.mjs';
-export { default as UserApiKeyRoutes } from './UserApiKeyRoutes.mjs';

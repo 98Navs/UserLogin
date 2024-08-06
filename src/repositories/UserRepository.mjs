@@ -17,6 +17,16 @@ class UserRepository {
 
     static async deleteUserByUserId(userId) { return await User.findOneAndDelete({ userId }); }
 
+    static async createUserApikey(userApikeyData) { return await User.create(userApikeyData); }
+
+    static async getUserApiKeyByApiKey(apiKey) { return await User.findOne({ apiKey }); }
+
+    static async getUserApiKeyByUserId(userId) { return await User.findOne({ userId }); }
+
+    static async updateUserApiKey(userId, userApiKeyData) { return await User.findOneAndUpdate({ userId }, userApiKeyData, { new: true }); }
+
+    static async deleteUserApiKeyByUserId(userId) { return await User.findOneAndDelete({ userId }); }
+
     static async filterUsers(filterParams, options, req) {
         const query = {};
 

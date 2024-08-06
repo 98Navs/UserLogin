@@ -2,7 +2,7 @@
 import { CommonHandler, NotFoundError } from "./CommonHandler.mjs";
 import DashboardRepository from '../repositories/DashboardRepository.mjs';
 import VerifyController from "./VerifyController.mjs";
-import WalletRepository from "../repositories/WalletRepository.mjs";
+import UserRepository from "../repositories/UserRepository.mjs";
 
 class DashboardController {
     static async getAdminApiHitCountStats(req, res) {
@@ -64,9 +64,9 @@ class DashboardController {
     static async getWalletDetails(req, res) {
         try {
             const userId = req.user.userId;
-            const userWallet = await WalletRepository.getWalletByUserId(userId);
-            if (!userWallet) { throw new NotFoundError(`Wallet details not found for userId: ${userId}`); }
-            res.status(200).json({ status: 200, success: true, message: 'Wallet details fetched successfully', data: userWallet });
+            const user = await UserRepository.getUserByUserId(userId);
+            if (!user) { throw new NotFoundError(`User details not found for userId: ${userId}`); }
+            res.status(200).json({ status: 200, success: true, message: 'Wallet details fetched successfully', data: user.amount });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }

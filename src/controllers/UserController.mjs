@@ -1,8 +1,6 @@
 // src/controllers/UserController.mjs
 import dayjs from 'dayjs';
 import UserRepository from '../repositories/UserRepository.mjs';
-import WalletRepository from '../repositories/WalletRepository.mjs';
-import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
 import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 import UserLoginLogsRepository from '../repositories/UserLoginLogsRepository.mjs'
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
@@ -21,14 +19,10 @@ class UserController {
             if (!user) { throw new NotFoundError(`User not found with email: ${email}`); }
             if (!admin) { throw new NotFoundError(`Admin not found with email: admin@scriza.in`); }
 
-            const [userWallet, adminWallet] = await Promise.all([WalletRepository.getWalletByUserId(user.userId), WalletRepository.getWalletByUserId(admin.userId)]);
-            if (!userWallet) { throw new NotFoundError(`User wallet not found for ${user.userName}`); }
-            if (!adminWallet) { throw new NotFoundError(`Admin wallet not found for ${admin.userName}`); }
-
-            if (adminWallet.amount < amount) { throw new ValidationError(`Admin doesn't have sufficient funds. Current balance: ${adminWallet.amount}`); }
-            userWallet.amount += amount;
-            adminWallet.amount -= amount;
-            await Promise.all([userWallet.save(), adminWallet.save()]);
+            if (admin.amount < amount) { throw new ValidationError(`Admin doesn't have sufficient funds. Current balance: ${admin.amount}`); }
+            user.amount += amount;
+            admin.amount -= amount;
+            await Promise.all([user.save(), admin.save()]);
 
             res.status(201).json({ status: 201, success: true, message: `User recharged successfully by admin to ${user.userName} for amount: ${amount}` });
         } catch (error) {
@@ -44,12 +38,7 @@ class UserController {
             const users = Object.keys(filterParams).length > 0 ?
                 await UserRepository.filterUsers(filterParams, options, req) :
                 await UserRepository.getAllUsers(options, req);
-
-            const userIds = users.data.map(user => user.userId);
-            const wallets = await WalletRepository.getWalletsByUserIds(userIds);
-            const userWalletMap = new Map(wallets.map(wallet => [wallet.userId, wallet.amount]));
-            const usersWithWallets = users.data.map(user => ({ ...user.toObject(), amount: userWalletMap.get(user.userId) || 0 }));
-            res.status(200).json({ status: 200, success: true, message: 'Users fetched successfully', data: usersWithWallets, total: users.total, page: users.pageNumber, pages: users.pages, perpage: users.perpage, nextPageUrl: users.nextPageUrl });
+            res.status(200).json({ status: 200, success: true, message: 'Users fetched successfully', data: users });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -59,9 +48,7 @@ class UserController {
         try {
             const { userId } = req.params;
             const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
-            const wallet = await WalletRepository.getWalletByUserId(userId);
-            const userWithWallet = { ...user.toObject(), amount: wallet?.amount || 0 };
-            res.status(200).json({ status: 200, success: true, message: `Data fetched successfully for userId ${userId}`, data: userWithWallet });
+            res.status(200).json({ status: 200, success: true, message: `Data fetched successfully for userId ${userId}`, data: user });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -91,13 +78,21 @@ class UserController {
         }
     }
 
+    static async updateUserApiKey(req, res) {
+        try {
+            const userId = req.user.userId;
+            const updateUserApiKey = await UserRepository.updateUserApiKey(userId, req.body);
+            res.status(200).json({ status: 200, success: true, message: 'User Api Key updated successful!', data: updateUserApiKey });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async deleteUserByUserId(req, res) {
         try {
             const { userId } = req.params;
             await UserRegistrationController.validateAndFetchUserByUserId(userId);
             const deleteUser = await UserRepository.deleteUserByUserId(userId);
-            await WalletRepository.deleteWalletByUserId(userId);
-            await UserApikeyRepository.deleteUserApiKeyByUserId(userId);
             res.status(200).json({ status: 200, success: true, message: `Data deleted successfully for userId ${userId}`, data: deleteUser });
         } catch (error) {
             CommonHandler.catchError(error, res);

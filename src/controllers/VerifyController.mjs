@@ -1,9 +1,7 @@
 // src/controllers/VerifyController.mjs
 import dayjs from 'dayjs';
 import ApiPartiesRepository from '../repositories/ApiPartiesRepository.mjs';
-import WalletRepository from '../repositories/WalletRepository.mjs';
 import TransactionHistoryRepository from '../repositories/TransactionHistoryRepository.mjs';
-import UserApikeyRepository from '../repositories/UserApiKeyRepository.mjs';
 import UserRepository from '../repositories/UserRepository.mjs';
 import * as ZoopServices from '../services/ZoopServices.mjs';
 import { CommonHandler, ValidationError, NotFoundError, ApiError, MiddlewareError } from './CommonHandler.mjs';
@@ -17,16 +15,16 @@ class VerifyController {
     static async verifyDocument(req, res, serviceType, verifyByZoop, verifyByScriza) {
         try {
             const apiKey = req.headers['api-key'];
-            const userId = req.user?.userId || (await UserApikeyRepository.getUserApiKeyByApiKey(apiKey))?.userId;
+            const userId = req.user?.userId || (await UserRepository.getUserApiKeyByApiKey(apiKey))?.userId;
             if (!userId) throw new MiddlewareError('Token or API-Key not found in the request');
 
             const userIp = req.ip;
-            const userApiKey = await UserApikeyRepository.getUserApiKeyByUserId(userId);
+            const userApiKey = await UserRepository.getUserApiKeyByUserId(userId);
             if (userApiKey.whiteListIp.length > 0 && !userApiKey.whiteListIp.includes(userIp)) { throw new MiddlewareError(`User IP is not in the whitelist, Currently IP being used is ${userIp}`); }
             
             const documentDetails = { ...req.body };
 
-            const userWallet = await WalletRepository.getWalletByUserId(userId);
+            const userWallet = await UserRepository.getUserByUserId(userId);
             if (!userWallet) throw new NotFoundError(`User wallet not found for userId: ${userId}`);
 
             const user = await UserRepository.getUserByUserId(userId);

@@ -26,7 +26,6 @@ export default async function setupExpressApp() {
     app.use(Routes.PaymentRoutes);
     app.use(Routes.DashboardRoutes);
     app.use(Routes.TransactionHistoryRoutes);
-    app.use(Routes.UserApiKeyRoutes);
 
     // Start the server
     app.listen(process.env.PORT, () => { console.log(`Server is running on port ${process.env.PORT} `); });
