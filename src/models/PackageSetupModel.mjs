@@ -5,7 +5,8 @@ const services = new Schema({
     serviceType: { type: String, required: true },
     serviceCharges: { type: Number, required: true },
     serviceLimit: { type: Number, required: true },
-    serviceLifeSpan: { type: Number, required: true}
+    serviceLifeSpan: { type: Number, required: true },
+    status: { type: String, default: "InActive" }
 }, { _id: false });
 
 const packageSetupSchema = new Schema({

@@ -3,7 +3,6 @@ import { Schema, model } from 'mongoose';
 
 const services = new Schema({
     serviceType: { type: String, required: true },
-    serviceCharges: { type: Number, required: true },
     serviceLimit: { type: Number, required: true },
     serviceLifeEnds: { type: String, required: true } 
 }, { _id: false });
