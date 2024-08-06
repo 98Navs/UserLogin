@@ -7,7 +7,7 @@ export const paginate = async (model, query, page, limit, req) => {
     const [data, totalDocuments] = await Promise.all([model.find(query).skip(skip).limit(limit).exec(), model.countDocuments(query)]);
     const pages = Math.ceil(totalDocuments / limit);
     const nextPageUrl = page < pages ? `${req.baseUrl}${req.path}?pageNumber=${page + 1}&perpage=${limit}` : null;
-    return { data, totalDocuments, currentPage: page, totalPages: pages, nextPageUrl, perpage: limit };
+    return { data, totalDocuments, currentPage: page, totalPages: pages, nextPageUrl, perPage: limit };
 };
 
 //Email handler
