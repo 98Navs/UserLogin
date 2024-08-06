@@ -32,7 +32,7 @@ class UserController {
 
     static async getAllUsers(req, res) {
         try {
-            const { search, startDate, endDate, pageNumber = 1, perpage = 10 } = req.query;
+            const { search, startDate, endDate, pageNumber = 1, perpage = undefined } = req.query;
             const options = { page: Number(pageNumber), limit: Number(perpage) };
             const filterParams = { search, startDate, endDate };
             const users = Object.keys(filterParams).length > 0 ?
