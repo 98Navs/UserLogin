@@ -1,5 +1,6 @@
 // src/controllers/UserController.mjs
 import dayjs from 'dayjs';
+import axios from 'axios';
 import UserRepository from '../repositories/UserRepository.mjs';
 import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 import UserLoginLogsRepository from '../repositories/UserLoginLogsRepository.mjs'
@@ -89,23 +90,22 @@ class UserController {
         }
     }
 
-    static async getAllIndianStateNames(req, res) {
+    static async getAreaDetailsByPinCode(req, res) {
         try {
-            const stateNames = CommonHandler.STATES_AND_UTS;
-            const transformedStates = stateNames.map(stateName => ({ statesAndUTs: stateName }));
-            res.status(200).json({ status: 200, success: true, message: 'All indian states and UTs fetched successfully', data: transformedStates });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
+            const { pinCode } = req.query;
+            await CommonHandler.validateRequiredFields({ pinCode });
+            await CommonHandler.validatePinCodeFormat(pinCode);
 
-    static async getDistrictsByState(req, res) {
-        try {
-            const { statesAndUTs } = req.query;
-            if (!statesAndUTs || !CommonHandler.DISTRICTS[statesAndUTs]) { throw new NotFoundError('Invalid or missing state name'); }
-            const districts = CommonHandler.DISTRICTS[statesAndUTs];
-            const dist = districts.map(district => ({ districtName: district }));
-            res.status(200).json({ status: 200, success: true, message: `Districts for ${statesAndUTs} fetched successfully`, data: dist });
+            const { data } = await axios.get(`https://api.postalpincode.in/pincode/${pinCode}`);
+            if (data?.[0]?.Status === "Success") {
+                const postOffices = data[0].PostOffice;
+                if (postOffices.length > 0) {
+                    const { Country: country, State: state, District: district } = postOffices[0];
+                    const postOfficeNames = postOffices.map(po => ({ areaName: po.Name }));
+                    return res.status(200).json({ status: 200, success: true, message: `Post offices for pin code ${pinCode} fetched successfully`, data: { country, state, district, postOfficeNames } });
+                }
+            }
+            throw new NotFoundError(`No data found for pin code ${pinCode}`);
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
