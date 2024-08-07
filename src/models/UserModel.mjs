@@ -16,7 +16,7 @@ const addressInputs = new Schema({
     city: { type: String, required: true },
     district: { type: String, required: true },
     state: { type: String, required: true },
-    pincode: { type: Number, required: true }
+    pinCode: { type: Number, required: true }
 }, { _id: false });
 
 const userSchema = new Schema({

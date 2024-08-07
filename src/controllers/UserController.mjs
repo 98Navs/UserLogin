@@ -89,6 +89,28 @@ class UserController {
         }
     }
 
+    static async getAllIndianStateNames(req, res) {
+        try {
+            const stateNames = CommonHandler.STATES_AND_UTS;
+            const transformedStates = stateNames.map(stateName => ({ statesAndUTs: stateName }));
+            res.status(200).json({ status: 200, success: true, message: 'All indian states and UTs fetched successfully', data: transformedStates });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async getDistrictsByState(req, res) {
+        try {
+            const { statesAndUTs } = req.query;
+            if (!statesAndUTs || !CommonHandler.DISTRICTS[statesAndUTs]) { throw new NotFoundError('Invalid or missing state name'); }
+            const districts = CommonHandler.DISTRICTS[statesAndUTs];
+            const dist = districts.map(district => ({ districtName: district }));
+            res.status(200).json({ status: 200, success: true, message: `Districts for ${statesAndUTs} fetched successfully`, data: dist });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async updateUserByUserId(req, res) {
         try {
             const { userId } = req.params;

@@ -42,6 +42,12 @@ router.get('/getAllAvailableServiceTypeByServicesName', Middleware.user, UserCon
 //GET /Route to get all available package setup names
 router.get('/getAllAvailablePackageSetupNames', Middleware.user, UserController.getAllAvailablePackageSetupNames);
 
+//GET /Route to get all indian states names
+router.get('/getAllIndianStateNames', Middleware.user, UserController.getAllIndianStateNames);
+
+//GET /Route to get all districts by state name
+router.get('/getDistrictsByState', Middleware.user, UserController.getDistrictsByState);
+
 // PUT /Route to update user details bu userId
 router.put('/updateUserByUserId/:userId', Middleware.user, UserController.updateUserByUserId);
 

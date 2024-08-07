@@ -107,9 +107,9 @@ class UserRegistrationController{
     }
 
     static async validateUserData(data) {
-        const { userName, email, mobile, password, packageName, serviceType, role, panNumber, gstNumber, address, status } = data;
+        const { userName, email, mobile, password, packageName, serviceType, role, panNumber, gstNumber, companyName, companyAddress, companyUrl, status, addressDetails: { address, city, district, state, pinCode } = {} } = data;
 
-        await CommonHandler.validateRequiredFields({ userName, email, mobile });
+        await CommonHandler.validateRequiredFields({ userName, email, mobile, panNumber, address, city, district, state, pinCode });
         await UserRegistrationController.checkExistingUser(email.toUpperCase(), mobile);
 
         if (userName) { await CommonHandler.validateNameFormat(userName); }
@@ -119,8 +119,10 @@ class UserRegistrationController{
         if (panNumber) { await CommonHandler.validatePanCardFormat(panNumber); }
         if (gstNumber) { await CommonHandler.validateGstNumberFormat(gstNumber); }
         if (status) { await CommonHandler.validateStatus(status); }
+        if (pinCode) { await CommonHandler.validatePinCodeFormat(pinCode); }
        
         if (password) {
+            await CommonHandler.validatePasswordFormat(password);
             data.password = await CommonHandler.hashPassword(password);
         } else {
             const newPassword = UserRegistrationController.generateRandomPassword();
