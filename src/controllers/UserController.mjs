@@ -58,9 +58,32 @@ class UserController {
         try {
             const userId = req.user.userId;
             const { pageNumber = 1, perpage = 10 } = req.query;
-            const options = { page: Number(pageNumber), limit: Number(perpage) };
+            const options = { page: Number(pageNumber), limit: Number(perpage) }; 
             const loginLogs = await UserLoginLogsRepository.getUserLoginLogsByUserId(userId, options, req);
             res.status(200).json({ status: 200, success: true, message: 'User login logs fetched successfully', data: loginLogs });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async getAllAvailablePackageSetupNames(req, res) {
+        try {
+            const availablePackages = await PackageSetupRepository.getAllAvailablePackageSetupNames();
+            if (!availablePackages) { throw new NotFoundError('No packages found' ); }
+            const packageNames = availablePackages.map(pkg => ({ packageName: pkg.packageName }));
+            res.status(200).json({ status: 200, success: true, message: 'Package names fetched successfully', data: packageNames });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async getAllAvailableServiceTypeByServicesName(req, res) {
+        try {
+            const { packageName } = req.query;
+            const availableServices = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
+            if (!availableServices) { throw new NotFoundError(`Package not found with package name: ${packageName}`); }
+            const serviceTypes = availableServices.servicesProvided.map(service => ({ serviceType: service.serviceType }));
+            res.status(200).json({ status: 200, success: true, message: 'Service types fetched successfully', data: serviceTypes });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }

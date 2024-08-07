@@ -36,6 +36,12 @@ router.get('/getUserByUserId/:userId', Middleware.admin, UserController.getUserB
 // GET /Route to get user login logs details
 router.get('/getUserLoginLogs', Middleware.user, UserController.getUserLoginLogs);
 
+//GET /Route to get all available service type by service name
+router.get('/getAllAvailableServiceTypeByServicesName', Middleware.user, UserController.getAllAvailableServiceTypeByServicesName)
+
+//GET /Route to get all available package setup names
+router.get('/getAllAvailablePackageSetupNames', Middleware.user, UserController.getAllAvailablePackageSetupNames);
+
 // PUT /Route to update user details bu userId
 router.put('/updateUserByUserId/:userId', Middleware.user, UserController.updateUserByUserId);
 

@@ -7,6 +7,8 @@ class PackageSetupRepository{
 
     static async getAllPackageSetup(options, req) { return await paginate(PackageSetup, {}, options.page, options.limit, req); }
 
+    static async getAllAvailablePackageSetupNames() { return await PackageSetup.find(); }
+
     static async getPackageSetupByPackageName(packageName) { return await PackageSetup.findOne({ packageName: new RegExp(`^${packageName}`, 'i') }); }
 
     static async updatePackageSetupByPackageName(packageName, packageSetupData) { return await PackageSetup.findOneAndUpdate({ packageName }, packageSetupData, { new: true }); }
