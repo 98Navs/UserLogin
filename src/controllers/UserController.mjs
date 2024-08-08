@@ -1,6 +1,7 @@
 // src/controllers/UserController.mjs
 import dayjs from 'dayjs';
 import axios from 'axios';
+import crypto from 'crypto';
 import UserRepository from '../repositories/UserRepository.mjs';
 import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 import UserLoginLogsRepository from '../repositories/UserLoginLogsRepository.mjs'
@@ -103,8 +104,10 @@ class UserController {
     static async updateUserApiKey(req, res) {
         try {
             const userId = req.user.userId;
-            const updateUserApiKey = await UserRepository.updateUserApiKey(userId, req.body);
-            res.status(200).json({ status: 200, success: true, message: 'User Api Key updated successful!', data: updateUserApiKey });
+            await UserRegistrationController.validateAndFetchUserByUserId(userId);
+            const newDefaultApiKey = crypto.randomBytes(25).toString('hex');
+            const updatedUserApiKey = await UserRepository.updateUserApiKey(userId, { apiKey: newDefaultApiKey} );
+            res.status(200).json({ status: 200, success: true, message: 'User Api Key updated successful!', data: updatedUserApiKey.apiKey });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
