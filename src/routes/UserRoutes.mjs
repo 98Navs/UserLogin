@@ -46,7 +46,7 @@ router.get('/getAreaDetailsByPinCode', Middleware.user, UserController.getAreaDe
 router.put('/updateUserByUserId/:userId', Middleware.admin, UserController.updateUserByUserId);
 
 // PUT /Route to update user api key for user
-router.put('/updateUserApiKey', Middleware.user, UserController.updateUserApiKey);
+router.put('/updateUserApiKeyByUserId', Middleware.user, UserController.updateUserApiKeyByUserId);
 
 // DELETE /Route to delete the user by userId
 router.delete('/deleteUserByUserId/:userId', Middleware.user, UserController.deleteUserByUserId);

@@ -101,9 +101,9 @@ class UserController {
         }
     }
 
-    static async updateUserApiKey(req, res) {
+    static async updateUserApiKeyByUserId(req, res) {
         try {
-            const userId = req.user.userId;
+            const { userId } = req.query;
             await UserRegistrationController.validateAndFetchUserByUserId(userId);
             const newDefaultApiKey = crypto.randomBytes(25).toString('hex');
             const updatedUserApiKey = await UserRepository.updateUserApiKey(userId, { apiKey: newDefaultApiKey} );
