@@ -24,9 +24,6 @@ router.post('/otp', UserRegistrationController.otp);
 // POST /Route for user to changePassword
 router.post('/changePassword', UserRegistrationController.changePassword);
 
-// POST /Route for admin to rechrge user wallet
-router.post('/userRechargeByAdmin', Middleware.admin, UserController.userRechargeByAdmin);
-
 // GET /Route to get all users
 router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 
@@ -37,7 +34,7 @@ router.get('/getUserByUserId/:userId', Middleware.admin, UserController.getUserB
 router.get('/getUserLoginLogs', Middleware.user, UserController.getUserLoginLogs);
 
 //GET /Route to get all available service type by service name
-router.get('/getAllAvailableServiceTypeByServicesName', Middleware.user, UserController.getAllAvailableServiceTypeByServicesName)
+router.get('/getAllAvailableServiceTypeByPackageName', Middleware.user, UserController.getAllAvailableServiceTypeByPackageName)
 
 //GET /Route to get all available package setup names
 router.get('/getAllAvailablePackageSetupNames', Middleware.user, UserController.getAllAvailablePackageSetupNames);

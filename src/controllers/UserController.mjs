@@ -8,29 +8,6 @@ import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.m
 import UserRegistrationController from './UserRegistrationController.mjs';
 
 class UserController {
-    static async userRechargeByAdmin(req, res) {
-        try {
-            const { email, amount } = req.body;
-
-            if (typeof email !== 'string') { throw new ValidationError('Email must be of string format'); }
-            if (typeof amount !== 'number') { throw new ValidationError('Amount must be of number format'); }
-            await CommonHandler.validateEmailFormat(email);
-
-            const [user, admin] = await Promise.all([UserRepository.getUserByEmail(email), UserRepository.getUserByEmail('admin@scriza.in')]);
-            if (!user) { throw new NotFoundError(`User not found with email: ${email}`); }
-            if (!admin) { throw new NotFoundError(`Admin not found with email: admin@scriza.in`); }
-
-            if (admin.amount < amount) { throw new ValidationError(`Admin doesn't have sufficient funds. Current balance: ${admin.amount}`); }
-            user.amount += amount;
-            admin.amount -= amount;
-            await Promise.all([user.save(), admin.save()]);
-
-            res.status(201).json({ status: 201, success: true, message: `User recharged successfully by admin to ${user.userName} for amount: ${amount}` });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
     static async getAllUsers(req, res) {
         try {
             const { search, startDate, endDate, pageNumber = 1, perpage = null } = req.query;
@@ -78,7 +55,7 @@ class UserController {
         }
     }
 
-    static async getAllAvailableServiceTypeByServicesName(req, res) {
+    static async getAllAvailableServiceTypeByPackageName(req, res) {
         try {
             const { packageName } = req.query;
             const availableServices = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
@@ -101,8 +78,8 @@ class UserController {
                 const postOffices = data[0].PostOffice;
                 if (postOffices.length > 0) {
                     const { Country: country, State: state, District: district } = postOffices[0];
-                    const postOfficeNames = postOffices.map(po => ({ areaName: po.Name }));
-                    return res.status(200).json({ status: 200, success: true, message: `Area details for pin code ${pinCode} fetched successfully`, data: { country, state, district, postOfficeNames } });
+                    const areaNames = postOffices.map(po => ({ areaName: po.Name }));
+                    return res.status(200).json({ status: 200, success: true, message: `Area details for pin code ${pinCode} fetched successfully`, data: { country, state, district, areaNames } });
                 }
             }
             throw new NotFoundError(`No data found for pin code ${pinCode}`);
