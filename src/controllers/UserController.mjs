@@ -136,10 +136,11 @@ class UserController {
             if (!packageSetup) { throw new NotFoundError(`No package found by entered name: ${packageName}`); }
             const today = dayjs();
             const allServicesActive = serviceType && serviceType.includes('ALL');
-            data.packageDetails = packageSetup.servicesProvided.map(service => {
+            const packageDetails = JSON.parse(JSON.stringify(packageSetup.servicesProvided));
+            data.packageDetails = packageDetails.map(service => {
                 const expirationDate = today.add(service.serviceLifeSpan, 'day').format('YYYY-MM-DD');
                 const isServiceTypeIncluded = allServicesActive || (serviceType && serviceType.includes(service.serviceType));
-                return { ...service, serviceLifeEnds: expirationDate, status: isServiceTypeIncluded ? 'Active' : 'Inactive' };
+                return { ...service, serviceLifeEnds: expirationDate, status: isServiceTypeIncluded ? 'Active' : 'InActive' };
             });
         }
         return data;

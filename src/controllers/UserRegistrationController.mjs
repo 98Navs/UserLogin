@@ -138,7 +138,7 @@ class UserRegistrationController{
             data.packageDetails = packageSetup.servicesProvided.map(service => {
                 const expirationDate = today.add(service.serviceLifeSpan, 'day').format('YYYY-MM-DD');
                 const isServiceTypeIncluded = allServicesActive || (serviceType && serviceType.includes(service.serviceType));
-                return { ...service, serviceLifeEnds: expirationDate, status: isServiceTypeIncluded ? 'Active' : 'Inactive' };
+                return { ...service, serviceLifeEnds: expirationDate, status: isServiceTypeIncluded ? 'Active' : 'InActive' };
             });
         }
         return data;
