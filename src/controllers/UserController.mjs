@@ -123,7 +123,7 @@ class UserController {
 
     // Static Methods Only For This Class (Not To Be Used In Routes)
     static async validateAndUpdateUserFields(data) {
-        const { password, packageName, role, status } = data;
+        const { password, packageName, serviceType, role, status } = data;
 
         if (role) { await CommonHandler.validateRole(role); }
         if (status) { await CommonHandler.validateStatus(status); }
@@ -135,9 +135,12 @@ class UserController {
             const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
             if (!packageSetup) { throw new NotFoundError(`No package found by entered name: ${packageName}`); }
             const today = dayjs();
+            const allServicesActive = serviceType && serviceType.includes('ALL');
             data.packageDetails = packageSetup.servicesProvided.map(service => {
                 const expirationDate = today.add(service.serviceLifeSpan, 'day').format('YYYY-MM-DD');
-                return { ...service.toObject ? service.toObject() : service, serviceLifeEnds: expirationDate }; });
+                const isServiceTypeIncluded = allServicesActive || (serviceType && serviceType.includes(service.serviceType));
+                return { ...service, serviceLifeEnds: expirationDate, status: isServiceTypeIncluded ? 'Active' : 'Inactive' };
+            });
         }
         return data;
     }

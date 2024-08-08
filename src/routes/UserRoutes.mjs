@@ -43,7 +43,7 @@ router.get('/getAllAvailablePackageSetupNames', Middleware.user, UserController.
 router.get('/getAreaDetailsByPinCode', Middleware.user, UserController.getAreaDetailsByPinCode);
 
 // PUT /Route to update user details bu userId
-router.put('/updateUserByUserId/:userId', Middleware.user, UserController.updateUserByUserId);
+router.put('/updateUserByUserId/:userId', Middleware.admin, UserController.updateUserByUserId);
 
 // PUT /Route to update user api key for user
 router.put('/updateUserApiKey', Middleware.user, UserController.updateUserApiKey);
