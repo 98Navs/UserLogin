@@ -24,6 +24,15 @@ router.post('/otp', UserRegistrationController.otp);
 // POST /Route for user to changePassword
 router.post('/changePassword', UserRegistrationController.changePassword);
 
+//GET /Route to get area details by pin code
+router.get('/getAreaDetailsByPinCode', Middleware.user, UserRegistrationController.getAreaDetailsByPinCode);
+
+//GET /Route to get all available service type by service name
+router.get('/getAllAvailableServiceTypeByPackageName', Middleware.user, UserRegistrationController.getAllAvailableServiceTypeByPackageName)
+
+//GET /Route to get all available package setup names
+router.get('/getAllAvailablePackageSetupNames', Middleware.user, UserRegistrationController.getAllAvailablePackageSetupNames);
+
 // GET /Route to get all users
 router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 
@@ -33,14 +42,8 @@ router.get('/getUserByUserId/:userId', Middleware.admin, UserController.getUserB
 // GET /Route to get user login logs details
 router.get('/getUserLoginLogs', Middleware.user, UserController.getUserLoginLogs);
 
-//GET /Route to get all available service type by service name
-router.get('/getAllAvailableServiceTypeByPackageName', Middleware.user, UserController.getAllAvailableServiceTypeByPackageName)
-
-//GET /Route to get all available package setup names
-router.get('/getAllAvailablePackageSetupNames', Middleware.user, UserController.getAllAvailablePackageSetupNames);
-
-//GET /Route to get area details by pin code
-router.get('/getAreaDetailsByPinCode', Middleware.user, UserController.getAreaDetailsByPinCode);
+// GET /Route to get user api key by userId
+router.get("/getUserApiKeyByUserId", Middleware.user, UserController.getUserApiKeyByUserId);
 
 // PUT /Route to update user details bu userId
 router.put('/updateUserByUserId/:userId', Middleware.admin, UserController.updateUserByUserId);

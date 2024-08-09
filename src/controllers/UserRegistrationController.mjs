@@ -1,6 +1,7 @@
 // src/controllers/UserRegistrationController.mjs
 import dayjs from 'dayjs';
 import bcrypt from 'bcrypt';
+import axios from 'axios';
 import UserRepository from '../repositories/UserRepository.mjs';
 import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 import UserLoginLogsRepository from '../repositories/UserLoginLogsRepository.mjs';
@@ -85,6 +86,50 @@ class UserRegistrationController{
             user.password = await CommonHandler.hashPassword(password);
             await user.save();
             res.status(200).json({ status: 200, success: true, message: 'Password reset successfully.' });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async getAreaDetailsByPinCode(req, res) {
+        try {
+            const { pinCode } = req.query;
+            await CommonHandler.validateRequiredFields({ pinCode });
+            await CommonHandler.validatePinCodeFormat(pinCode);
+            
+            const { data } = await axios.get(`https://api.postalpincode.in/pincode/${pinCode}`);
+            if (data?.[0]?.Status === "Success") {
+                const postOffices = data[0].PostOffice;
+                if (postOffices.length > 0) {
+                    const { Country: country, State: state, District: district } = postOffices[0];
+                    const areaNames = postOffices.map(po => ({ areaName: po.Name }));
+                    return res.status(200).json({ status: 200, success: true, message: `Area details for pin code ${pinCode} fetched successfully`, data: { country, state, district, areaNames } });
+                }
+            }
+            throw new NotFoundError(`No data found for pin code ${pinCode}`);
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async getAllAvailablePackageSetupNames(req, res) {
+        try {
+            const availablePackages = await PackageSetupRepository.getAllAvailablePackageSetupNames();
+            if (!availablePackages) { throw new NotFoundError('No packages found'); }
+            const packageNames = availablePackages.map(pkg => ({ packageName: pkg.packageName }));
+            res.status(200).json({ status: 200, success: true, message: 'Package names fetched successfully', data: packageNames });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async getAllAvailableServiceTypeByPackageName(req, res) {
+        try {
+            const { packageName } = req.query;
+            const availableServices = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
+            if (!availableServices) { throw new NotFoundError(`Package not found with package name: ${packageName}`); }
+            const serviceTypes = availableServices.servicesProvided.map(service => ({ serviceType: service.serviceType }));
+            res.status(200).json({ status: 200, success: true, message: 'Service types fetched successfully', data: serviceTypes });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }

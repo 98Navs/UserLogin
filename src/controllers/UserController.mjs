@@ -1,6 +1,5 @@
 // src/controllers/UserController.mjs
 import dayjs from 'dayjs';
-import axios from 'axios';
 import crypto from 'crypto';
 import UserRepository from '../repositories/UserRepository.mjs';
 import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
@@ -45,45 +44,11 @@ class UserController {
         }
     }
 
-    static async getAllAvailablePackageSetupNames(req, res) {
+    static async getUserApiKeyByUserId(req, res) {
         try {
-            const availablePackages = await PackageSetupRepository.getAllAvailablePackageSetupNames();
-            if (!availablePackages) { throw new NotFoundError('No packages found' ); }
-            const packageNames = availablePackages.map(pkg => ({ packageName: pkg.packageName }));
-            res.status(200).json({ status: 200, success: true, message: 'Package names fetched successfully', data: packageNames });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-    static async getAllAvailableServiceTypeByPackageName(req, res) {
-        try {
-            const { packageName } = req.query;
-            const availableServices = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
-            if (!availableServices) { throw new NotFoundError(`Package not found with package name: ${packageName}`); }
-            const serviceTypes = availableServices.servicesProvided.map(service => ({ serviceType: service.serviceType }));
-            res.status(200).json({ status: 200, success: true, message: 'Service types fetched successfully', data: serviceTypes });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-    static async getAreaDetailsByPinCode(req, res) {
-        try {
-            const { pinCode } = req.query;
-            await CommonHandler.validateRequiredFields({ pinCode });
-            await CommonHandler.validatePinCodeFormat(pinCode);
-
-            const { data } = await axios.get(`https://api.postalpincode.in/pincode/${pinCode}`);
-            if (data?.[0]?.Status === "Success") {
-                const postOffices = data[0].PostOffice;
-                if (postOffices.length > 0) {
-                    const { Country: country, State: state, District: district } = postOffices[0];
-                    const areaNames = postOffices.map(po => ({ areaName: po.Name }));
-                    return res.status(200).json({ status: 200, success: true, message: `Area details for pin code ${pinCode} fetched successfully`, data: { country, state, district, areaNames } });
-                }
-            }
-            throw new NotFoundError(`No data found for pin code ${pinCode}`);
+            const userId = req.user.userId;
+            const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
+            res.status(200).json({ status: 200, success: true, message: 'User api key fetched successfully', data: user.apiKey });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -107,7 +72,7 @@ class UserController {
             await UserRegistrationController.validateAndFetchUserByUserId(userId);
             const newDefaultApiKey = crypto.randomBytes(25).toString('hex');
             const updatedUserApiKey = await UserRepository.updateUserApiKey(userId, { apiKey: newDefaultApiKey} );
-            res.status(200).json({ status: 200, success: true, message: 'User Api Key updated successful!', data: updatedUserApiKey.apiKey });
+            res.status(200).json({ status: 200, success: true, message: 'User Api Key updated successful!', data: { newApiKey: updatedUserApiKey.apiKey } });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
