@@ -28,7 +28,7 @@ const userSchema = new Schema({
     amount: { type: Number, default: 0 },
     apiKey: { type: String, default: generateDefaultApiKey, unique: true },
     whiteListIp: [{ type: String }],
-    packageName: { type: String, default: 'NaN' },
+    packageName: { type: String, default: 'Default Package' },
     packageDetails: [services],
     role: { type: String, default: 'user' },
     panNumber: { type: String, default: 'NaN' },

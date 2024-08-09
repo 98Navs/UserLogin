@@ -5,6 +5,7 @@ import TransactionHistoryRepository from '../repositories/TransactionHistoryRepo
 import UserRepository from '../repositories/UserRepository.mjs';
 import * as ZoopServices from '../services/ZoopServices.mjs';
 import { CommonHandler, ValidationError, NotFoundError, ApiError, MiddlewareError } from './CommonHandler.mjs';
+import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 
 class VerifyController {
     // Service and Operator constants
@@ -19,43 +20,33 @@ class VerifyController {
             if (!userId) throw new MiddlewareError('Token or API-Key not found in the request');
 
             const userIp = req.ip;
-            const userApiKey = await UserRepository.getUserApiKeyByUserId(userId);
-            if (userApiKey.whiteListIp.length > 0 && !userApiKey.whiteListIp.includes(userIp)) { throw new MiddlewareError(`User IP is not in the whitelist, Currently IP being used is ${userIp}`); }
-            
-            const documentDetails = { ...req.body };
-
-            const userWallet = await UserRepository.getUserByUserId(userId);
-            if (!userWallet) throw new NotFoundError(`User wallet not found for userId: ${userId}`);
-
             const user = await UserRepository.getUserByUserId(userId);
             if (!user) throw new NotFoundError(`User not found for userId: ${userId}`);
+            if (user.whiteListIp.length > 0 && !user.whiteListIp.includes(userIp)) { throw new MiddlewareError(`User IP is not in the whitelist, Currently IP being used is ${userIp}`); }
+            
+            const documentDetails = { ...req.body };
 
             const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(serviceType);
             if (!apiParty) throw new NotFoundError(`Api party not found for: ${serviceType}`);
 
-            // Helper function to update wallet
-            let amountDeducted;
-            const updateWalletAndSave = async (charges) => {
-                amountDeducted = charges;
-                if (userWallet.amount < charges) throw new ValidationError(`Insufficient funds. Current balance: RS: ${userWallet.amount}, service charge: RS: ${charges}`);
-                userWallet.amount -= charges;
-                await userWallet.save();
-            };
+            const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(user.packageName);
+            const packageServiceCharge = packageSetup.servicesProvided.find(service => service.serviceType === serviceType);
 
             // Handle service verification and wallet update
             const today = dayjs();
             const service = user.packageDetails.find(service => service.serviceType === serviceType);
-            if (user.packageName === 'NaN' || !service) { throw new ValidationError(`Service ${serviceType} not included in user's package`); }
-            const serviceExpiryDate = dayjs(service.serviceLifeEnds);
-            if (today.isAfter(serviceExpiryDate)) {throw new ValidationError(`Service ${serviceType} has expired. Expiry date: ${serviceExpiryDate.format('YYYY-MM-DD')}`); }
+
+            if (!service || service.status !== 'Active' || today.isAfter(dayjs(service.serviceLifeEnds))) { throw new ValidationError(`Service ${serviceType} is either not included, inactive, or expired in the user's package.`); }
+
+            if (user.amount < packageServiceCharge.serviceCharges) { throw new ValidationError(`Insufficient funds or invalid package name. Balance: RS: ${user.amount}, Charge: RS: ${packageServiceCharge.serviceCharges}`); }
             if (service.serviceLimit > 0) {
-                service.serviceLimit -= 1;
+                service.serviceLimit--;
+                user.amount -= packageServiceCharge.serviceCharges;
                 await user.save();
-                await updateWalletAndSave(service.serviceCharges);
-            } else { await updateWalletAndSave(apiParty.ourCharges); }
+            }
             
             // Record transaction
-            const transactionHistoryData = { userId: userId, userName: user.userName, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: amountDeducted, type: 'Debit', reason: `${serviceType} verification, User input: ${JSON.stringify(documentDetails)} `, gstNumber: user.gstNumber };
+            const transactionHistoryData = { userId: userId, userName: user.userName, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: packageServiceCharge.serviceCharges, type: 'Debit', reason: `${serviceType} verification, User input: ${JSON.stringify(documentDetails)} `, gstNumber: user.gstNumber };
             const transaction = await TransactionHistoryRepository.createTransactionHistory(transactionHistoryData);
 
             // Verify document with the appropriate service

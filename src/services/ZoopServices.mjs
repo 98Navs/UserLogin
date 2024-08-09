@@ -81,9 +81,11 @@ export async function verifyPanDemographicByZoop({ customerPan, customerDob, cus
     });
 }
 
-export async function verifyDrivingLicenceAdvanceByZoop({ customerDLN, customerDob }) {
+export async function verifyDrivingLicenceAdvanceByZoop({ customerDL, customerDob }) {
+    console.log(customerDL, customerDob);
+
     return makeZoopRequest(ZOOP_API_URLS.DRIVING_LICENCE_ADVANCE, {
-        customer_dl_number: customerDLN,
+        customer_dl_number: customerDL,
         customer_dob: customerDob,
         consent: "Y",
         consent_text: "I hereby declare my consent agreement for fetching my information via ZOOP API."
