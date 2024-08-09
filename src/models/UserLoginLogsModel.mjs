@@ -5,8 +5,7 @@ const userLoginLogsSchema = new Schema({
     userId: { type: Number, required: true },
     ipAddress: { type: String, required: false, default: 'NaN' },
     deviceName: { type: String, required: false, default: 'NaN' },
-    location: { type: String, required: false, default: 'NaN' },
-    host: { type:String, required: false, default: 'NaN'}
+    location: { type: String, required: false, default: 'NaN' }
 }, {
     timestamps: true
 });

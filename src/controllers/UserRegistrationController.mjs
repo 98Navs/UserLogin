@@ -22,20 +22,9 @@ class UserRegistrationController{
 
     static async signIn(req, res) {
         try {
-            console.log(req);
-            const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress;
-            const userAgent = req.headers['user-agent'];
-            const deviceId = req.headers['device-id'];
+            const ipAddress = req.headers['ip-address'];
+            const deviceName = req.headers['device-name'];
             const location = req.headers['location'];
-            const host = req.headers['host'];
-
-
-            // const latitude = req.body.latitude || null
-            // const longitude = req.body.longitude || null
-
-            // const location = "latitude: " + latitude + ", " + "longitude: " + longitude;
-            
-            console.log(ipAddress, userAgent, deviceId, location, host);
             const { user, password } = req.body;
             await CommonHandler.validateRequiredFields({ user, password });
             const existingUser = await UserRegistrationController.getUser(user.trim());
@@ -43,8 +32,7 @@ class UserRegistrationController{
             if (existingUser.status != 'Active') { throw new ValidationError('User account has been deleted or suspended'); }
             if (! await bcrypt.compare(password, existingUser.password)) { throw new ValidationError('Invalid credentials.'); }
             const token = await Middleware.generateToken({ userId: existingUser.userId, email: existingUser.email, role: existingUser.role }, res);
-
-            await UserLoginLogsRepository.createUserLoginLogs({ userId: existingUser.userId, ipAddress: ipAddress, deviceName: userAgent, location: location, host: host });
+            await UserLoginLogsRepository.createUserLoginLogs({ userId: existingUser.userId, ipAddress: ipAddress, deviceName: deviceName, location: location });
             res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, role: existingUser.role, token } });
         } catch (error) {
             CommonHandler.catchError(error, res);
