@@ -79,7 +79,7 @@ class PaymentController {
         if (!admin) { throw new NotFoundError(`Admin with email: admin@scriza.in does not exist`); }
         const bankDetails = await BankDetailsRepository.getBankDetailsByUserIdAndSaveAs(admin.userId, saveAs);
         if (!bankDetails) { throw new NotFoundError(`Admin bank details not found with ${saveAs}.`); }
-        data.body.bankName = bankDetails.bankName;
+        data.body.bankName = bankDetails.saveAs;
 
         const existingUser = await UserRepository.getUserByUserId(userId);
         if (!existingUser) { throw new NotFoundError(`User with userId: ${userId} does not exist`); }

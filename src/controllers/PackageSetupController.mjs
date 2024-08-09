@@ -23,6 +23,7 @@ class PackageSetupController{
             if (!service.serviceType) { throw new ValidationError('Service type is required'); }
             if (service.serviceCharges == null) { throw new ValidationError('Service charges are required'); }
             if (service.serviceLimit == null) { throw new ValidationError('Service limit is required'); }
+            if (service.serviceLifeSpan == null) { throw new ValidationError('Service life span is required'); }
         }
         return data;
     }

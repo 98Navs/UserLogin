@@ -6,7 +6,8 @@ import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.m
 class BankDetailsController {
     static async createBankDetails(req, res) {
         try {
-            const bankDetailsData = await BankDetailsController.bankDetailsValidation(req.body);
+            const userId = req.user.userId;
+            const bankDetailsData = await BankDetailsController.bankDetailsValidation(req.body, userId);
             const bankDetails = await BankDetailsRepository.createBankDetails(bankDetailsData);
             res.status(201).json({ status: 201, success: true, message: 'Bank details created successfully', data: bankDetails });
         } catch (error) {
@@ -126,10 +127,9 @@ class BankDetailsController {
         return bankDetails;
     }
 
-    static async bankDetailsValidation(data, isUpdate = false) {
-        const { userId, bankName, accountNumber, ifscCode, upiId, mobile, saveAs, status } = data;
-        if (!isUpdate) await CommonHandler.validateRequiredFields({ userId, bankName, accountNumber, ifscCode, upiId, mobile, saveAs });
-        if (userId) await CommonHandler.validateSixDigitIdFormat(userId);
+    static async bankDetailsValidation(data, userId, isUpdate = false) {
+        const { bankName, accountNumber, ifscCode, upiId, mobile, saveAs, status } = data;
+        if (!isUpdate) await CommonHandler.validateRequiredFields({ bankName, accountNumber, ifscCode, upiId, mobile, saveAs });
         if (bankName) await CommonHandler.validateNameFormat(bankName);
         if (accountNumber) await CommonHandler.validateAccountNumberFormat(accountNumber);
         if (ifscCode) await CommonHandler.validateIfscCodeFormat(ifscCode);

@@ -106,7 +106,8 @@ class UserRegistrationController{
                 if (postOffices.length > 0) {
                     const { Country: country, State: state, District: district } = postOffices[0];
                     const areaNames = postOffices.map(po => ({ areaName: po.Name }));
-                    return res.status(200).json({ status: 200, success: true, message: `Area details for pin code ${pinCode} fetched successfully`, data: { country, state, district, areaNames } });
+                    areaNames.push({ areaName: "Other" });
+                return res.status(200).json({ status: 200, success: true, message: `Area details for pin code ${pinCode} fetched successfully`, data: { country, state, district, areaNames } });
                 }
             }
             throw new NotFoundError(`No data found for pin code ${pinCode}`);
