@@ -59,7 +59,7 @@ class UserController {
         try {
             const { userId } = req.query;
             const userData = await UserRegistrationController.validateAndFetchUserByUserId(userId);
-            const activeServices = userData.packageDetails.filter(service => service.status === 'Active').map(service => service.serviceType);
+            const activeServices = userData.packageDetails.filter(service => service.status === 'Active').map(service => ({ activeServices: service.serviceType}));
             return res.status(200).json({ status: 200, success: true, message: `User service types fetched successfully`, data: activeServices });
         } catch (error) {
             CommonHandler.catchError(error, res);
