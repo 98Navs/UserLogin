@@ -166,7 +166,7 @@ class UserRegistrationController{
         if (mobile) { await CommonHandler.validateMobileFormat(mobile); }
         if (role) { await CommonHandler.validateRole(role); }
         if (panNumber) { await CommonHandler.validatePanCardFormat(panNumber); }
-        if (gstNumber) { await CommonHandler.validateGstNumberFormat(gstNumber); }
+        //if (gstNumber) { await CommonHandler.validateGstNumberFormat(gstNumber); }
         if (status) { await CommonHandler.validateStatus(status); }
         if (pinCode) { await CommonHandler.validatePinCodeFormat(pinCode); }
        
