@@ -42,6 +42,9 @@ router.get('/getUserByUserId/:userId', Middleware.admin, UserController.getUserB
 // GET /Route to get user login logs details
 router.get('/getUserLoginLogs', Middleware.user, UserController.getUserLoginLogs);
 
+// GET /Route to get user active service types
+router.get('/getUserServicesByUserId', Middleware.user, UserController.getUserServicesByUserId);
+
 // GET /Route to get user api key by userId
 router.get("/getUserApiKeyByUserId", Middleware.user, UserController.getUserApiKeyByUserId);
 
