@@ -6,9 +6,9 @@ const BankDetailsSchema = new Schema({
     bankId: { type: Number, default: () => Math.floor(100000 + Math.random() * 900000), unique: true },
     bankName: { type: String, required: true, trim: true, uppercase: true },
     accountNumber: { type: Number, required: true },
+    accountHolderName: { type: String, required: true, trim: true, uppercase: true},
     ifscCode: { type: String, required: true, trim: true, uppercase: true },
-    upiId: { type: String, required: true, trim: true },
-    mobile: { type: Number, required: true },
+    upiId: { type: String, required: false, trim: true },
     saveAs: { type: String, required: true, trim: true, uppercase: true },
     primary: { type: String, default: 'Yes' },
     status: { type: String, default: 'Active' }

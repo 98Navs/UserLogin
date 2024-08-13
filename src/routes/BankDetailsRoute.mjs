@@ -11,14 +11,14 @@ router.post('/createBankDetails', Middleware.user, BankDetailsController.createB
 // GET /Route to get all admin bank details
 router.get('/getAdminBankDetails', Middleware.user, BankDetailsController.getAdminBankDetails);
 
+// GET /Route to get all admin banks saveAs
+router.get('/getAdminSaveAs', Middleware.user, BankDetailsController.getAdminSaveAs);
+
 // GET /Route to get bank details by bankId
 router.get('/getBankDetailsByBankId/:bankId', Middleware.user, BankDetailsController.getBankDetailsByBankId)
 
 // GET /Route to get all user bank details by userId
 router.get('/getUserBankDetailsByUserId/:userId', Middleware.user, BankDetailsController.getUserBankDetailsByUserId);
-
-// GET /Route to get all user banks saveAs by userId
-router.get('/getSaveAsByUserId/:userId', Middleware.user, BankDetailsController.getSaveAsByUserId);
 
 // GET /Route to get all user banks details by userId and saveAs
 router.get('/getBankDetailsByUserIdAndSaveAs/:userId/:saveAs', Middleware.user, BankDetailsController.getBankDetailsByUserIdAndSaveAs);
@@ -27,7 +27,7 @@ router.get('/getBankDetailsByUserIdAndSaveAs/:userId/:saveAs', Middleware.user, 
 router.put('/updatePrimaryAccountByBankId/:bankId', Middleware.user, BankDetailsController.updatePrimaryAccountByBankId);
 
 // PUT /Route to update a bank details by userId and saveAs
-router.put('/updateBankDetailsByUserIdAndSaveAs/:userId/:saveAs', Middleware.user, BankDetailsController.updateBankDetailsByUserIdAndSaveAs);
+router.put('/updateBankDetailsByBankId/:bankId', Middleware.user, BankDetailsController.updateBankDetailsByBankId);
 
 // DELETE /Route to delete a specific bank details by bankId
 router.delete('/deleteBankDetailsByBankId/:bankId', Middleware.user, BankDetailsController.deleteBankDetailsByBankId);

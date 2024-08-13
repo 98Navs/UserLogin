@@ -66,6 +66,15 @@ class UserController {
         }
     }
 
+    static async deleteAlluser(req, res) {
+        try {
+            const allUserDeleted = await UserRepository.deleteAllUsers();
+            res.status(200).json({ status: 200, success: true, message: 'All users data deleted successfully', data: allUserDeleted });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async updateUserByUserId(req, res) {
         try {
             const { userId } = req.params;

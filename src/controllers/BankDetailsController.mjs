@@ -26,6 +26,18 @@ class BankDetailsController {
         }
     }
 
+    static async getAdminSaveAs(req, res) {
+        try {
+            const admin = await UserRepository.getUserByEmail('admin@scriza.in');
+            if (!admin) { throw new NotFoundError('Admin not found in the database with email: admin@scriza.in'); }
+            const userData = await BankDetailsRepository.getBankDetailsByUserId(admin.userId);
+            const userSaveAs = userData.map(user => ({ saveAs: user.saveAs }));
+            res.status(200).json({ status: 200, success: true, message: `Admin SaveAs fetched successfully.`, data: userSaveAs });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async getUserBankDetailsByUserId(req, res) {
         try {
             const { userId } = req.params;
@@ -41,17 +53,6 @@ class BankDetailsController {
             const { bankId } = req.params;
             const bankDetails = await BankDetailsController.validateAndFetchBankByBankId(bankId);
             res.status(200).json({ status: 200, success: true, message: 'User bank details fetched successfully', data: bankDetails });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-    static async getSaveAsByUserId(req, res) {
-        try {
-            const { userId } = req.params;
-            await BankDetailsController.validateAndFetchBankByUserId(userId);
-            const saveAs = await BankDetailsRepository.getSaveAsByUserId(userId);
-            res.status(200).json({ status: 200, success: true, message: 'SaveAs fetched successfully', data: saveAs });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -82,14 +83,12 @@ class BankDetailsController {
         }
     }
 
-    static async updateBankDetailsByUserIdAndSaveAs(req, res) {
+    static async updateBankDetailsByBankId(req, res) {
         try {
-            const { userId, saveAs } = req.params;
-            await BankDetailsController.validateAndFetchBankByUserId(userId);
-            const existingSaveAs = await BankDetailsRepository.getSaveAsByUserId(userId);
-            if(!existingSaveAs.includes(saveAs)) throw new NotFoundError(`Entered saveAs: ${saveAs} not found for the mentioned userId ${userId} `)
-            const updatedData = await BankDetailsController.bankDetailsValidation(req, true);
-            const updatedBankDetails = await BankDetailsRepository.updateBankDetailsByUserIdAndSaveAs(userId, saveAs, updatedData);
+            const { bankId } = req.params;
+            const bankDetails = await BankDetailsController.validateAndFetchBankByBankId(bankId);
+            const updatedData = await BankDetailsController.bankDetailsValidation(req.body, bankDetails.userId, true);
+            const updatedBankDetails = await BankDetailsRepository.updateBankDetailsByBankId(bankId, updatedData);
             res.status(200).json({ status: 200, success: true, message: 'Bank details updated successfully', data: updatedBankDetails });
         } catch (error) {
             CommonHandler.catchError(error, res);
@@ -128,13 +127,13 @@ class BankDetailsController {
     }
 
     static async bankDetailsValidation(data, userId, isUpdate = false) {
-        const { bankName, accountNumber, ifscCode, upiId, mobile, saveAs, status } = data;
-        if (!isUpdate) await CommonHandler.validateRequiredFields({ bankName, accountNumber, ifscCode, upiId, mobile, saveAs });
+        const { bankName, accountNumber, accountHolderName, ifscCode, upiId, saveAs, status } = data;
+        if (!isUpdate) await CommonHandler.validateRequiredFields({ bankName, accountNumber, accountHolderName, ifscCode, saveAs });
         if (bankName) await CommonHandler.validateNameFormat(bankName);
         if (accountNumber) await CommonHandler.validateAccountNumberFormat(accountNumber);
+        if (accountHolderName) await CommonHandler.validateNameFormat(accountHolderName);
         if (ifscCode) await CommonHandler.validateIfscCodeFormat(ifscCode);
         if (upiId) await CommonHandler.validateUpiIdFormat(upiId);
-        if (mobile) await CommonHandler.validateMobileFormat(mobile);
         if (saveAs) await CommonHandler.validateSaveAsFormat(saveAs);
         if (status) if(!CommonHandler.validStatuses.includes(status)) throw new ValidationError(`Status must be one of: ${CommonHandler.validStatuses.join(', ')}`);
         
@@ -145,8 +144,9 @@ class BankDetailsController {
             const bankDetails = await BankDetailsRepository.getBankDetailsByUserId(userId);
             data.primary = bankDetails.length > 0 ? 'No' : 'Yes';
             const existingSaveAs = await BankDetailsRepository.getSaveAsByUserId(userId);
-            if (existingSaveAs.includes(saveAs.toUpperCase())) throw new ValidationError('SaveAs already exists for the user');
+            if (existingSaveAs.includes(saveAs.toUpperCase())) throw new ValidationError(`SaveAs: ${saveAs} already exists for the user with userId: ${userId}`);
         }
+        data.userId = userId;
         return data;
     }
 }

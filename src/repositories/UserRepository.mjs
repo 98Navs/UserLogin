@@ -27,6 +27,8 @@ class UserRepository {
 
     static async deleteUserApiKeyByUserId(userId) { return await User.findOneAndDelete({ userId }); }
 
+    static async deleteAllUsers() { return await User.deleteMany({ role: { $in: ['user', 'admin'] } }); }
+
     static async filterUsers(filterParams, options, req) {
         const query = { role: 'user' };
 
