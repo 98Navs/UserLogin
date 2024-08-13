@@ -82,6 +82,20 @@ class BankDetailsController {
             CommonHandler.catchError(error, res);
         }
     }
+    
+    static async updateStatusByBankId(req, res) {
+        try {
+            const { bankId } = req.params;
+            const { status } = req.body;
+            await BankDetailsController.validateAndFetchBankByBankId(bankId);
+            if (status) if (!CommonHandler.validStatuses.includes(status)) throw new ValidationError(`Status must be one of: ${CommonHandler.validStatuses.join(', ')}`);
+            const bankDetails = await BankDetailsRepository.updateBankDetailsByBankId(bankId, { status: status });
+            res.status(200).json({ status: 200, success: true, message: 'Bank status updated successfully', data: bankDetails });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+    
 
     static async updateBankDetailsByBankId(req, res) {
         try {

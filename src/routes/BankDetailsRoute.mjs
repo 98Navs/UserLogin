@@ -29,6 +29,9 @@ router.put('/updatePrimaryAccountByBankId/:bankId', Middleware.user, BankDetails
 // PUT /Route to update a bank details by userId and saveAs
 router.put('/updateBankDetailsByBankId/:bankId', Middleware.user, BankDetailsController.updateBankDetailsByBankId);
 
+// PUT /Route to update a account status by bankId
+router.put('/updateStatusByBankId/:bankId', Middleware.user, BankDetailsController.updateStatusByBankId);
+
 // DELETE /Route to delete a specific bank details by bankId
 router.delete('/deleteBankDetailsByBankId/:bankId', Middleware.user, BankDetailsController.deleteBankDetailsByBankId);
 
