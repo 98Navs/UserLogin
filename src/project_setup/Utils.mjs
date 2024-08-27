@@ -2,9 +2,9 @@
 import nodemailer from 'nodemailer';
 
 //Pagination
-export const paginate = async (model, query, page, limit, req) => {
+export const paginate = async (model, query, page, limit, req, sort = { createdAt: 1 }) => {
     const skip = (page - 1) * limit;
-    const [data, totalDocuments] = await Promise.all([model.find(query).skip(skip).limit(limit).exec(), model.countDocuments(query)]);
+    const [data, totalDocuments] = await Promise.all([model.find(query).sort(sort).skip(skip).limit(limit).exec(), model.countDocuments(query)]);
     const pages = !limit ? 0 :  Math.ceil(totalDocuments / limit);
     const nextPageUrl = page < pages ? `${req.baseUrl}${req.path}?pageNumber=${page + 1}&perpage=${limit}` : "";
     return { data, totalDocuments, currentPage: page, totalPages: pages, nextPageUrl, perPage: limit };
