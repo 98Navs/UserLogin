@@ -12,6 +12,7 @@ const transactionHistorySchema = new Schema({
     apiOperatorName: { type: String, required: true, trim: true, uppercase: true },
     category: { type: String, required: true, trim: true, uppercase: true },
     amount: { type: Number, required: true },
+    gstCharge: { type: Number, required: true },
     type: { type: String, required: true },
     reason: { type: String, default: 'NaN' },
     endResult: { type: String, default: 'NaN' },

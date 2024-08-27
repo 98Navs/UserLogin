@@ -36,7 +36,7 @@ class TransactionHistoryController{
     static async getAllTransactionHistoryDataInCSV(req, res) {
         try {
             const users = await TransactionHistoryRepository.getAllTransactionHistoryDataInCSV();
-            const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstNumber', 'status'];
+            const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstCharge', 'gstNumber', 'status'];
             const csv = new Parser({ fields }).parse(users);
             res.status(200).header('Content-Type', 'text/csv').header('X-Status', '200').header('X-Success', 'true').header('X-Message', 'All payments fetched successfully').attachment('users.csv').send(csv);
         } catch (error) {
@@ -48,7 +48,7 @@ class TransactionHistoryController{
         try {
             const userId = req.user.userId;
             const users = await TransactionHistoryRepository.getUserTransactionHistoryDataInCSV(userId);
-            const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstNumber', 'status'];
+            const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstCharge', 'gstNumber', 'status'];
             const csv = new Parser({ fields }).parse(users);
             res.status(200).header('Content-Type', 'text/csv').header('X-Status', '200').header('X-Success', 'true').header('X-Message', 'All payments fetched successfully').attachment('users.csv').send(csv);
         } catch (error) {

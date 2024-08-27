@@ -34,7 +34,7 @@ router.get('/getAllAvailableServiceTypeByPackageName', Middleware.user, UserRegi
 router.get('/getAllAvailablePackageSetupNames', Middleware.user, UserRegistrationController.getAllAvailablePackageSetupNames);
 
 // GET /Route to get all users
-router.get('/getAllUsers', UserController.getAllUsers);
+router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 
 // GET /Route to get user details by userId
 router.get('/getUserByUserId/:userId', Middleware.admin, UserController.getUserByUserId);

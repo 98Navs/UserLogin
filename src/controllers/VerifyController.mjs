@@ -36,15 +36,20 @@ class VerifyController {
             const today = dayjs();
             const userService = user.packageDetails.find(service => service.serviceType === serviceType);
             if (!userService || userService.status !== 'Active' || today.isAfter(dayjs(userService.serviceLifeEnds))) { throw new ValidationError(`Service ${serviceType} is either not included, inactive, or expired in the user's package.`); }
+            
+            // Calculate the base charge and gst charge based on service limit
+            const baseCharge = userService.serviceLimit > 0 ? packageServiceCharge.serviceCharges : (await PackageSetupRepository.getPackageSetupByPackageName('DEFAULT PACKAGE')).servicesProvided.find(service => service.serviceType === serviceType).serviceCharges;
+            const gstCharge = baseCharge * 0.18;
+            const totalCharge = baseCharge + gstCharge;
+            if (user.amount < totalCharge) { throw new ValidationError(`Insufficient funds in user account. Balance: RS: ${user.amount}, Charge: RS: ${totalCharge}`); }
 
-            const charge = userService.serviceLimit > 0 ? packageServiceCharge.serviceCharges : (await PackageSetupRepository.getPackageSetupByPackageName('DEFAULT PACKAGE')).servicesProvided.find(service => service.serviceType === serviceType).serviceCharges;
-            if (user.amount < charge) {  throw new ValidationError(`Insufficient funds in user account. Balance: RS: ${user.amount}, Charge: RS: ${charge}`); }
+            // Update the user's service limit and amount
             userService.serviceLimit = Math.max(0, userService.serviceLimit - 1);
-            user.amount -= charge;
+            user.amount -= totalCharge;
             await user.save();
             
             // Record transaction
-            const transactionHistoryData = { userId: userId, userName: user.userName, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: charge, type: 'Debit', reason: `${serviceType} verification, User input: ${JSON.stringify(documentDetails)} `, gstNumber: user.gstNumber };
+            const transactionHistoryData = { userId: userId, userName: user.userName, serviceName: apiParty.serviceName, apiOperatorName: apiParty.apiOperatorName, category: apiParty.category, amount: baseCharge, gstCharge: gstCharge, type: 'Debit', reason: `${serviceType} verification, User input: ${JSON.stringify(documentDetails)} `, gstNumber: user.gstNumber };
             const transaction = await TransactionHistoryRepository.createTransactionHistory(transactionHistoryData);
 
             // Verify document with the appropriate service
