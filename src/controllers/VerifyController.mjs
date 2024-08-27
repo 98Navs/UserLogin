@@ -58,7 +58,7 @@ class VerifyController {
             
             const result = await verifyByOperator(documentDetails);
             const responseMessage = result.response_message || result.data?.response_message || 'Unknown error occurred during verification';
-            await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { endResult: `Api response: ${responseMessage}, Api result: ${await CommonHandler.safeStringify(result)}`, status: 'Complete' });
+            await TransactionHistoryRepository.updateTransactionHistoryById(transaction.id, { endResult: `Api response: ${responseMessage}, Api result: ${await CommonHandler.safeStringify(result)}`, status: 'Success' });
 
             // Result handling
             if (result.response_message === 'Valid Authentication') { res.status(200).json({ status: 200, success: true, message: `User ${serviceType} details fetched successfully`, data: result }); }
