@@ -7,9 +7,9 @@ class TransactionHistoryRepository {
 
     static async createTransactionHistory(transactionHistoryData) { return await TransactionHistory.create(transactionHistoryData); }
 
-    static async getAllTransactionHistory(options, req) { return await paginate(TransactionHistory, {}, options.page, options.limit, req, this.sort); }
+    static async getAllTransactionHistory(options, req) { return await paginate(TransactionHistory, {}, options.page, options.limit, req); }
 
-    static async getAllTransactionHistoryforUser(userId, options, req) { return paginate(TransactionHistory, { userId }, options.page, options.limit, req, this.sort); }
+    static async getAllTransactionHistoryforUser(userId, options, req) { return paginate(TransactionHistory, { userId }, options.page, options.limit, req); }
 
     static async getTransactionHistoryById(id) { return await TransactionHistory.findById(id); }
 
@@ -36,7 +36,7 @@ class TransactionHistoryRepository {
             if (filterParams.startDate) query.createdAt.$gte = new Date(filterParams.startDate);
             if (filterParams.endDate) { query.createdAt.$lte = new Date(new Date(filterParams.endDate).setHours(23, 59, 59, 999)); }
         }
-        return await paginate(TransactionHistory, query, options.page, options.limit, req, this.sort);
+        return await paginate(TransactionHistory, query, options.page, options.limit, req);
     }
 }
 export default TransactionHistoryRepository;

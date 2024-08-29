@@ -91,7 +91,7 @@ class PaymentController {
 
     static async paymentUpdateValidation(data) {
         const { paymentId } = data.params;
-        const { status } = data.body;
+        const { status } = data.query;
 
         await CommonHandler.validateRequiredFields({ status });
         await CommonHandler.validatePaymentStatus(status);
