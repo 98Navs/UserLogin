@@ -12,10 +12,11 @@ export const paginate = async (model, query, page, limit, req, sort = { updatedA
 
 //Email handler
 const transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
+    host: "smtp.gmail.com",
+    port: 587,
     secure: false,
-    auth: { user: '942cb39e2f2ca8', pass: '3bad5a04640988' }
+    auth: {
+        user: 'navdeep@scriza.in', pass: 'bqofhxylqvkspers' }
 });
 
 export const sendEmail = async (to, subject, text) => {
