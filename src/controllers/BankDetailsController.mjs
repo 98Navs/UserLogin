@@ -146,7 +146,7 @@ class BankDetailsController {
         if (bankName) await CommonHandler.validateNameFormat(bankName);
         if (accountNumber) await CommonHandler.validateAccountNumberFormat(accountNumber);
         if (accountHolderName) await CommonHandler.validateNameFormat(accountHolderName);
-        if (ifscCode) await CommonHandler.validateIfscCodeFormat(ifscCode);
+        //if (ifscCode) await CommonHandler.validateIfscCodeFormat(ifscCode);
         if (upiId) await CommonHandler.validateUpiIdFormat(upiId);
         if (saveAs) await CommonHandler.validateSaveAsFormat(saveAs);
         if (status) if(!CommonHandler.validStatuses.includes(status)) throw new ValidationError(`Status must be one of: ${CommonHandler.validStatuses.join(', ')}`);

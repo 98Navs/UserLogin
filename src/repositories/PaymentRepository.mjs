@@ -15,8 +15,8 @@ class PaymentRepository {
 
     static async filterPayments(filterParams, options, req) {
         const query = {};
-
-        if (filterParams.status) { query.status = new RegExp(`^${filterParams.status}`, 'i'); }
+        
+        if (filterParams.status && filterParams.status !== "All") { query.status = new RegExp(`^${filterParams.status}`, 'i'); }
         if (filterParams.search) {
             const searchRegex = new RegExp(`^${filterParams.search}`, 'i');
             query.$or = [
