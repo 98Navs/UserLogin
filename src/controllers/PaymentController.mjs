@@ -75,7 +75,7 @@ class PaymentController {
         await CommonHandler.validateSixDigitIdFormat(userId);
         await CommonHandler.validateTransactionFormat(transactionNo);
 
-        const admin = UserRepository.getUserByEmail('admin@scriza.in');
+        const admin = await UserRepository.getUserByEmail('admin@scriza.in');
         if (!admin) { throw new NotFoundError(`Admin with email: admin@scriza.in does not exist`); }
         const bankDetails = await BankDetailsRepository.getBankDetailsByUserIdAndSaveAs(admin.userId, saveAs);
         if (!bankDetails) { throw new NotFoundError(`Admin bank details not found with ${saveAs}.`); }
