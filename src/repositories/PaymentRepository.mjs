@@ -25,7 +25,8 @@ class PaymentRepository {
                 { userName: searchRegex },
                 { status: searchRegex },
                 { transactionNo: searchRegex },
-                { paymentMethod: searchRegex}
+                { paymentMethod: searchRegex },
+                { bankName : searchRegex }
             ];
         }
         if (filterParams.startDate || filterParams.endDate) {
