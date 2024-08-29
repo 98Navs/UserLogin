@@ -22,7 +22,10 @@ class PaymentRepository {
             query.$or = [
                 { $expr: { $regexMatch: { input: { $toString: "$userId" }, regex: searchRegex } } },
                 { $expr: { $regexMatch: { input: { $toString: "$paymentId" }, regex: searchRegex } } },
-                { userName: searchRegex }
+                { userName: searchRegex },
+                { status: searchRegex },
+                { transactionNo: searchRegex },
+                { paymentMethod: searchRegex}
             ];
         }
         if (filterParams.startDate || filterParams.endDate) {

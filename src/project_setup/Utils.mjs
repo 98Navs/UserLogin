@@ -2,7 +2,7 @@
 import nodemailer from 'nodemailer';
 
 //Pagination
-export const paginate = async (model, query, page, limit, req, sort = { createdAt: -1 }) => {
+export const paginate = async (model, query, page, limit, req, sort = { updatedAt: -1 }) => {
     const skip = (page - 1) * limit;
     const [data, totalDocuments] = await Promise.all([model.find(query).sort(sort).skip(skip).limit(limit).exec(), model.countDocuments(query)]);
     const pages = !limit ? 0 :  Math.ceil(totalDocuments / limit);
