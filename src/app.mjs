@@ -7,6 +7,8 @@ import dns from 'dns';
 import { monitorEventLoopDelay } from 'perf_hooks';
 
 const numCPUs = os.cpus().length;
+
+export default numCPUs ;
 const MEMORY_USAGE_THRESHOLD = 100 * 1024 * 1024; // 100 MB
 const EVENT_LOOP_DELAY_THRESHOLD = 500; // 500 ms
 
