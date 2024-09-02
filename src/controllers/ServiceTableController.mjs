@@ -16,7 +16,7 @@ class ServiceTableController{
 
     static async getCpuNumber(req, res) {
         try {
-            const cpuNumber = appClass;
+            const cpuNumber = await parseInt(appClass);
             console.log(cpuNumber);
             res.status(200).json({ status: 200, success: true, message: `Total number of CPUs availaible`, data: cpuNumber });
         } catch (error) {
