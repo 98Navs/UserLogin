@@ -1,6 +1,5 @@
 // src/controllers/ServiceTableController.mjs
 import ServiceTableRepository from "../repositories/ServiceTableRepository.mjs";
-import appClass from '../app.mjs';
 import { CommonHandler, ValidationError } from "./CommonHandler.mjs";
 
 class ServiceTableController{
@@ -9,16 +8,6 @@ class ServiceTableController{
             const serviceTableData = await ServiceTableController.validateServiceTable(req.body); 
             const serviceTable = await ServiceTableRepository.createServiceTable(serviceTableData);
             res.status(201).json({ status: 201, success: true, message: `Service table created successfully`, data: serviceTable });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
-    static async getCpuNumber(req, res) {
-        try {
-            const cpuNumber = await parseInt(appClass);
-            console.log(cpuNumber);
-            res.status(200).json({ status: 200, success: true, message: `Total number of CPUs availaible`, data: cpuNumber });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }

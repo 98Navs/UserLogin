@@ -169,7 +169,6 @@ class UserRegistrationController{
         //if (gstNumber) { await CommonHandler.validateGstNumberFormat(gstNumber); }
         if (status) { await CommonHandler.validateStatus(status); }
         if (pinCode) { await CommonHandler.validatePinCodeFormat(pinCode); }
-        console.log(data);
         if (password) {
             await CommonHandler.validatePasswordFormat(password);
             data.password = await CommonHandler.hashPassword(password);

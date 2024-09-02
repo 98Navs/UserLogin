@@ -8,6 +8,4 @@ const router = express.Router();
 // POST /Route to create a new service table
 router.post('/createServiceTable', Middleware.admin, ServiceTableController.createServiceTable);
 
-router.get('/getCpuNumber', ServiceTableController.getCpuNumber);
-
 export default router;
