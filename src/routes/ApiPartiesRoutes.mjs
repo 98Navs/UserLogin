@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/createApiParty', Middleware.admin, ApiPartiesController.createApiParty);
 
 // GET /Route to fetch Api input keys by serviceId
-router.get('/getPrimaryApiInputKeysByServiceId', Middleware.user, ApiPartiesController.getPrimaryApiInputKeysByServiceId);
+router.get('/getPrimaryApiInputKeysByServiceName/:serviceName', Middleware.user, ApiPartiesController.getPrimaryApiInputKeysByServiceName);
 
 // POST /Route to create a new user
 router.put('/changePrimaryByApiOperatorId/:apiOperatorId', Middleware.admin, ApiPartiesController.changePrimaryByApiOperatorId);

@@ -13,7 +13,7 @@ class ApiPartiesRepository {
 
     static async getCurrentPrimaryByServiceName(serviceName) { return await ApiParties.findOne({ serviceName, primary: 'Yes' }); }
 
-    static async getCurrentPrimaryByServiceId(serviceId) { return await ApiParties.findOne({ serviceId, primary: 'Yes' }); }
+    static async getCurrentPrimaryByServiceName(serviceName) { return await ApiParties.findOne({ serviceName, primary: 'Yes' }); }
 
     static async updateApiPartyDetailsByApiOperatorId(apiOperatorId, updateData) { return await ApiParties.findOneAndUpdate({ apiOperatorId }, updateData, { new: true }); }
 }
