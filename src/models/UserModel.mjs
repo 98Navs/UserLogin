@@ -9,6 +9,7 @@ const services = new Schema({
     serviceLimit: { type: Number, required: true },
     serviceLifeEnds: { type: String, required: true },
     serviceChecked: { type: Boolean, default: false },
+    serviceUrl: { type: String, required: true },
     status: { type: String, required: true }
 }, { _id: false });
 
