@@ -13,6 +13,16 @@ class ServiceTableController{
         }
     }
 
+    static async getAllServicesNames(req, res) {
+        try {
+            const servicesNames = await ServiceTableRepository.getAllServicesNames();
+            const mappedServiceNames = servicesNames.map(name => ({ serviceName: name }));
+            res.status(200).json({ status: 201, success: true, message: `Service names fetched successfully`, data: mappedServiceNames });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async validateServiceTable(data) {
         const { serviceName, serviceId, category } = data;
 
