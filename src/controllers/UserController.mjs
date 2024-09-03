@@ -32,6 +32,16 @@ class UserController {
         }
     }
 
+    static async getUserDetails(req, res) {
+        try {
+            const userId = req.user.userId;
+            const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
+            res.status(200).json({ status: 200, success: true, message: `Data fetched successfully for userId ${userId}`, data: user });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async getUserLoginLogs(req, res) {
         try {
             const userId = req.user.userId;

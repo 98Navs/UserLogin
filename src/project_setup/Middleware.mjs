@@ -5,9 +5,9 @@ import { CommonHandler, MiddlewareError } from '../controllers/CommonHandler.mjs
 class Middleware {
     //Validate Authentiacation
     static async validateToken(req, res, next, roles, message) {
-        const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
-        if (!token) throw new MiddlewareError('Token not found in header or cookies');
         try {
+            const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
+            if (!token) throw new MiddlewareError('Token not found in header or cookies');
             const decodedToken = jwt.verify(token, process.env.APP_SECRET);
             if (!decodedToken) { throw new MiddlewareError('Unauthorized or distorted token'); }
             if (roles && !roles.includes(decodedToken.role)) { return res.status(403).json({ status: 403, success: false, message }); }
@@ -19,8 +19,8 @@ class Middleware {
     }
 
     static optionalMiddleware(req, res, next) {
-        const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
         try {
+            const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
             if (token) {
                 jwt.verify(token, process.env.APP_SECRET, (error, decodedToken) => {
                     if (!error) req.user = decodedToken;

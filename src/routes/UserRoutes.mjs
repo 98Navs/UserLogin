@@ -39,6 +39,9 @@ router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 // GET /Route to get user details by userId
 router.get('/getUserByUserId/:userId', Middleware.admin, UserController.getUserByUserId);
 
+// GET /Route to get user details
+router.get('/getUserDetails', Middleware.user, UserController.getUserDetails);
+
 // GET /Route to get user login logs details
 router.get('/getUserLoginLogs', Middleware.user, UserController.getUserLoginLogs);
 
