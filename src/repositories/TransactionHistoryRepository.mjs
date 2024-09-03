@@ -27,8 +27,9 @@ class TransactionHistoryRepository {
             const searchRegex = new RegExp(`^${filterParams.search}`, 'i');
             query.$or = [
                 { $expr: { $regexMatch: { input: { $toString: "$userId" }, regex: searchRegex } } },
-                { $expr: { $regexMatch: { input: { $toString: "$paymentId" }, regex: searchRegex } } },
-                { userName: searchRegex }
+                { userName: searchRegex },
+                { transactionId: searchRegex },
+                { serviceName : searchRegex }
             ];
         }
         if (filterParams.startDate || filterParams.endDate) {
