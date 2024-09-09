@@ -133,6 +133,7 @@ class UserRegistrationController{
             const availableServices = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
             if (!availableServices) { throw new NotFoundError(`Package not found with package name: ${packageName}`); }
             const serviceTypes = availableServices.servicesProvided.map(service => ({ serviceType: service.serviceType, checked: false }));
+            serviceTypes.unshift({ serviceType: 'ALL', checked: false });
             res.status(200).json({ status: 200, success: true, message: 'Service types fetched successfully', data: serviceTypes });
         } catch (error) {
             CommonHandler.catchError(error, res);
