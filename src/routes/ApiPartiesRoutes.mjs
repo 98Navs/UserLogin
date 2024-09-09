@@ -11,6 +11,9 @@ router.post('/createApiParty', Middleware.admin, ApiPartiesController.createApiP
 // GET /Route to fetch Api input keys by serviceId
 router.get('/getPrimaryApiInputKeysByServiceName/:serviceName', Middleware.user, ApiPartiesController.getPrimaryApiInputKeysByServiceName);
 
+// GET /Route to fetch all api parties
+router.get('/getAllApiParties', Middleware.admin, ApiPartiesController.getAllApiParties);
+
 // POST /Route to create a new user
 router.put('/changePrimaryByApiOperatorId/:apiOperatorId', Middleware.admin, ApiPartiesController.changePrimaryByApiOperatorId);
 

@@ -7,6 +7,8 @@ class ApiPartiesRepository {
 
     static async getAllApiPartiess(options, req) { return await paginate(ApiParties, {}, options.page, options.limit, req); }
 
+    static async getAllApiParties() { return await ApiParties.find(); }
+
     static async getApiPartyByApiOperatorId(apiOperatorId) { return await ApiParties.findOne({ apiOperatorId }); }
 
     static async getApiPartyByServiceName(serviceName) { return await ApiParties.findOne({ serviceName: new RegExp(`^${serviceName}`, 'i') }); }

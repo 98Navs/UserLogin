@@ -11,7 +11,7 @@ export default async function setupExpressApp() {
     app.use(express.urlencoded({ extended: true, limit: '1mb' }));
     app.use(cors({
         credentials: true,
-        origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:5173', 'http://localhost:1102', 'https://user-login-phi-sooty.vercel.app']
+        origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:5173', 'http://localhost:1102', 'https://user-login-phi-sooty.vercel.app', 'https://documentverification-two.vercel.app']
     }));
 
     app.use(express.static('src/public'));
