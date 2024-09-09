@@ -91,14 +91,19 @@ class PaymentController {
 
     static async paymentUpdateValidation(data) {
         const { paymentId } = data.params;
-        const { status } = data.query;
+        let { status } = data.query;
 
         await CommonHandler.validateRequiredFields({ status });
         await CommonHandler.validatePaymentStatus(status);
 
         const payment = await PaymentController.validateAndFetchPaymentByPaymentId(paymentId);
         const user = await UserRepository.getUserByUserId(payment.userId);
-        if (!user) { throw new NotFoundError(`User wallet with userId: ${payment.userId} does not exist`); }
+
+        if (!user || user.status !== 'Active') {
+            status = 'Rejected';
+            await PaymentRepository.updatePaymentByPaymentId(paymentId, { status });
+            throw new NotFoundError(`User wallet with userId: ${payment.userId} either does not exist or user status is Inactive. \n Request has been rejected.`);
+        } 
 
         if (status === 'Approved') {
             user.amount += payment.amount;
