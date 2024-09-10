@@ -41,9 +41,9 @@ class DashboardController {
     static async getAdminGraphStats(req, res) {
         try {
             const { startDate, endDate } = req.query;
-            if (!startDate || !endDate) { throw new ValidationError('Both startDate and endDate are required.'); }
+            await CommonHandler.validateRequiredFields({ startDate, endDate });
             const data = await DashboardRepository.getAdminGraphStats(startDate, endDate);
-            res.status(200).json({ status: 200, success: true, message: 'Graph stats fetched successfully', data });
+            res.status(200).json({ status: 200, success: true, message: 'Graph admin stats fetched successfully', data });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -51,11 +51,11 @@ class DashboardController {
 
     static async getUserGraphStats(req, res) {
         try {
-            const { startDate, endDate } = req.query;
             const userId = req.user.userId;
-            if (!startDate || !endDate) { throw new ValidationError('Both startDate and endDate are required.'); }
+            const { startDate, endDate } = req.query;
+            await CommonHandler.validateRequiredFields({ startDate, endDate });
             const data = await DashboardRepository.getUserGraphStats(userId, startDate, endDate);
-            res.status(200).json({ status: 200, success: true, message: 'Graph stats fetched successfully', data });
+            res.status(200).json({ status: 200, success: true, message: `Graph user stats with userId: ${userId} fetched successfully`, data });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
