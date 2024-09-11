@@ -22,7 +22,7 @@ class ApiPartiesRepository {
     static async updateApiPartyDetailsByApiOperatorId(apiOperatorId, updateData) { return await ApiParties.findOneAndUpdate({ apiOperatorId }, updateData, { new: true }); }
 
     static async filterApiParties( filterParams, options, req) {
-        const query = {};
+        const query = { primary: 'Yes' };
         if (filterParams.status) { query.status = new RegExp(`^${filterParams.status}`, 'i'); }
         if (filterParams.search) {
             const searchRegex = new RegExp(`^${filterParams.search}`, 'i');
