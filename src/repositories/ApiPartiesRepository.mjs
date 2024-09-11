@@ -15,6 +15,8 @@ class ApiPartiesRepository {
 
     static async getApiPartyByServiceName(serviceName) { return await ApiParties.findOne({ serviceName: new RegExp(`^${serviceName}`, 'i') }); }
 
+    static async getApiPartiesByServiceName(serviceName) { return await ApiParties.find({ serviceName }); }
+
     static async getCurrentPrimaryByServiceName(serviceName) { return await ApiParties.findOne({ serviceName, primary: 'Yes' }); }
 
     static async getCurrentPrimaryByServiceName(serviceName) { return await ApiParties.findOne({ serviceName, primary: 'Yes' }); }

@@ -14,17 +14,6 @@ class ApiPartiesController {
         }
     }
 
-    static async getPrimaryApiInputKeysByServiceName(req, res) {
-        try {
-            const { serviceName } = req.params;
-            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(serviceName);
-            const apiInputKeys = apiParty.apiInputKeys.map(input => ({ apiInputKey: input }));
-            res.status(200).json({ status: 200, success: true, message: 'Primary api input keys fetched by serviceId successfully', data: apiInputKeys });
-        } catch (error) {
-            CommonHandler.catchError(error, res);
-        }
-    }
-
     static async getAllApiParties(req, res) {
         try {
             const { status, search, startDate, endDate, pageNumber = 1, perpage = 10 } = req.query;
@@ -47,6 +36,29 @@ class ApiPartiesController {
         }
     }
 
+    static async getApiOperatorsNamesByServiceName(req, res) {
+        try {
+            const { serviceName } = req.params;
+            const apiOperators = await ApiPartiesRepository.getApiPartiesByServiceName(serviceName);
+            if (!apiOperators.length > 0) { throw new NotFoundError(`Api operators not found for service name: ${serviceName}.`) }
+            const operators = apiOperators.map(operatorsName => ({ operatorsName: operatorsName.apiOperatorName }))
+            res.status(200).json({ status: 200, success: true, message: 'All api operators names fetched successfully', data: operators });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async getPrimaryApiInputKeysByServiceName(req, res) {
+        try {
+            const { serviceName } = req.params;
+            const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(serviceName);
+            const apiInputKeys = apiParty.apiInputKeys.map(input => ({ apiInputKey: input }));
+            res.status(200).json({ status: 200, success: true, message: 'Primary api input keys fetched by serviceId successfully', data: apiInputKeys });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async changePrimaryByServiceNameAndApiOperatorName(req, res) {
         try {
             const { serviceName, apiOperatorName } = req.query;
@@ -63,13 +75,6 @@ class ApiPartiesController {
     }
 
     //Static Methods Only For This Class (Not To Be Used In Routes)
-    static async validateAndFetchApiOperatorByApiId(apiOperatorId) {
-        await CommonHandler.validateSixDigitIdFormat(apiOperatorId);
-        const apiParty = await ApiPartiesRepository.getApiPartyByApiOperatorId(apiOperatorId);
-        if (!apiParty) throw new NotFoundError(`Api operator details not found for apiOperatorId: ${apiOperatorId}.`);
-        return apiParty;
-    }
-
     static async validateApiPartiesData(data) {
         const { apiOperatorName, serviceName, apiOperatorCharges, ourCharges } = data;
         await CommonHandler.validateRequiredFields({ apiOperatorName, serviceName, apiOperatorCharges, ourCharges });
