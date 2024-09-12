@@ -61,7 +61,7 @@ class ApiPartiesController {
 
     static async changePrimaryByServiceNameAndApiOperatorName(req, res) {
         try {
-            const { serviceName, apiOperatorName } = req.query;
+            const { serviceName, apiOperatorName } = req.params;
             await CommonHandler.validateRequiredFields({serviceName, apiOperatorName})
             const apiParty = await ApiPartiesRepository.getApiPartyByServiceNameAndApiOperatorName({ serviceName, apiOperatorName });
             if (!apiParty) { throw new NotFoundError(`No api party found for the provided service name: ${serviceName} and api operator name: ${apiOperatorName}`); }

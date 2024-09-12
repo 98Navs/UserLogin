@@ -14,9 +14,10 @@ router.get('/getPrimaryApiInputKeysByServiceName/:serviceName', Middleware.user,
 // GET /Route to fetch all api parties
 router.get('/getAllApiParties', Middleware.admin, ApiPartiesController.getAllApiParties);
 
+// GET /Route to fetch api operators name by service name
 router.get('/getApiOperatorsNamesByServiceName/:serviceName', Middleware.admin, ApiPartiesController.getApiOperatorsNamesByServiceName);
 
 // POST /Route to create a new user
-router.put('/changePrimaryByServiceNameAndApiOperatorName', Middleware.admin, ApiPartiesController.changePrimaryByServiceNameAndApiOperatorName);
+router.put('/changePrimaryByServiceNameAndApiOperatorName/:serviceName/:apiOperatorName', Middleware.admin, ApiPartiesController.changePrimaryByServiceNameAndApiOperatorName);
 
 export default router;
