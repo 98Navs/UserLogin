@@ -11,11 +11,11 @@ class ApiPartiesRepository {
 
     static async getApiPartyByApiOperatorId(apiOperatorId) { return await ApiParties.findOne({ apiOperatorId }); }
 
-    static async getApiPartyByServiceNameAndApiOperatorName({ serviceName, apiOperatorName }) { return await ApiParties.findOne({ serviceName: new RegExp(`^${serviceName}`, 'i'), apiOperatorName: new RegExp(`^${apiOperatorName}`, 'i') }); }
+    static async getApiPartyByServiceIdAndApiOperatorName({ serviceId, apiOperatorName }) { return await ApiParties.findOne({ serviceId, apiOperatorName: new RegExp(`^${apiOperatorName}`, 'i') }); }
 
     static async getApiPartyByServiceName(serviceName) { return await ApiParties.findOne({ serviceName: new RegExp(`^${serviceName}`, 'i') }); }
 
-    static async getApiPartiesByServiceName(serviceName) { return await ApiParties.find({ serviceName }); }
+    static async getApiPartiesByServiceId(serviceId) { return await ApiParties.find({ serviceId }); }
 
     static async getCurrentPrimaryByServiceName(serviceName) { return await ApiParties.findOne({ serviceName, primary: 'Yes' }); }
 

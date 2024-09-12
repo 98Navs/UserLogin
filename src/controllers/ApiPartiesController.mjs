@@ -38,8 +38,8 @@ class ApiPartiesController {
 
     static async getApiOperatorsNamesByServiceName(req, res) {
         try {
-            const { serviceName } = req.params;
-            const apiOperators = await ApiPartiesRepository.getApiPartiesByServiceName(serviceName);
+            const { serviceId } = req.params;
+            const apiOperators = await ApiPartiesRepository.getApiPartiesByServiceId(serviceId);
             if (!apiOperators.length > 0) { throw new NotFoundError(`Api operators not found for service name: ${serviceName}.`) }
             const operators = apiOperators.map(operatorsName => ({ operatorsName: operatorsName.apiOperatorName }))
             res.status(200).json({ status: 200, success: true, message: 'All api operators names fetched successfully', data: operators });
@@ -61,9 +61,9 @@ class ApiPartiesController {
 
     static async changePrimaryByServiceNameAndApiOperatorName(req, res) {
         try {
-            const { serviceName, apiOperatorName } = req.params;
-            await CommonHandler.validateRequiredFields({serviceName, apiOperatorName})
-            const apiParty = await ApiPartiesRepository.getApiPartyByServiceNameAndApiOperatorName({ serviceName, apiOperatorName });
+            const { serviceId, apiOperatorName } = req.params;
+            await CommonHandler.validateRequiredFields({ serviceId, apiOperatorName})
+            const apiParty = await ApiPartiesRepository.getApiPartyByServiceIdAndApiOperatorName({ serviceId, apiOperatorName });
             if (!apiParty) { throw new NotFoundError(`No api party found for the provided service name: ${serviceName} and api operator name: ${apiOperatorName}`); }
             const currentPrimary = await ApiPartiesRepository.getCurrentPrimaryByServiceName(apiParty.serviceName);
             if (currentPrimary) { await ApiPartiesRepository.updateApiPartyDetailsByApiOperatorId(currentPrimary.apiOperatorId, { primary: 'No' }); }
