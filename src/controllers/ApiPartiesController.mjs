@@ -2,6 +2,7 @@
 import ApiPartiesRepository from "../repositories/ApiPartiesRepository.mjs";
 import ServiceTableRepository from "../repositories/ServiceTableRepository.mjs";
 import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.mjs';
+import { performance } from 'perf_hooks';
 
 class ApiPartiesController {
     static async createApiParty(req, res) {
@@ -16,6 +17,7 @@ class ApiPartiesController {
 
     static async getAllApiParties(req, res) {
         try {
+            const startTime = performance.now();
             const { status, search, startDate, endDate, pageNumber = 1, perpage = 10 } = req.query;
             const options = { page: Number(pageNumber), limit: Number(perpage) };
             const filterParams = { status, search, startDate, endDate };
@@ -30,7 +32,7 @@ class ApiPartiesController {
                     return cleanItem;
                 });
             }
-            res.status(200).json({ status: 200, success: true, message: 'All api fetched successfully', data: apiParties });
+            res.status(200).json({ status: 200, success: true, message: 'All api fetched successfully', timeTaken: performance.now() - startTime,  data: apiParties });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -41,8 +43,19 @@ class ApiPartiesController {
             const { serviceId } = req.params;
             const apiOperators = await ApiPartiesRepository.getApiPartiesByServiceId(serviceId);
             if (!apiOperators.length > 0) { throw new NotFoundError(`Api operators not found for service name: ${serviceName}.`) }
-            const operators = apiOperators.map(operatorsName => ({ operatorsName: operatorsName.apiOperatorName }))
+            const operators = apiOperators.map(apiOperators => ({ operatorsName: apiOperators.apiOperatorName }))
             res.status(200).json({ status: 200, success: true, message: 'All api operators names fetched successfully', data: operators });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async deleteApiPartyByApiOperatorId(req, res) {
+        try {
+            const { apiOperatorId } = req.params;
+            const deletApiOperator = await ApiPartiesRepository.deleteApiPartyByApiOperatorId(apiOperatorId);
+            res.status()
+            res.graph
         } catch (error) {
             CommonHandler.catchError(error, res);
         }

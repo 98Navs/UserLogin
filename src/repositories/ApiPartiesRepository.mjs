@@ -23,6 +23,8 @@ class ApiPartiesRepository {
 
     static async updateApiPartyDetailsByApiOperatorId(apiOperatorId, updateData) { return await ApiParties.findOneAndUpdate({ apiOperatorId }, updateData, { new: true }); }
 
+    static async deleteApiPartyByApiOperatorId(apiOperatorId) { return await ApiParties.findOne({ apiOperatorId }); }
+
     static async filterApiParties( filterParams, options, req) {
         const query = { primary: 'Yes' };
         if (filterParams.status) { query.status = new RegExp(`^${filterParams.status}`, 'i'); }
