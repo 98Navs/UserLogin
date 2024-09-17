@@ -8,4 +8,6 @@ const router = express.Router();
 // POST /Route to create a package setup
 router.post('/createPackageSetup', Middleware.admin, PackageSetupController.createPackageSetup);
 
+router.get('/getAllPackageSetup', Middleware.admin, PackageSetupController.getAllPackageSetup);
+
 export default router;
