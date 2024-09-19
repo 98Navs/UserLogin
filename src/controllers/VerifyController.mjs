@@ -38,7 +38,7 @@ class VerifyController {
             if (!userService || userService.status !== 'Active' || today.isAfter(dayjs(userService.serviceLifeEnds))) { throw new ValidationError(`Service ${serviceType} is either not included, inactive, or expired in the user's package.`); }
             
             // Calculate the base charge and gst charge based on service limit
-            const baseCharge = userService.serviceLimit > 0 ? packageServiceCharge.serviceCharges : (await PackageSetupRepository.getPackageSetupByPackageName('DEFAULT PACKAGE')).servicesProvided.find(service => service.serviceType === serviceType).serviceCharges;
+            const baseCharge = userService.serviceLimit > 0 ? packageServiceCharge.serviceCharge : (await PackageSetupRepository.getPackageSetupByPackageName('BASE PACKAGE')).servicesProvided.find(service => service.serviceType === serviceType).serviceCharge;
             const gstCharge = baseCharge * 0.18;
             const totalCharge = baseCharge + gstCharge;
             if (user.amount < totalCharge) { throw new ValidationError(`Insufficient funds in user account. Balance: RS: ${user.amount}, Charge: RS: ${totalCharge}`); }

@@ -29,29 +29,26 @@ class PackageSetupController{
     }
 
     static async validatePackageSetupData(data) {
-        const { packageName, servicesProvided } = data;
+        const { packageName, packageLifeSpan, packageCharges, servicesProvided } = data;
 
-        if (!packageName) { throw new ValidationError('Package name is required'); }
+        await CommonHandler.validateRequiredFields({packageName, packageLifeSpan, packageCharges})
         if (!servicesProvided || !Array.isArray(servicesProvided) || servicesProvided.length === 0) { throw new ValidationError('At least one service must be provided'); }
 
-        const existingPackage = await PackageSetupRepository.getPackageSetupByPackageName('BASE PACKAGE');
-        if (!existingPackage) { throw new Error('Package not found'); }
+        const existingPackage = await PackageSetupRepository.getPackageSetupByPackageName('GOLD PACKAGE');
+        if (!existingPackage) { throw new NotFoundError('Package not found'); }
 
         for (const service of servicesProvided) {
             if (!service.serviceType) { throw new ValidationError('Service type is required'); }
-            if (service.serviceCharges == null) { throw new ValidationError('Service charges are required'); }
-            if (service.serviceLimit == null) { throw new ValidationError('Service limit is required'); }
-            if (service.serviceLifeSpan == null) { throw new ValidationError('Service life span is required'); }
+            if (service.serviceCharge == null) { throw new ValidationError('Service charges are required'); }
         }
 
         const updatedServicesProvided = servicesProvided.map(service => {
             const matchingService = existingPackage.servicesProvided.find( existingService => existingService.serviceType === service.serviceType );
-
             if (matchingService) { return { ...service, serviceUrl: matchingService.serviceUrl  };
-            } else { return { ...service, serviceUrl: 'URL not found' }; } });
-
+            } else { return { ...service, serviceUrl: 'URL not found' }; }
+        });
+        
         data.servicesProvided = updatedServicesProvided;
-
         return data;
     }
 }

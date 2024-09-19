@@ -183,7 +183,7 @@ class UserRegistrationController{
             const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
             if (!packageSetup) { throw new NotFoundError(`No package found by entered name: ${packageName}`); }
             const today = dayjs();
-            const allServicesActive = serviceType && serviceType.includes('ALL')  || null;
+            const allServicesActive = serviceType && serviceType.includes('ALL') || null;
             data.packageDetails = packageSetup.servicesProvided.map(service => {
                 const expirationDate = today.add(service.serviceLifeSpan, 'day').format('YYYY-MM-DD');
                 const isServiceTypeIncluded = allServicesActive || (serviceType && serviceType.includes(service.serviceType));
