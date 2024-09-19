@@ -8,14 +8,8 @@ class DashboardController {
     static async getAdminApiHitCountStats(req, res) {
         try {
             const { selectDate } = req.query;
-            const serviceNames = Object.keys(VerifyController.SERVICES);
-            const serviceCounts = await Promise.all(serviceNames.map(service => DashboardRepository.getAdminApiHitCountStats(VerifyController.SERVICES[service], selectDate)));
-            const data = serviceNames.reduce((result, service, index) => {
-                result[service] = serviceCounts[index];
-                return result;
-            }, {});
-
-            res.status(200).json({ status: 200, success: true, message: 'Admin API hit counts fetched successfully', data });
+            const services = await Promise.all(Object.values(VerifyController.SERVICES).map(async service => ({ serviceName: service, ...(await DashboardRepository.getAdminApiHitCountStats( service, selectDate)) })));
+            res.status(200).json({ status: 200, success: true, message: 'Admin API hit counts fetched successfully', data: services });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -25,14 +19,8 @@ class DashboardController {
         try {
             const { selectDate } = req.query;
             const userId = req.user.userId;
-            const serviceNames = Object.keys(VerifyController.SERVICES);
-            const serviceCounts = await Promise.all(serviceNames.map(service => DashboardRepository.getUserApiHitCountStats(userId, VerifyController.SERVICES[service], selectDate)));
-            const data = serviceNames.reduce((result, service, index) => {
-                result[service] = serviceCounts[index];
-                return result;
-            }, {});
-
-            res.status(200).json({ status: 200, success: true, message: 'User API hit counts fetched successfully', data });
+            const services = await Promise.all( Object.values(VerifyController.SERVICES).map(async service => ({ serviceName: service, ...(await DashboardRepository.getUserApiHitCountStats(userId, service, selectDate)) })) );
+            res.status(200).json({ status: 200,success: true, message: 'User API hit counts fetched successfully', data: services });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }

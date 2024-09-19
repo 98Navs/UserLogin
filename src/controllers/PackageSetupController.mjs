@@ -28,6 +28,36 @@ class PackageSetupController{
         }
     }
 
+    static async updatePackageSetupByPackageName(req, res) {
+        try {
+            const { packageName } = req.params;
+            await PackageSetupController.validateAndFetchPackageSetupByPackageName(packageName);
+            const updatedData = await PackageSetupController.validatePackageSetupData(req.body);
+            const updatedPackageSetup = await PackageSetupRepository.updatePackageSetupByPackageName(packageName, updatedData);
+            res.status(200).json({ status: 200, success: true, message: 'Package setup updated successfully', data: updatedPackageSetup });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async deletePackageSetupByPackageName(req, res) {
+        try {
+            const { packageName } = req.params;
+            await PackageSetupController.validateAndFetchPackageSetupByPackageName(packageName);
+            const deletedPackageSetup = await PackageSetupRepository.deletePackageSetupByPackageName(packageName);
+            res.status(200).json({ status: 200, success: true, message: 'Package setup deleted successfully', data: deletedPackageSetup });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    // Static Methods Only For This Class (Not To Be Used In Routes)
+    static async validateAndFetchPackageSetupByPackageName(packageName) {
+        const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
+        if (!packageSetup) { throw new NotFoundError(`Package setup with packageName: ${packageName} not found`); }
+        return packageSetup;
+    }
+
     static async validatePackageSetupData(data) {
         const { packageName, packageLifeSpan, packageCharges, servicesProvided } = data;
 

@@ -7,7 +7,7 @@ class DashboardRepository {
         const today = dayjs().startOf('day');
         const selectedDay = selectDate ? dayjs(selectDate, 'DD-MM-YYYY').startOf('day') : null;
 
-        const totalQuery = { serviceName, status: 'Complete' };
+        const totalQuery = { serviceName, status: 'Success' };
         const todayQuery = { ...totalQuery, createdAt: { $gte: today.toDate(), $lt: today.add(1, 'day').toDate() } };
         const selectDateQuery = selectedDay ? { ...totalQuery, createdAt: { $gte: selectedDay.toDate(), $lt: today.add(1, 'day').toDate() } } : null;
 
@@ -19,7 +19,7 @@ class DashboardRepository {
         const today = dayjs().startOf('day');
         const selectedDay = selectDate ? dayjs(selectDate, 'DD-MM-YYYY').startOf('day') : null;
 
-        const totalQuery = { userId, serviceName, status: 'Complete' };
+        const totalQuery = { userId, serviceName, status: 'Success' };
         const todayQuery = { ...totalQuery, createdAt: { $gte: today.toDate(), $lt: today.add(1, 'day').toDate() } };
         const selectDateQuery = selectedDay ? { ...totalQuery, createdAt: { $gte: selectedDay.toDate(), $lt: today.add(1, 'day').toDate() } } : null;
 
@@ -28,7 +28,7 @@ class DashboardRepository {
     }
 
     static async getAdminGraphStats(startDate, endDate) {
-        const matchStage = { status: 'Complete', createdAt: { $gte: new Date(startDate), $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) } };
+        const matchStage = { status: 'Success', createdAt: { $gte: new Date(startDate), $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) } };
         const aggregateStats = (format) => { return TransactionHistory.aggregate([{ $match: matchStage }, { $group: { _id: { $dateToString: { format, date: '$createdAt' } }, count: { $sum: 1 } } }, { $sort: { _id: 1 } }]); };
 
         const dailyStats = aggregateStats('%Y-%m-%d');
@@ -41,7 +41,7 @@ class DashboardRepository {
     }
 
     static async getUserGraphStats(userId, startDate, endDate) {
-        const matchStage = { userId: userId, status: 'Complete', createdAt: { $gte: new Date(startDate), $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) } };
+        const matchStage = { userId: userId, status: 'Success', createdAt: { $gte: new Date(startDate), $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) } };
         const aggregateStats = (format) => { return TransactionHistory.aggregate([{ $match: matchStage }, { $group: { _id: { $dateToString: { format, date: '$createdAt' } }, count: { $sum: 1 } } }, { $sort: { _id: 1 } }]); };
 
         const dailyStats = aggregateStats('%Y-%m-%d');

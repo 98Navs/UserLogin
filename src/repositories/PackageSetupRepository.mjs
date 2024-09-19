@@ -13,7 +13,7 @@ class PackageSetupRepository{
 
     static async updatePackageSetupByPackageName(packageName, packageSetupData) { return await PackageSetup.findOneAndUpdate({ packageName }, packageSetupData, { new: true }); }
 
-    static async deletePackageSetupByPackageName(packageName) { return await PackageSetup.findOneAndDelete({ packageName }); }
+    static async deletePackageSetupByPackageName(packageName) { return await PackageSetup.findOneAndDelete({ packageName: new RegExp(`^${packageName}`, 'i') }); }
 
     static async filterPackageSetup(filterParams, options, req) {
         const query = {};
