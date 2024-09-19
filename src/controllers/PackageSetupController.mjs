@@ -39,7 +39,7 @@ class PackageSetupController{
 
         for (const service of servicesProvided) {
             if (!service.serviceType) { throw new ValidationError('Service type is required'); }
-            if (service.serviceCharge == null) { throw new ValidationError('Service charges are required'); }
+            if (service.serviceCharge == null) { throw new ValidationError('Service charge are required'); }
         }
 
         const updatedServicesProvided = servicesProvided.map(service => {

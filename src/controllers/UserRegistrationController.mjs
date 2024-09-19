@@ -13,6 +13,7 @@ class UserRegistrationController{
     static async createUser(req, res) {
         try {
             const userData = await UserRegistrationController.validateUserData(req.body);
+            console.log(userData);
             const user = await UserRepository.createUser(userData);
             res.status(201).json({ status: 201, success: true, message: 'User created successfully', user });
         } catch (error) {
@@ -184,12 +185,11 @@ class UserRegistrationController{
             if (!packageSetup) { throw new NotFoundError(`No package found by entered name: ${packageName}`); }
             const today = dayjs();
             const allServicesActive = serviceType && serviceType.includes('ALL') || null;
-            data.packageDetails = packageSetup.servicesProvided.map(service => {
-                const expirationDate = today.add(service.serviceLifeSpan, 'day').format('YYYY-MM-DD');
-                const isServiceTypeIncluded = allServicesActive || (serviceType && serviceType.includes(service.serviceType));
-                return { ...service, serviceLifeEnds: expirationDate, status: isServiceTypeIncluded ? 'Active' : 'InActive', serviceChecked: isServiceTypeIncluded ? true : false };
-            });
+            data.packageLifeSpan = today.add(packageSetup.packageLifeSpan, 'day').format('YYYY-MM-DD');
+            data.packageDetails = packageSetup.servicesProvided.map(service => ({...service,status: allServicesActive || serviceType?.includes(service.serviceType) ? 'Active' : 'InActive', serviceChecked: allServicesActive || serviceType?.includes(service.serviceType)
+            }));
         }
+        
         return data;
     }
 

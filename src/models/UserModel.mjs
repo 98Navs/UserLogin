@@ -6,8 +6,6 @@ const generateDefaultApiKey = () => { return crypto.randomBytes(25).toString('he
 
 const services = new Schema({
     serviceType: { type: String, required: true },
-    serviceLimit: { type: Number, required: true },
-    serviceLifeEnds: { type: String, required: true },
     serviceChecked: { type: Boolean, default: false },
     serviceUrl: { type: String, required: true },
     status: { type: String, required: true }
@@ -31,6 +29,7 @@ const userSchema = new Schema({
     apiKey: { type: String, default: generateDefaultApiKey, unique: true },
     whiteListIp: [{ type: String }],
     packageName: { type: String, default: 'Default Package' },
+    packageLifeSpan: { type: String, required: true },
     packageDetails: [services],
     role: { type: String, default: 'user' },
     panNumber: { type: String, default: 'NaN' },
