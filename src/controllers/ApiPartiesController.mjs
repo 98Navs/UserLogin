@@ -63,8 +63,9 @@ class ApiPartiesController {
 
     static async getPrimaryApiInputKeysByServiceName(req, res) {
         try {
-            const { serviceName } = req.params;
+            const { serviceName } = req.query;
             const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(serviceName);
+            console.log(apiParty);
             const apiInputKeys = apiParty.apiInputKeys.map(input => ({ apiInputKey: input }));
             res.status(200).json({ status: 200, success: true, message: 'Primary api input keys fetched by serviceId successfully', data: apiInputKeys });
         } catch (error) {

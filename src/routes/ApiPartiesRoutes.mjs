@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/createApiParty', Middleware.admin, ApiPartiesController.createApiParty);
 
 // GET /Route to fetch Api input keys by serviceId
-router.get('/getPrimaryApiInputKeysByServiceName/:serviceName', Middleware.user, ApiPartiesController.getPrimaryApiInputKeysByServiceName);
+router.get('/getPrimaryApiInputKeysByServiceName', Middleware.user, ApiPartiesController.getPrimaryApiInputKeysByServiceName);
 
 // GET /Route to fetch all api parties
 router.get('/getAllApiParties', Middleware.admin, ApiPartiesController.getAllApiParties);
