@@ -65,7 +65,7 @@ class ApiPartiesController {
         try {
             const { serviceName } = req.query;
             const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(serviceName);
-            console.log(apiParty);
+            if (!apiParty) { throw new NotFoundError(`No primary api found for service name: ${serviceName}`); }
             const apiInputKeys = apiParty.apiInputKeys.map(input => ({ apiInputKey: input }));
             res.status(200).json({ status: 200, success: true, message: 'Primary api input keys fetched by serviceId successfully', data: apiInputKeys });
         } catch (error) {
