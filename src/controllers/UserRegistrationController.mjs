@@ -23,10 +23,7 @@ class UserRegistrationController{
 
     static async signIn(req, res) {
         try {
-            const ipAddress = req.headers['ip-address'];
-            const deviceName = req.headers['device-name'];
-            const location = req.headers['location'];
-            const { user, password } = req.body;
+            const { user, password, ipAddress, deviceName, location } = req.body;
             await CommonHandler.validateRequiredFields({ user, password });
             const existingUser = await UserRegistrationController.getUser(user.trim());
             if (!existingUser) { throw new NotFoundError("user not found for the provided details"); }
