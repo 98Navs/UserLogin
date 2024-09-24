@@ -7,6 +7,8 @@ class PaymentRepository {
 
     static async getAllPayments(options, req) { return await paginate(Payment, {}, options.page, options.limit, req); }
 
+    static async getAllUserPayments(options, userId, req) { return await paginate(Payment, { userId }, options.page, options.limit, req); }
+
     static async getPaymentByPaymentId(paymentId) { return await Payment.findOne({ paymentId }); }
 
     static async updatePaymentByPaymentId(paymentId, status) { return await Payment.findOneAndUpdate({ paymentId }, status, { new: true }); }
@@ -15,7 +17,7 @@ class PaymentRepository {
 
     static async filterPayments(filterParams, options, req) {
         const query = {};
-        
+        if (filterParams.userId) { query.userId = filterParams.userId; }
         if (filterParams.status && filterParams.status !== "All") { query.status = new RegExp(`^${filterParams.status}`, 'i'); }
         if (filterParams.search) {
             const searchRegex = new RegExp(`^${filterParams.search}`, 'i');

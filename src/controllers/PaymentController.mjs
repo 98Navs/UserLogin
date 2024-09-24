@@ -29,6 +29,22 @@ class PaymentController {
         }
     }
 
+    static async getAllUserPayments(req, res) {
+        try {
+            const userId = req.user.userId;
+            const { status, search, startDate, endDate, pageNumber = 1, perpage = 10 } = req.query;
+            const options = { page: Number(pageNumber), limit: Number(perpage) };
+            const filterParams = { status, search, startDate, endDate, userId };
+            const payment = Object.keys(filterParams).length > 0 ?
+                await PaymentRepository.filterPayments(filterParams, options, req) :
+                await PaymentRepository.getAllUserPayments(options, userId, req);
+            res.status(200).json({ status: 200, success: true, message: 'All user payments fetched successfully', data: payment });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+
     static async getPaymentByPaymentId(req, res) {
         try {
             const { paymentId } = req.params;

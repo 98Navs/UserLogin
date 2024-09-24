@@ -11,6 +11,9 @@ router.post('/createPayment', Middleware.user, PaymentController.createPayment);
 // GET /Route to get all the payments
 router.get('/getAllPayments', Middleware.admin, PaymentController.getAllPayments);
 
+// GET /Route to get all the user payments
+router.get('/getAllUserPayments', Middleware.user, PaymentController.getAllUserPayments);
+
 // GET /Route to get a payment by paymentId
 router.get('/getPaymentByPaymentId/:paymentId', Middleware.admin, PaymentController.getPaymentByPaymentId);
 
