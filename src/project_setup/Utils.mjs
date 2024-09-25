@@ -11,12 +11,21 @@ export const paginate = async (model, query, page, limit, req, sort = { updatedA
 };
 
 //Email handler
+// const transporter = nodemailer.createTransport({
+//     host: "smtp.gmail.com",
+//     port: 587,
+//     secure: false,
+//     auth: {
+//         user: 'navdeep@scriza.in', pass: 'bqofhxylqvkspers' }
+// });
+
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
     secure: false,
     auth: {
-        user: 'navdeep@scriza.in', pass: 'bqofhxylqvkspers' }
+        user: '942cb39e2f2ca8', pass: '3bad5a04640988'
+    }
 });
 
 export const sendEmail = async (to, subject, text) => {
