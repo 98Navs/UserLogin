@@ -103,7 +103,7 @@ class UserController {
             if (user.whiteListIp.includes(whiteListIp)) { throw new ValidationError(`Entered whiteListIp: ${whiteListIp} already exist`); }
             user.whiteListIp.unshift(whiteListIp);
             await user.save();
-            res.status(200).json({ status: 200, success: true, message: `User with userId ${userId} white list ip updated successfully.`, data: user.whiteListIp });
+            res.status(200).json({ status: 200, success: true, message: `White List IP :${whiteListIp} address added successfully.`, data: user.whiteListIp });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -116,7 +116,7 @@ class UserController {
             const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
             user.whiteListIp = user.whiteListIp.filter(ip => ip !== whiteListIp);
             await user.save();
-            res.status(200).json({ status: 200, success: true, message: `User with userId ${userId} white list ip updated successfully.`, data: user.whiteListIp });
+            res.status(200).json({ status: 200, success: true, message: `White List IP :${whiteListIp} address removed successfully.`, data: user.whiteListIp });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
