@@ -63,7 +63,7 @@ router.put('/updateUserApiKeyByUserId', Middleware.user, UserController.updateUs
 // DELETE /Route to delete the user by userId
 router.delete('/deleteUserByUserId/:userId', Middleware.user, UserController.deleteUserByUserId);
 
-router.post('/updateUserWhiteListIp', Middleware.user, UserController.addUserWhiteListIp);
+router.put('/updateUserWhiteListIp', Middleware.user, UserController.addUserWhiteListIp);
 
 router.delete('/updateUserWhiteListIp', Middleware.user, UserController.removeUserWhiteListIp);
 
