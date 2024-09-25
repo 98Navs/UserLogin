@@ -68,7 +68,8 @@ class UserController {
         try {
             const userId = req.user.userId;
             const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
-            res.status(200).json({ status: 200, success: true, message: 'User white list ip fetched successfully', data: user.whiteListIp });
+            const whiteListIp = user.whiteListIp.map(ip => ({ whiteListIp: ip }));
+            res.status(200).json({ status: 200, success: true, message: 'User white list ip fetched successfully', data: whiteListIp });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -89,6 +90,33 @@ class UserController {
         try {
             const allUserDeleted = await UserRepository.deleteAllUsers();
             res.status(200).json({ status: 200, success: true, message: 'All users data deleted successfully', data: allUserDeleted });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async addUserWhiteListIp(req, res) {
+        try {
+            const userId = req.user.userId;
+            const { whiteListIp } = req.query;
+            const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
+            if (user.whiteListIp.includes(whiteListIp)) { throw new ValidationError(`Entered whiteListIp: ${whiteListIp} already exist`); }
+            user.whiteListIp.unshift(whiteListIp);
+            await user.save();
+            res.status(200).json({ status: 200, success: true, message: `User with userId ${userId} white list ip updated successfully.`, data: user.whiteListIp });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
+    static async removeUserWhiteListIp(req, res) {
+        try {
+            const userId = req.user.userId;
+            const { whiteListIp } = req.query;
+            const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
+            user.whiteListIp = user.whiteListIp.filter(ip => ip !== whiteListIp);
+            await user.save();
+            res.status(200).json({ status: 200, success: true, message: `User with userId ${userId} white list ip updated successfully.`, data: user.whiteListIp });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
