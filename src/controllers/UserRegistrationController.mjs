@@ -30,8 +30,8 @@ class UserRegistrationController{
             if (existingUser.status != 'Active') { throw new ValidationError('User account has been deleted or suspended'); }
             if (! await bcrypt.compare(password, existingUser.password)) { throw new ValidationError('Invalid credentials.'); }
             const token = await Middleware.generateToken({ userId: existingUser.userId, email: existingUser.email, role: existingUser.role }, res);
-            const userLoginLog = await UserLoginLogsRepository.createUserLoginLogs({ userId: existingUser.userId, ipAddress: ipAddress, deviceName: deviceName, location: location });
-            res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, role: existingUser.role, token }, userLoginLog });
+            await UserLoginLogsRepository.createUserLoginLogs({ userId: existingUser.userId, ipAddress: ipAddress, deviceName: deviceName, location: location });
+            res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, role: existingUser.role, token } });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -46,7 +46,7 @@ class UserRegistrationController{
         }
     }
 
-    static async forgetPassword(req, res) {
+    static async sendOtp(req, res) {
         try {
             const { email } = req.body;
             await CommonHandler.validateRequiredFields({ email });
@@ -56,14 +56,14 @@ class UserRegistrationController{
             const otp = Math.floor(100000 + Math.random() * 900000);
             user.otp = otp;
             await user.save();
-            await sendEmail(email, 'Password Reset OTP', `Your OTP for password reset is: ${otp}`);
+            await sendEmail(email, 'OTP from Document Verification', `Your OTP is: ${otp}`);
             res.status(200).json({ status: 200, success: true, message: 'OTP sent to your email.' });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
     }
 
-    static async otp(req, res) {
+    static async verifyOtp(req, res) {
         try {
             const { email, otp } = req.body;
             await CommonHandler.validateRequiredFields({ email, otp });

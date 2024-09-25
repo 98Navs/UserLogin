@@ -16,10 +16,10 @@ router.post('/signIn', UserRegistrationController.signIn);
 router.post('/signOut', Middleware.user, UserRegistrationController.signOut);
 
 // POST /Route for user to apply for forgetPassword
-router.post('/forgetPassword', UserRegistrationController.forgetPassword);
+router.post('/sendOtp', UserRegistrationController.sendOtp);
 
 // POST /Route for user confirm otp
-router.post('/otp', UserRegistrationController.otp);
+router.post('/verifyOtp', UserRegistrationController.verifyOtp);
 
 // POST /Route for user to changePassword
 router.post('/changePassword', UserRegistrationController.changePassword);
@@ -37,7 +37,7 @@ router.get('/getAllAvailablePackageSetupNames', Middleware.user, UserRegistratio
 router.get('/getAllUsers', Middleware.admin, UserController.getAllUsers);
 
 // GET /Route to get user details by userId
-router.get('/getUserByUserId/:userId', Middleware.admin, UserController.getUserByUserId);
+router.get('/getUserByUserId/:userId', Middleware.user, UserController.getUserByUserId);
 
 // GET /Route to get user details
 router.get('/getUserDetails', Middleware.user, UserController.getUserDetails);
