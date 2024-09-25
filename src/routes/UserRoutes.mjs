@@ -49,7 +49,10 @@ router.get('/getUserLoginLogs', Middleware.user, UserController.getUserLoginLogs
 router.get('/getUserServicesByUserId', Middleware.user, UserController.getUserServicesByUserId);
 
 // GET /Route to get user api key by userId
-router.get("/getUserApiKeyByUserId", Middleware.user, UserController.getUserApiKeyByUserId);
+router.get('/getUserApiKeyByUserId', Middleware.user, UserController.getUserApiKeyByUserId);
+
+// GET /Route to get user white list ip by userId
+router.get('/getUserWhiteListIpByUserId', Middleware.user, UserController.getUserWhiteListIpByUserId);
 
 // PUT /Route to update user details bu userId
 router.put('/updateUserByUserId/:userId', Middleware.admin, UserController.updateUserByUserId);

@@ -64,6 +64,15 @@ class UserController {
         }
     }
 
+    static async getUserWhiteListIpByUserId(req, res) {
+        try {
+            const userId = req.user.userId;
+            const user = await UserRegistrationController.validateAndFetchUserByUserId(userId);
+            res.status(200).json({ status: 200, success: true, message: 'User white list ip fetched successfully', data: user.whiteListIp });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
 
     static async getUserServicesByUserId(req, res) {
         try {
@@ -99,7 +108,7 @@ class UserController {
 
     static async updateUserApiKeyByUserId(req, res) {
         try {
-            const { userId } = req.query;
+            const userId = req.user.userId
             await UserRegistrationController.validateAndFetchUserByUserId(userId);
             const newDefaultApiKey = crypto.randomBytes(25).toString('hex');
             const updatedUserApiKey = await UserRepository.updateUserApiKey(userId, { apiKey: newDefaultApiKey} );
