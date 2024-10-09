@@ -3,7 +3,7 @@
   "name": "userlogin",
   "version": "1.0.0",
   "description": "",
-  "main": "src/app.js",
+  "main": "src/app.mjs",
   "scripts": {
     "start": "nodemon src/app.mjs"
   },
