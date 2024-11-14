@@ -9,7 +9,7 @@ import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 
 class VerifyController {
     // Service and Operator constants
-    static SERVICES = { PAN_LITE: 'PAN CARD', PAN_ADVANCE: 'PAN CARD ADVANCE', PAN_DEMOGRAPHIC: 'PAN CARD DEMOGRAPHIC', VOTER_ADVANCE: 'VOTER ADVANCE', DL_ADVANCE: 'DRIVING LICENCE ADVANCE', PASSPORT_LITE: 'PASSPORT LITE', CKYC_LITE: 'CKYC LITE', OKYC_LITE: 'OKYC LITE', GSTIN_LITE: 'GSTIN LITE', GSTIN_ADVANCE: 'GSTIN ADVANCE', BANK_VERIFICATION_LITE: 'BANK VERIFICATION LITE', RC_LITE: 'RC LITE', RC_ADVANCE: 'RC ADVANCE', IFSC_LITE: 'IFSC LITE', OCR_LITE: 'OCR LITE', EPFO_PRO: 'EPFO PRO', PAN_206AB: 'PAN 206AB', PAN_MICRO: 'PAN MICRO', PAN_PRO: 'PAN PRO', PASSPORT_ADVANCE: 'PASSPORT ADVANCE', CIN_ADVANCE: 'CIN ADVANCE', FSSAI: 'FSSAI', GST_PAN: 'GST PAN', UDYOG_AADHAAR: 'UDYOG AADHAAR', CORPORATE_VERIFICATION: 'CORPORATE VERIFICATION', CHEQUE_OCR: 'CHEQUE OCR', EMAIL_VERIFICATION_REQUEST: 'EMAIL VERIFICATION REQUEST', AADHAAR_ESIGN: "AADHAAR ESIGN", FACE_CROP: 'FACE CROP', FACE_MATCH: 'FACE MATCH' };
+    static SERVICES = { PAN_LITE: 'PAN LITE', PAN_ADVANCE: 'PAN CARD ADVANCE', PAN_DEMOGRAPHIC: 'PAN CARD DEMOGRAPHIC', VOTER_ADVANCE: 'VOTER ADVANCE', DL_ADVANCE: 'DRIVING LICENCE ADVANCE', PASSPORT_LITE: 'PASSPORT LITE', CKYC_LITE: 'CKYC LITE', OKYC_LITE: 'OKYC LITE', GSTIN_LITE: 'GSTIN LITE', GSTIN_ADVANCE: 'GSTIN ADVANCE', BANK_VERIFICATION_LITE: 'BANK VERIFICATION LITE', RC_LITE: 'RC LITE', RC_ADVANCE: 'RC ADVANCE', IFSC_LITE: 'IFSC LITE', OCR_LITE: 'OCR LITE', EPFO_PRO: 'EPFO PRO', PAN_206AB: 'PAN 206AB', PAN_MICRO: 'PAN MICRO', PAN_PRO: 'PAN PRO', PASSPORT_ADVANCE: 'PASSPORT ADVANCE', CIN_ADVANCE: 'CIN ADVANCE', FSSAI: 'FSSAI', GST_PAN: 'GST PAN', UDYOG_AADHAAR: 'UDYOG AADHAAR', CORPORATE_VERIFICATION: 'CORPORATE VERIFICATION', CHEQUE_OCR: 'CHEQUE OCR', EMAIL_VERIFICATION_REQUEST: 'EMAIL VERIFICATION REQUEST', AADHAAR_ESIGN: "AADHAAR ESIGN", FACE_CROP: 'FACE CROP', FACE_MATCH: 'FACE MATCH' };
     static OPERATORS = { ZOOP: 'ZOOP', SCRIZA: 'SCRIZA' };
     
     // Main document verification method
@@ -28,15 +28,20 @@ class VerifyController {
 
             const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(serviceType);
             if (!apiParty) throw new NotFoundError(`Api party not found for: ${serviceType}`);
+            console.log(apiParty);
 
             const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(user.packageName);
             const packageServiceCharge = packageSetup.servicesProvided.find(service => service.serviceType === serviceType);
+            console.log(packageServiceCharge);
+            console.log(packageSetup);
+
 
             // Handle service verification and wallet update
             const today = dayjs();
             const userService = user.packageDetails.find(service => service.serviceType === serviceType);
             if (!userService || userService.status !== 'Active' || today.isAfter(dayjs(user.packageLifeSpan))) { throw new ValidationError(`Service ${serviceType} is either not included, inactive, or expired in the user's package.`); }
-            
+            console.log(userService);
+
             // Calculate the base charge and gst charge based on service limit
             const gstCharge = packageServiceCharge.serviceCharge * 0.18;
             const totalCharge = packageServiceCharge.serviceCharge + gstCharge;
