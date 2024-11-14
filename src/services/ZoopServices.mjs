@@ -198,11 +198,11 @@ export async function verifyIfscLiteByZoop(documentDetails) {
     });
 }
 
-export async function verifyOcrLiteByZoop({ customerCardFront, customerCardBack }) {
+export async function verifyOcrLiteByZoop({ customerCardFront, customerCardBack, customerCardType }) {
     return makeZoopRequest(ZOOP_API_URLS.OCR_LITE, {
         card_front_image: customerCardFront,
         card_back_image: customerCardBack,
-        card_type: "Anyone mention on document.",
+        card_type: customerCardType,
         consent: "Y",
         consent_text: "I hear by declare my consent agreement for fetching my information via ZOOP API."
     });

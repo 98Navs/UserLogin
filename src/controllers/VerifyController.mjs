@@ -28,19 +28,15 @@ class VerifyController {
 
             const apiParty = await ApiPartiesRepository.getCurrentPrimaryByServiceName(serviceType);
             if (!apiParty) throw new NotFoundError(`Api party not found for: ${serviceType}`);
-            console.log(apiParty);
 
             const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(user.packageName);
             const packageServiceCharge = packageSetup.servicesProvided.find(service => service.serviceType === serviceType);
-            console.log(packageServiceCharge);
-            console.log(packageSetup);
 
 
             // Handle service verification and wallet update
             const today = dayjs();
             const userService = user.packageDetails.find(service => service.serviceType === serviceType);
             if (!userService || userService.status !== 'Active' || today.isAfter(dayjs(user.packageLifeSpan))) { throw new ValidationError(`Service ${serviceType} is either not included, inactive, or expired in the user's package.`); }
-            console.log(userService);
 
             // Calculate the base charge and gst charge based on service limit
             const gstCharge = packageServiceCharge.serviceCharge * 0.18;
