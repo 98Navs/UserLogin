@@ -64,7 +64,7 @@ class PackageSetupController{
         await CommonHandler.validateRequiredFields({packageName, packageLifeSpan, packageCharges})
         if (!servicesProvided || !Array.isArray(servicesProvided) || servicesProvided.length === 0) { throw new ValidationError('At least one service must be provided'); }
 
-        const existingPackage = await PackageSetupRepository.getPackageSetupByPackageName('GOLD PACKAGE');
+        const existingPackage = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
         if (!existingPackage) { throw new NotFoundError('Package not found'); }
 
         for (const service of servicesProvided) {

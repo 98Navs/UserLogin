@@ -43,12 +43,12 @@ class TransactionHistoryController{
 
     static async getAllTransactionHistoryDataInCSV(req, res) {
         try {
-            const users = await TransactionHistoryRepository.getAllTransactionHistoryDataInCSV();
+            const transactions = await TransactionHistoryRepository.getAllTransactionHistoryDataInCSV();
             const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstCharge', 'gstNumber', 'status'];
-            const csv = new Parser({ fields }).parse(users);
-            res.status(200).header('Content-Type', 'text/csv').header('X-Status', '200').header('X-Success', 'true').header('X-Message', 'All payments fetched successfully').attachment('users.csv').send(csv);
+            const csvArray = [ fields, ...transactions.map(transaction => fields.map(field => transaction[field])) ];
+            res.status(200).json({ status: 200, success: true, message: 'All transactions fetched successfully', data: csvArray });
         } catch (error) {
-            res.status(500).json({ status: 500, success: false, message: 'Failed to export users to CSV.' });
+            res.status(500).json({ status: 500, success: false, message: 'Failed to export transactions to desired format.', error: error.message });
         }
     }
 
@@ -56,12 +56,15 @@ class TransactionHistoryController{
         try {
             const userId = req.user.userId;
             const users = await TransactionHistoryRepository.getUserTransactionHistoryDataInCSV(userId);
-            const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstCharge', 'gstNumber', 'status'];
-            const csv = new Parser({ fields }).parse(users);
-            res.status(200).header('Content-Type', 'text/csv').header('X-Status', '200').header('X-Success', 'true').header('X-Message', 'All payments fetched successfully').attachment('users.csv').send(csv);
+            const headers = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstCharge', 'gstNumber', 'status'];
+            const data = users.map(user => [ user._id, user.userName, user.createdAt, user.transactionId, user.serviceName, user.amount, user.gstCharge, user.gstNumber, user.status ]);
+            const result = [headers, ...data];
+
+            res.status(200).json({ status: 200, success: true, message: 'User transaction history fetched successfully', data: result });
         } catch (error) {
-            res.status(500).json({ status: 500, success: false, message: 'Failed to export users to CSV.' });
+            res.status(500).json({ status: 500, success: false, message: 'Failed to fetch user transaction history data.' });
         }
     }
+
 }
 export default TransactionHistoryController;
