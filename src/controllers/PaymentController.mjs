@@ -89,7 +89,7 @@ class PaymentController {
         await CommonHandler.validateRequiredFields({ transactionNo, saveAs, amount, depositDate, paymentMethod });
         await CommonHandler.validateSixDigitIdFormat(userId);
         await CommonHandler.validateTransactionFormat(transactionNo);
-
+//test
         const admin = await UserRepository.getUserByEmail('admin@scriza.in');
         if (!admin) { throw new NotFoundError(`Admin with email: admin@scriza.in does not exist`); }
         const bankDetails = await BankDetailsRepository.getBankDetailsByUserIdAndSaveAs(admin.userId, saveAs);
