@@ -11,6 +11,8 @@ class PaymentRepository {
 
     static async getPaymentByPaymentId(paymentId) { return await Payment.findOne({ paymentId }); }
 
+    static async getPaymentByTransactionNo(transactionNo) { return await Payment.findOne({ transactionNo }); }
+
     static async updatePaymentByPaymentId(paymentId, status) { return await Payment.findOneAndUpdate({ paymentId }, status, { new: true }); }
 
     static async deletePaymentByPaymentId(paymentId) { return await Payment.findOneAndDelete({ paymentId }); }
