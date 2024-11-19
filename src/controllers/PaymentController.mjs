@@ -96,7 +96,7 @@ class PaymentController {
         const bankDetails = await BankDetailsRepository.getBankDetailsByUserIdAndSaveAs(admin.userId, saveAs);
         if (!bankDetails) { throw new NotFoundError(`Admin bank details not found with ${saveAs}.`); }
         const existingTransactionNo = await PaymentRepository.getPaymentByTransactionNo(transactionNo);
-        if (existingTransactionNo) { await ValidationError('Duplicate UTR No. detected, Provide new UTR as this one is already registered.'); }
+        if (existingTransactionNo) { throw new ValidationError('Duplicate UTR No. detected, Provide new UTR as this one is already registered.'); }
         data.body.bankName = bankDetails.saveAs;
 
         const existingUser = await UserRepository.getUserByUserId(userId);
