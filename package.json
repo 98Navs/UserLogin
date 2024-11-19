@@ -29,7 +29,7 @@
     "mongoose": "^8.5.2",
     "nodemailer": "^6.9.14",
     "open": "^10.1.0",
-    "rename-cli": "^6.2.1",
+    "rename-cli": "^3.0.0",
     "trim": "^1.0.1",
     "uuid": "^10.0.0"
   },

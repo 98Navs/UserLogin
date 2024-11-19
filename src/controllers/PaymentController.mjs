@@ -89,13 +89,13 @@ class PaymentController {
         await CommonHandler.validateRequiredFields({ transactionNo, saveAs, amount, depositDate, paymentMethod });
         await CommonHandler.validateSixDigitIdFormat(userId);
         await CommonHandler.validateTransactionFormat(transactionNo);
-//testyycyuyu
+//test7
         const admin = await UserRepository.getUserByEmail('admin@scriza.in');
         if (!admin) { throw new NotFoundError(`Admin with email: admin@scriza.in does not exist`); }
         const bankDetails = await BankDetailsRepository.getBankDetailsByUserIdAndSaveAs(admin.userId, saveAs);
         if (!bankDetails) { throw new NotFoundError(`Admin bank details not found with ${saveAs}.`); }
         const existingTransactionNo = await PaymentRepository.getPaymentByTransactionNo(transactionNo);
-        if (existingTransactionNo) { throw new ValidationError('Duplicate UTR No. detected, Provide new UTR as this one is already registered.'); }
+        if (existingTransactionNo) { throw new ValidationError('Duplicate UTR No. detected, Provide new UTR as this one is already registered. test 1'); }
         data.body.bankName = bankDetails.saveAs;
 
         const existingUser = await UserRepository.getUserByUserId(userId);
