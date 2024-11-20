@@ -30,7 +30,7 @@ class PackageSetupController{
 
     static async updatePackageSetupByPackageName(req, res) {
         try {
-            const { packageName } = req.params;
+            const { packageName } = req.query;
             await PackageSetupController.validateAndFetchPackageSetupByPackageName(packageName);
             const updatedData = await PackageSetupController.validatePackageSetupData(req.body);
             const updatedPackageSetup = await PackageSetupRepository.updatePackageSetupByPackageName(packageName, updatedData);

@@ -54,10 +54,10 @@ router.post('/verifyGstinAdvance', Middleware.optionalMiddleware, VerifyControll
 router.post('/verifyBankAccountLite', Middleware.optionalMiddleware, VerifyController.verifyBankAccountLite);
 
 // POST /Route to Verify RC Lite Details
-router.post('/verifyRcLite', Middleware.optionalMiddleware, VerifyController.verifyRcLite);
+//router.post('/verifyRcLite', Middleware.optionalMiddleware, VerifyController.verifyRcLite);
 
 // POST /Route to Verify RC Advance Details
-router.post('/verifyRcAdvance', Middleware.optionalMiddleware, VerifyController.verifyRcAdvance);
+//router.post('/verifyRcAdvance', Middleware.optionalMiddleware, VerifyController.verifyRcAdvance);
 
 // POST /Route to Verify IFSC Lite Details
 router.post('/verifyIfscLite', Middleware.optionalMiddleware, VerifyController.verifyIfscLite);
@@ -87,13 +87,13 @@ router.post('/verifyCorporateVerification', Middleware.optionalMiddleware, Verif
 router.post('/verifyChequeOcr', Middleware.optionalMiddleware, VerifyController.verifyChequeOcr);
 
 // POST /Route to Verify Email Verification Request Details
-router.post('/verifyEmailVerificationRequest', Middleware.optionalMiddleware, VerifyController.verifyEmailVerificationRequest);
+//router.post('/verifyEmailVerificationRequest', Middleware.optionalMiddleware, VerifyController.verifyEmailVerificationRequest);
 
 // POST /Route to Verify Email Verification Submit Details
-router.post('/verifyEmailVerificationSubmit', Middleware.optionalMiddleware, VerifyController.verifyEmailVerificationSubmit);
+//router.post('/verifyEmailVerificationSubmit', Middleware.optionalMiddleware, VerifyController.verifyEmailVerificationSubmit);
 
 // POST /Route to Verify Aadhaar Esign Details
-router.post('/verifyAadhaarEsign', Middleware.optionalMiddleware, VerifyController.verifyAadhaarEsign);
+//router.post('/verifyAadhaarEsign', Middleware.optionalMiddleware, VerifyController.verifyAadhaarEsign);
 
 // POST /Route to Verify Face Crop Details
 router.post('/verifyFaceCrop', Middleware.optionalMiddleware, VerifyController.verifyFaceCrop);

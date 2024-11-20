@@ -9,7 +9,7 @@ import PackageSetupRepository from '../repositories/PackageSetupRepository.mjs';
 
 class VerifyController {
     // Service and Operator constants
-    static SERVICES = { PAN_LITE: 'PAN LITE', PAN_ADVANCE: 'PAN CARD ADVANCE', PAN_DEMOGRAPHIC: 'PAN CARD DEMOGRAPHIC', VOTER_ADVANCE: 'VOTER ADVANCE', DL_ADVANCE: 'DRIVING LICENCE ADVANCE', PASSPORT_LITE: 'PASSPORT LITE', CKYC_LITE: 'CKYC LITE', OKYC_LITE: 'OKYC LITE', GSTIN_LITE: 'GSTIN LITE', GSTIN_ADVANCE: 'GSTIN ADVANCE', BANK_VERIFICATION_LITE: 'BANK VERIFICATION LITE', RC_LITE: 'RC LITE', RC_ADVANCE: 'RC ADVANCE', IFSC_LITE: 'IFSC LITE', OCR_LITE: 'OCR LITE', EPFO_PRO: 'EPFO PRO', PAN_206AB: 'PAN 206AB', PAN_MICRO: 'PAN MICRO', PAN_PRO: 'PAN PRO', PASSPORT_ADVANCE: 'PASSPORT ADVANCE', CIN_ADVANCE: 'CIN ADVANCE', FSSAI: 'FSSAI', GST_PAN: 'GST PAN', UDYOG_AADHAAR: 'UDYOG AADHAAR', CORPORATE_VERIFICATION: 'CORPORATE VERIFICATION', CHEQUE_OCR: 'CHEQUE OCR', EMAIL_VERIFICATION_REQUEST: 'EMAIL VERIFICATION REQUEST', AADHAAR_ESIGN: "AADHAAR ESIGN", FACE_CROP: 'FACE CROP', FACE_MATCH: 'FACE MATCH' };
+    static SERVICES = { PAN_LITE: 'PAN LITE', PAN_ADVANCE: 'PAN ADVANCE', PAN_DEMOGRAPHIC: 'PAN DEMOGRAPHIC', VOTER_ADVANCE: 'VOTER ADVANCE', DL_ADVANCE: 'DRIVING LICENCE ADVANCE', PASSPORT_LITE: 'PASSPORT LITE', CKYC_LITE: 'CKYC LITE', OKYC_LITE: 'OKYC LITE', GSTIN_LITE: 'GSTIN LITE', GSTIN_ADVANCE: 'GSTIN ADVANCE', BANK_VERIFICATION_LITE: 'BANK VERIFICATION LITE', RC_LITE: 'RC LITE', RC_ADVANCE: 'RC ADVANCE', IFSC_LITE: 'IFSC LITE', OCR_LITE: 'OCR LITE', EPFO_PRO: 'EPFO PRO', PAN_206AB: 'PAN 206AB', PAN_MICRO: 'PAN MICRO', PAN_PRO: 'PAN PRO', PASSPORT_ADVANCE: 'PASSPORT ADVANCE', CIN_ADVANCE: 'CIN ADVANCE', FSSAI: 'FSSAI', GST_PAN: 'GST PAN', UDYOG_AADHAAR: 'UDYOG AADHAAR', CORPORATE_VERIFICATION: 'CORPORATE VERIFICATION', CHEQUE_OCR: 'CHEQUE OCR', EMAIL_VERIFICATION_REQUEST: 'EMAIL VERIFICATION REQUEST', AADHAAR_ESIGN: "AADHAAR ESIGN", FACE_CROP: 'FACE CROP', FACE_MATCH: 'FACE MATCH' };
     static OPERATORS = { ZOOP: 'ZOOP', SCRIZA: 'SCRIZA' };
     
     // Main document verification method
@@ -93,9 +93,9 @@ class VerifyController {
 
     static async verifyBankAccountLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.BANK_VERIFICATION_LITE, ZoopServices.verifyBankAccountLiteByZoop, null); }
 
-    static async verifyRcLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.RC_LITE, ZoopServices.verifyRcLiteByZoop, null); }
+    //static async verifyRcLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.RC_LITE, ZoopServices.verifyRcLiteByZoop, null); }
 
-    static async verifyRcAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.RC_ADVANCE, ZoopServices.verifyRcAdvanceByZoop, null); }
+    //static async verifyRcAdvance(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.RC_ADVANCE, ZoopServices.verifyRcAdvanceByZoop, null); }
 
     static async verifyIfscLite(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.IFSC_LITE, ZoopServices.verifyIfscLiteByZoop, null); }
 
@@ -123,11 +123,11 @@ class VerifyController {
 
     static async verifyChequeOcr(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.CHEQUE_OCR, ZoopServices.verifyChequeOcrByZoop, null); }
 
-    static async verifyEmailVerificationRequest(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.EMAIL_VERIFICATION_REQUEST, ZoopServices.verifyEmailVerificationRequestByZoop, null); }
+    //static async verifyEmailVerificationRequest(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.EMAIL_VERIFICATION_REQUEST, ZoopServices.verifyEmailVerificationRequestByZoop, null); }
 
-    static async verifyEmailVerificationSubmit(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.EMAIL_VERIFICATION_REQUEST, ZoopServices.verifyEmailVerificationSubmitByZoop, null); }
+    //static async verifyEmailVerificationSubmit(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.EMAIL_VERIFICATION_REQUEST, ZoopServices.verifyEmailVerificationSubmitByZoop, null); }
 
-    static async verifyAadhaarEsign(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.AADHAAR_ESIGN, ZoopServices.verifyAadhaarEsignByZoop, null); }
+    //static async verifyAadhaarEsign(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.AADHAAR_ESIGN, ZoopServices.verifyAadhaarEsignByZoop, null); }
 
     static async verifyFaceCrop(req, res) { await VerifyController.verifyDocument(req, res, VerifyController.SERVICES.FACE_CROP, ZoopServices.verifyFaceCropByZoop, null); }
 
