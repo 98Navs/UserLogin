@@ -12,7 +12,7 @@ router.post('/createPackageSetup', Middleware.admin, PackageSetupController.crea
 router.get('/getAllPackageSetup', Middleware.admin, PackageSetupController.getAllPackageSetup);
 
 // PUT /Route to update a package setup by package name
-router.put('/updatePackageSetupByPackageName/:packageName', Middleware.admin, PackageSetupController.updatePackageSetupByPackageName);
+router.put('/updatePackageSetupByPackageName', Middleware.admin, PackageSetupController.updatePackageSetupByPackageName);
 
 // DELETE /Route to delete a package setup by package name
 router.delete('/deletePackageSetupByPackageName/:packageName', Middleware.admin, PackageSetupController.deletePackageSetupByPackageName)
