@@ -9,6 +9,8 @@ class PackageSetupRepository{
 
     static async getAllAvailablePackageSetupNames() { return await PackageSetup.find(); }
 
+    static async getPackageByPackageId(packageId) { return await PackageSetup.findOne({ packageId }); }
+
     static async getPackageSetupByPackageName(packageName) { return await PackageSetup.findOne({ packageName: new RegExp(`^${packageName}`, 'i') }); }
 
     static async updatePackageSetupByPackageName(packageName, packageSetupData) { return await PackageSetup.findOneAndUpdate({ packageName }, packageSetupData, { new: true }); }

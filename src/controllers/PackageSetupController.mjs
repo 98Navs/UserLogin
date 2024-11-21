@@ -28,6 +28,16 @@ class PackageSetupController{
         }
     }
 
+    static async getPackageByPackageId(req, res) {
+        try {
+            const { packageId } = req.params;
+            const packageSetup = await PackageSetupController.validateAndFetchPackageSetupByPackageId(packageId);
+            res.status(200).json({ status: 200, success: true, message: 'Package fetched successfully', data: packageSetup });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async updatePackageSetupByPackageName(req, res) {
         try {
             const { packageName } = req.query;
@@ -55,6 +65,12 @@ class PackageSetupController{
     static async validateAndFetchPackageSetupByPackageName(packageName) {
         const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
         if (!packageSetup) { throw new NotFoundError(`Package setup with packageName: ${packageName} not found`); }
+        return packageSetup;
+    }
+
+    static async validateAndFetchPackageSetupByPackageId(packageId) {
+        const packageSetup = await PackageSetupRepository.getPackageByPackageId(packageId);
+        if (!packageSetup) { throw new NotFoundError(`Package setup with packageId: ${packageId} not found`); }
         return packageSetup;
     }
 

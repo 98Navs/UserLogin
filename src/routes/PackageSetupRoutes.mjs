@@ -11,6 +11,9 @@ router.post('/createPackageSetup', Middleware.admin, PackageSetupController.crea
 // GET /Route to fetch all package setup
 router.get('/getAllPackageSetup', Middleware.admin, PackageSetupController.getAllPackageSetup);
 
+// GET /Route to fetch package setup by packageId
+router.get('/getPackageByPackageId/:packageId', Middleware.admin, PackageSetupController.getPackageByPackageId);
+
 // PUT /Route to update a package setup by package name
 router.put('/updatePackageSetupByPackageName', Middleware.admin, PackageSetupController.updatePackageSetupByPackageName);
 
