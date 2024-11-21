@@ -4,7 +4,7 @@ import BankDetails from "../models/BankDetailsModel.mjs";
 class BankDetailsRepository {
     static async createBankDetails(data) { return await BankDetails.create(data); }
 
-    static async getBankDetailsByUserId(userId) { return await BankDetails.find({ userId }); }
+    static async getAdminBankDetails() { return await BankDetails.find(); }
 
     static async getSaveAsByUserId(userId) { return await BankDetails.find({ userId }, 'saveAs').then(results => results.map(({ saveAs }) => saveAs)); }
 

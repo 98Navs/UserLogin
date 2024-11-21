@@ -17,9 +17,7 @@ class BankDetailsController {
 
     static async getAdminBankDetails(req, res) {
         try {
-            const admin = await UserRepository.getUserByEmail('admin@scriza.in');
-            if (!admin) { throw new NotFoundError('Admin not found in the database with email: admin@scriza.in'); }
-            const bankDetails = await BankDetailsRepository.getBankDetailsByUserId(admin.userId);
+            const bankDetails = await BankDetailsRepository.getAdminBankDetails();
             res.status(200).json({ status: 200, success: true, message: 'Admin bank details fetched successfully', data: bankDetails });
         } catch (error) {
             CommonHandler.catchError(error, res);
