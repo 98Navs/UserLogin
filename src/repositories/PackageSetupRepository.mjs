@@ -13,9 +13,9 @@ class PackageSetupRepository{
 
     static async getPackageSetupByPackageName(packageName) { return await PackageSetup.findOne({ packageName: new RegExp(`^${packageName}`, 'i') }); }
 
-    static async updatePackageSetupByPackageName(packageName, packageSetupData) { return await PackageSetup.findOneAndUpdate({ packageName }, packageSetupData, { new: true }); }
+    static async updatePackageSetupByPackageId(packageId, packageSetupData) { return await PackageSetup.findOneAndUpdate({ packageId }, packageSetupData, { new: true }); }
 
-    static async deletePackageSetupByPackageName(packageName) { return await PackageSetup.findOneAndDelete({ packageName: new RegExp(`^${packageName}`, 'i') }); }
+    static async deletePackageSetupByPackageId(packageId) { return await PackageSetup.findOneAndDelete({ packageId }); }
 
     static async filterPackageSetup(filterParams, options, req) {
         const query = {};

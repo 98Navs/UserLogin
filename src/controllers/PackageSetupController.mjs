@@ -6,7 +6,6 @@ class PackageSetupController{
     static async createPackageSetup(req, res) {
         try {
             const packageSetupData = await PackageSetupController.validatePackageSetupData(req.body);
-            console.log(packageSetupData);
             const packageSetup = await PackageSetupRepository.createPackageSetup(packageSetupData);
             res.status(201).json({ status: 201, success: true, message: 'Package setup created successfully', data: packageSetup });
         } catch (error) {
@@ -38,23 +37,23 @@ class PackageSetupController{
         }
     }
 
-    static async updatePackageSetupByPackageName(req, res) {
+    static async updatePackageSetupByPackageId(req, res) {
         try {
-            const { packageName } = req.query;
-            await PackageSetupController.validateAndFetchPackageSetupByPackageName(packageName);
+            const { packageId } = req.params;
+            await PackageSetupController.validateAndFetchPackageSetupByPackageId(packageId);
             const updatedData = await PackageSetupController.validatePackageSetupData(req.body);
-            const updatedPackageSetup = await PackageSetupRepository.updatePackageSetupByPackageName(packageName, updatedData);
+            const updatedPackageSetup = await PackageSetupRepository.updatePackageSetupByPackageId(packageId, updatedData);
             res.status(200).json({ status: 200, success: true, message: 'Package setup updated successfully', data: updatedPackageSetup });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
     }
 
-    static async deletePackageSetupByPackageName(req, res) {
+    static async deletePackageSetupByPackageId(req, res) {
         try {
-            const { packageName } = req.params;
-            await PackageSetupController.validateAndFetchPackageSetupByPackageName(packageName);
-            const deletedPackageSetup = await PackageSetupRepository.deletePackageSetupByPackageName(packageName);
+            const { packageId } = req.params;
+            await PackageSetupController.validateAndFetchPackageSetupByPackageId(packageId);
+            const deletedPackageSetup = await PackageSetupRepository.deletePackageSetupByPackageId(packageId);
             res.status(200).json({ status: 200, success: true, message: 'Package setup deleted successfully', data: deletedPackageSetup });
         } catch (error) {
             CommonHandler.catchError(error, res);
@@ -80,7 +79,7 @@ class PackageSetupController{
         await CommonHandler.validateRequiredFields({packageName, packageLifeSpan, packageCharges})
         if (!servicesProvided || !Array.isArray(servicesProvided) || servicesProvided.length === 0) { throw new ValidationError('At least one service must be provided'); }
 
-        const existingPackage = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
+        const existingPackage = await PackageSetupRepository.getPackageSetupByPackageName('GOLDEN PACKAGE');
         if (!existingPackage) { throw new NotFoundError('Package not found'); }
 
         for (const service of servicesProvided) {

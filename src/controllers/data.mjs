@@ -37,4 +37,80 @@
          //AADHAAR_ESIGN: "AADHAAR ESIGN",
     };
 
-    
+{
+ {
+        "packageName": "ADMIN PACKAGE",
+        "packageLifeSpan": 365,
+        "packageCharges": 5000,
+        "status": "Active",
+            "servicesProvided": [
+                    {
+                        "serviceType": "RC LITE",
+                        "serviceCharge": 150,
+                        "serviceUrl": "/verifyRcLite",
+                        "status": "Active"
+                    },
+
+                    {
+                        "serviceType": "AADHAAR ESIGN",
+                        "serviceCharge": 200,
+                        "serviceUrl": "/verifyAadhaarEsign",
+                        "status": "Active"
+                    },
+
+                    {
+                        "serviceType": "CHEQUE OCR",
+                        "serviceCharge": 180,
+                        "serviceUrl": "/verifyChequeOcr",
+                        "status": "Active"
+                    },
+ 
+
+
+
+                    {
+                        "serviceType": "EMAIL VERIFICATION REQUEST",
+                        "serviceCharge": 130,
+                        "serviceUrl": "/verifyEmailVerificationRequest",
+                        "status": "Active"
+                    },
+                    {
+                        "serviceType": "EMAIL VERIFICATION SUBMIT",
+                        "serviceCharge": 140,
+                        "serviceUrl": "/verifyEmailVerificationSubmit",
+                        "status": "Active"
+                    },
+
+                    {
+                        "serviceType": "FACE CROP",
+                        "serviceCharge": 170,
+                        "serviceUrl": "/verifyFaceCrop",
+                        "status": "Active"
+                    },
+                    {
+                        "serviceType": "FACE MATCH",
+                        "serviceCharge": 190,
+                        "serviceUrl": "/verifyFaceMatch",
+                        "status": "Active"
+                    },
+
+                    {
+                        "serviceType": "OCR LITE",
+                        "serviceCharge": 160,
+                        "serviceUrl": "/verifyOcrLite",
+                        "status": "Active"
+                    },
+
+
+
+                    {
+                        "serviceType": "RC ADVANCE",
+                        "serviceCharge": 350,
+                        "serviceUrl": "/verifyRcAdvance",
+                        "status": "Active"
+                    },
+
+
+                ]
+    }
+}

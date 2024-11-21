@@ -14,10 +14,10 @@ router.get('/getAllPackageSetup', Middleware.admin, PackageSetupController.getAl
 // GET /Route to fetch package setup by packageId
 router.get('/getPackageByPackageId/:packageId', Middleware.admin, PackageSetupController.getPackageByPackageId);
 
-// PUT /Route to update a package setup by package name
-router.put('/updatePackageSetupByPackageName', Middleware.admin, PackageSetupController.updatePackageSetupByPackageName);
+// PUT /Route to update a package setup by packageId
+router.put('/updatePackageSetupByPackageId/:packageId', Middleware.admin, PackageSetupController.updatePackageSetupByPackageId);
 
-// DELETE /Route to delete a package setup by package name
-router.delete('/deletePackageSetupByPackageName/:packageName', Middleware.admin, PackageSetupController.deletePackageSetupByPackageName)
+// DELETE /Route to delete a package setup by packageId
+router.delete('/deletePackageSetupByPackageId/:packageId', Middleware.admin, PackageSetupController.deletePackageSetupByPackageId)
 
 export default router;
