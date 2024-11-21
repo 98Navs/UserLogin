@@ -92,6 +92,23 @@ class UserRegistrationController{
         }
     }
 
+    static async resetPassword(req, res) {
+        try {
+            const userId = req.user.userId;
+            const { currentPassword, newPassword } = req.body;
+            await CommonHandler.validateRequiredFields({ currentPassword, newPassword });
+            await CommonHandler.validatePasswordFormat(newPassword);
+            const user = await UserRepository.getUserByUserId(userId);
+            if (!user) throw new NotFoundError('User not found.');
+            if (! await bcrypt.compare(currentPassword, user.password)) { throw new ValidationError('Invalid password.'); }
+            user.password = await CommonHandler.hashPassword(newPassword);
+            await user.save();
+            res.status(200).json({ status: 200, success: true, message: 'Password reset successfully.' });
+        } catch (error) {
+            CommonHandler.catchError(error, res);
+        }
+    }
+
     static async getAreaDetailsByPinCode(req, res) {
         try {
             const { pinCode } = req.query;

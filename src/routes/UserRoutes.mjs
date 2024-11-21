@@ -24,6 +24,9 @@ router.post('/verifyOtp', UserRegistrationController.verifyOtp);
 // POST /Route for user to changePassword
 router.post('/changePassword', UserRegistrationController.changePassword);
 
+// POST /Route for user to resetPassword
+router.post('/resetPassword', Middleware.user, UserRegistrationController.resetPassword);
+
 //GET /Route to get area details by pin code
 router.get('/getAreaDetailsByPinCode', Middleware.user, UserRegistrationController.getAreaDetailsByPinCode);
 
