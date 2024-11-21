@@ -52,6 +52,7 @@ class PackageSetupController{
     static async deletePackageSetupByPackageId(req, res) {
         try {
             const { packageId } = req.params;
+            if (packageId == 673829) { throw new ValidationError('Admin package can not be deleted.'); }
             await PackageSetupController.validateAndFetchPackageSetupByPackageId(packageId);
             const deletedPackageSetup = await PackageSetupRepository.deletePackageSetupByPackageId(packageId);
             res.status(200).json({ status: 200, success: true, message: 'Package setup deleted successfully', data: deletedPackageSetup });
@@ -79,7 +80,7 @@ class PackageSetupController{
         await CommonHandler.validateRequiredFields({packageName, packageLifeSpan, packageCharges})
         if (!servicesProvided || !Array.isArray(servicesProvided) || servicesProvided.length === 0) { throw new ValidationError('At least one service must be provided'); }
 
-        const existingPackage = await PackageSetupRepository.getPackageSetupByPackageName('GOLDEN PACKAGE');
+        const existingPackage = await PackageSetupRepository.getPackageSetupByPackageName('ADMIN PACKAGE');
         if (!existingPackage) { throw new NotFoundError('Package not found'); }
 
         for (const service of servicesProvided) {
