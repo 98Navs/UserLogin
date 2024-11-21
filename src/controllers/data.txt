@@ -64,9 +64,6 @@
                         "serviceUrl": "/verifyChequeOcr",
                         "status": "Active"
                     },
- 
-
-
 
                     {
                         "serviceType": "EMAIL VERIFICATION REQUEST",
