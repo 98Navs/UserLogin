@@ -44,8 +44,9 @@ class TransactionHistoryController{
         try {
             const transactions = await TransactionHistoryRepository.getAllTransactionHistoryDataInCSV();
             const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstCharge', 'gstNumber', 'status'];
-            const csvArray = [ fields, ...transactions.map(transaction => fields.map(field => transaction[field])) ];
-            res.status(200).json({ status: 200, success: true, message: 'All transactions fetched successfully', data: csvArray });
+            const csvArray = transactions.length > 0 ? [fields, ...transactions.map(transaction => fields.map(field => transaction[field]))] : [fields];
+            res.status(200).json({ status: 200, success: true, message: transactions.length > 0 ? 'All transactions fetched successfully' : 'No transaction history found, returning empty data.', data: csvArray });
+
         } catch (error) {
             res.status(500).json({ status: 500, success: false, message: 'Failed to export transactions to desired format.' });
         }
@@ -56,12 +57,25 @@ class TransactionHistoryController{
             const userId = req.user.userId;
             const users = await TransactionHistoryRepository.getUserTransactionHistoryDataInCSV(userId);
             const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstCharge', 'gstNumber', 'status'];
-            const csvArray = [fields, ...users.map(user => fields.map(field => user[field]))];
-            res.status(200).json({ status: 200, success: true, message: 'User transaction history fetched successfully', data: csvArray });
+            const csvArray = users.length > 0 ? [fields, ...users.map(user => fields.map(field => user[field]))] : [fields];
+            res.status(200).json({ status: 200, success: true, message: users.length > 0 ? 'User transaction history fetched successfully' : 'No transaction history found, returning empty data.', data: csvArray });
         } catch (error) {
             res.status(500).json({ status: 500, success: false, message: 'Failed to fetch user transaction history data.' });
         }
     }
+
+    static async getUserTransactionHistoryDataInCSVByUserId(req, res) {
+        try {
+            const { userId } = req.params;
+            const users = await TransactionHistoryRepository.getUserTransactionHistoryDataInCSV(userId);
+            const fields = ['_id', 'userName', 'createdAt', 'transactionId', 'serviceName', 'amount', 'gstCharge', 'gstNumber', 'status'];
+            const csvArray = users.length > 0 ? [fields, ...users.map(user => fields.map(field => user[field]))] : [fields];
+            res.status(200).json({ status: 200, success: true, message: users.length > 0 ? 'User transaction history fetched successfully' : 'No transaction history found, returning empty data.', data: csvArray });
+        } catch (error) {
+            res.status(500).json({ status: 500, success: false, message: 'Failed to fetch user transaction history data.' });
+        }
+    }
+
 
 }
 export default TransactionHistoryController;
