@@ -52,7 +52,7 @@ class UserRegistrationController{
             await CommonHandler.validateRequiredFields({ email });
             await CommonHandler.validateEmailFormat(email.trim());
             const user = await UserRepository.getUserByEmail(email.trim());
-            if (!user) throw new NotFoundError('User not found.');
+            if (!user) throw new NotFoundError('UserId does not exist in our database.');
             const otp = Math.floor(100000 + Math.random() * 900000);
             user.otp = otp;
             await user.save();
