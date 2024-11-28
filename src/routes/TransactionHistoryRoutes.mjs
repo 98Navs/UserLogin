@@ -14,9 +14,6 @@ router.get('/getAllTransactionHistoryforUser', Middleware.user, TransactionHisto
 // GET /Route to get all transaction history data in CSV
 router.get('/getAllTransactionHistoryDataInCSV', Middleware.admin, TransactionHistoryController.getAllTransactionHistoryDataInCSV);
 
-// GET /Route to get all transaction history data in CSV for user by admin
-router.get('/getUserTransactionHistoryDataInCSVByUserId/:userId', Middleware.admin, TransactionHistoryController.getUserTransactionHistoryDataInCSVByUserId)
-
 // GET /Route to get all transaction history data in CSV for user
 router.get('/getUserTransactionHistoryDataInCSV', Middleware.user, TransactionHistoryController.getUserTransactionHistoryDataInCSV);
 

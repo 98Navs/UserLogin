@@ -19,6 +19,18 @@ class TransactionHistoryRepository {
 
     static async updateTransactionHistoryById(id, transactionHistoryData) { return await TransactionHistory.findByIdAndUpdate(id, transactionHistoryData, { new: true }); }
 
+    static async getTransactionHistoryByFilters(userId = null, startDate = null, endDate = null) {
+        const query = {};
+        if (userId) query.userId = userId; 
+        if (startDate || endDate) {
+            query.createdAt = {};
+            if (startDate) query.createdAt.$gte = new Date(startDate);
+            if (endDate) query.createdAt.$lte = new Date(new Date(endDate).setHours(23, 59, 59, 999));
+        }
+        return await TransactionHistory.find(query).sort(this.sort).lean().exec();
+    }
+
+
     static async filterTransactionHistorys(userId = null, filterParams, options, req) {
         const query = {};
         if (userId) { query.userId = userId; }

@@ -1,6 +1,8 @@
 // src/project_setup/Middleware.mjs
 import jwt from 'jsonwebtoken';
 import { CommonHandler, MiddlewareError } from '../controllers/CommonHandler.mjs';
+import UserLoginLogsRepository from '../repositories/UserLoginLogsRepository.mjs';
+
 
 class Middleware {
     //Validate Authentiacation
@@ -9,16 +11,27 @@ class Middleware {
             const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
             if (!token) throw new MiddlewareError('Token not found in header or cookies');
             const decodedToken = jwt.verify(token, process.env.APP_SECRET);
-            if (!decodedToken) { throw new MiddlewareError('Unauthorized or distorted token'); }
+            if (!decodedToken) throw new MiddlewareError('Unauthorized or distorted token');
             if (roles && !roles.includes(decodedToken.role)) { return res.status(403).json({ status: 403, success: false, message }); }
             req.user = decodedToken;
+
+            const tokenManagement = await UserLoginLogsRepository.getUserLogTokenByUserIdAndToken({ userId: req.user.userId, token });
+            if (!tokenManagement || tokenManagement.status !== 'ACTIVE') throw new MiddlewareError('Token is not active, Re-SignIn is required.');
+
+            if (Date.now() - new Date(tokenManagement.updatedAt).getTime() > 15 * 60 * 1000) {
+                await UserLoginLogsRepository.blockUserLogTokenByUserIdAndToken({ userId: req.user.userId, token });
+                throw new MiddlewareError('Token has been inactive for more than 15 minutes and is now terminated.');
+            }
+
+            await UserLoginLogsRepository.updateUserLogTokenByUserIdAndToken({ userId: req.user.userId, token });
+
             next();
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
     }
 
-    static optionalMiddleware(req, res, next) {
+    static async optionalMiddleware(req, res, next) {
         try {
             const token = req.headers.authorization?.split(" ")[1] || req.cookies.jwt;
             if (token) {
@@ -30,7 +43,7 @@ class Middleware {
             } else {
                 next();
             }
-        } catch(error) {
+        } catch (error) {
             CommonHandler.catchError(error, res);
         }
     }

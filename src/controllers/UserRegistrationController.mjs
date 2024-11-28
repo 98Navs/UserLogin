@@ -9,17 +9,16 @@ import { CommonHandler, ValidationError, NotFoundError } from './CommonHandler.m
 import { sendEmail } from '../project_setup/Utils.mjs';
 import Middleware from '../project_setup/Middleware.mjs';
 
-class UserRegistrationController{
+class UserRegistrationController {
     static async createUser(req, res) {
         try {
             const userData = await UserRegistrationController.validateUserData(req.body);
-            console.log(userData);
             const user = await UserRepository.createUser(userData);
             res.status(201).json({ status: 201, success: true, message: 'User created successfully', user });
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
-    } 
+    }
 
     static async signIn(req, res) {
         try {
@@ -30,7 +29,7 @@ class UserRegistrationController{
             if (existingUser.status != 'Active') { throw new ValidationError('User account has been deleted or suspended'); }
             if (! await bcrypt.compare(password, existingUser.password)) { throw new ValidationError('Invalid credentials.'); }
             const token = await Middleware.generateToken({ userId: existingUser.userId, email: existingUser.email, role: existingUser.role }, res);
-            await UserLoginLogsRepository.createUserLoginLogs({ userId: existingUser.userId, ipAddress: ipAddress, deviceName: deviceName, location: location });
+            await UserLoginLogsRepository.createUserLoginLogs({ userId: existingUser.userId, ipAddress: ipAddress, deviceName: deviceName, location: location, token });
             res.status(200).json({ status: 200, success: true, message: 'Sign in successful!', user: { userId: existingUser.userId, email: existingUser.email, role: existingUser.role, token } });
         } catch (error) {
             CommonHandler.catchError(error, res);
@@ -39,6 +38,9 @@ class UserRegistrationController{
 
     static async signOut(req, res) {
         try {
+            const userId = req.user.userId;
+            const token = req.cookies.jwt;
+            await UserLoginLogsRepository.blockUserLogTokenByUserIdAndToken({ userId, token })
             res.clearCookie('jwt');
             res.status(200).json({ status: 200, success: true, message: 'User sign out is successful!' });
         } catch (error) {
@@ -190,11 +192,11 @@ class UserRegistrationController{
             data.password = await CommonHandler.hashPassword(password);
         } else {
             const newPassword = UserRegistrationController.generateRandomPassword();
-            await sendEmail(email, `Login Credintials for Verify Documentation `,`Hi Mr./Ms ${userName.toUpperCase()}, \n \n Welcome to verify documentation \n Your login ID is:  ${email.toUpperCase()} \n Your login password is: ${newPassword}`);
+            await sendEmail(email, `Login Credintials for Verify Documentation `, `Hi Mr./Ms ${userName.toUpperCase()}, \n \n Welcome to verify documentation \n Your login ID is:  ${email.toUpperCase()} \n Your login password is: ${newPassword}`);
             data.password = await CommonHandler.hashPassword(newPassword);
         }
-            
-        if (packageName ) {
+
+        if (packageName) {
             const packageSetup = await PackageSetupRepository.getPackageSetupByPackageName(packageName);
             if (!packageSetup) { throw new NotFoundError(`No package found by entered name: ${packageName}`); }
             const today = dayjs();
