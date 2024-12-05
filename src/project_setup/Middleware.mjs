@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken';
 import { CommonHandler, MiddlewareError } from '../controllers/CommonHandler.mjs';
 import UserLoginLogsRepository from '../repositories/UserLoginLogsRepository.mjs';
+import UserRepository from '../repositories/UserRepository.mjs';
 
 
 class Middleware {
@@ -24,8 +25,7 @@ class Middleware {
             }
 
             await UserLoginLogsRepository.updateUserLogTokenByUserIdAndToken({ userId: req.user.userId, token });
-
-            next();
+            UserRepository.middleware(next);
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -38,7 +38,7 @@ class Middleware {
                 jwt.verify(token, process.env.APP_SECRET, (error, decodedToken) => {
                     if (!error) req.user = decodedToken;
                     else { throw new MiddlewareError('Unauthorized or distorted token'); }
-                    next();
+                    UserRepository.middleware(next);
                 });
             } else {
                 next();

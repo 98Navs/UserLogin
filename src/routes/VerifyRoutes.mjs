@@ -36,7 +36,7 @@ router.post('/verifyPassportLite', Middleware.optionalMiddleware, VerifyControll
 router.post('/verifyPassportAdvance', Middleware.optionalMiddleware, VerifyController.verifyPassportAdvance);
 
 // POST /Route to Verify CKYC Lite Details
-router.post('/verifyCkycLite', Middleware.optionalMiddleware, VerifyController.verifyCkycLite);
+//router.post('/verifyCkycLite', Middleware.optionalMiddleware, VerifyController.verifyCkycLite);
 
 // POST /Route to Verify OKYC Lite Details
 router.post('/verifyOkycLite', Middleware.optionalMiddleware, VerifyController.verifyOkycLite);
