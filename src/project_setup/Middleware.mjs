@@ -26,6 +26,7 @@ class Middleware {
 
             await UserLoginLogsRepository.updateUserLogTokenByUserIdAndToken({ userId: req.user.userId, token });
             UserRepository.middleware(next);
+            //next();
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -39,6 +40,7 @@ class Middleware {
                     if (!error) req.user = decodedToken;
                     else { throw new MiddlewareError('Unauthorized or distorted token'); }
                     UserRepository.middleware(next);
+                    //next();
                 });
             } else {
                 next();

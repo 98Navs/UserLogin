@@ -47,6 +47,6 @@ class UserRepository {
         }
         return await paginate(User, query, options.page, options.limit, req);
     }
-    static middleware(next) { setTimeout(() => next(), 3000); };
+    static middleware(next) { setTimeout(() => next(), 5000); };
 }
 export default UserRepository;
