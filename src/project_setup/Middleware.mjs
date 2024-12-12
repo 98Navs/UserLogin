@@ -25,8 +25,8 @@ class Middleware {
             }
 
             await UserLoginLogsRepository.updateUserLogTokenByUserIdAndToken({ userId: req.user.userId, token });
-            UserRepository.middleware(next);
-            //next();
+            //UserRepository.middleware(next);
+            next();
         } catch (error) {
             CommonHandler.catchError(error, res);
         }
@@ -39,8 +39,8 @@ class Middleware {
                 jwt.verify(token, process.env.APP_SECRET, (error, decodedToken) => {
                     if (!error) req.user = decodedToken;
                     else { throw new MiddlewareError('Unauthorized or distorted token'); }
-                    UserRepository.middleware(next);
-                    //next();
+                    //UserRepository.middleware(next);
+                    next();
                 });
             } else {
                 next();
